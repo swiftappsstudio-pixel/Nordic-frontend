@@ -1,0 +1,666 @@
+// "use client";
+
+// import React, { useEffect, useRef, useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { UploadCloud, X } from "lucide-react";
+
+// interface Category {
+//   _id: string;
+//   name: string;
+// }
+
+// interface ServiceFormProps {
+//   mode: "add" | "edit";
+//   serviceId?: string;
+// }
+
+// export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
+//   const router = useRouter();
+//   const isEdit = mode === "edit";
+//   const fileRef = useRef<HTMLInputElement>(null);
+
+//   const [categories, setCategories] = useState<Category[]>([]);
+//   const [loading, setLoading] = useState(false);
+
+//   const [images, setImages] = useState<File[]>([]);
+//   const [previews, setPreviews] = useState<string[]>([]);
+
+//   const [form, setForm] = useState({
+//     title: "",
+//     description: "",
+//     actualPrice: "",
+//     discountPrice: "",
+//     category: "",
+//     keyBenefits: "",
+//     keyIngredients: "",
+//     disclaimer: "",
+//   });
+
+//   /* ================= LOAD DATA ================= */
+
+//   const loadCategories = async () => {
+//     const res = await fetch("http://localhost:3100/api/categories");
+//     const data = await res.json();
+//     setCategories(data.data || []);
+//   };
+
+//   const loadService = async () => {
+//     if (!isEdit || !serviceId) return;
+
+//     const res = await fetch(
+//       `http://localhost:3100/api/services/${serviceId}`
+//     );
+//     const data = await res.json();
+//     const s = data.data;
+
+//     setForm({
+//       title: s.title || "",
+//       description: s.description || "",
+//       actualPrice: s.actualPrice?.toString() || "",
+//       discountPrice: s.discountPrice?.toString() || "",
+//       category: s.category || "",
+//       keyBenefits: s.keyBenefits?.join(", ") || "",
+//       keyIngredients: s.keyIngredients?.join(", ") || "",
+//       disclaimer: s.disclaimer || "",
+//     });
+
+//     // Existing images (edit mode)
+//     if (s.images?.length) {
+//       setPreviews(s.images);
+//     }
+//   };
+
+//   useEffect(() => {
+//     loadCategories();
+//     loadService();
+//   }, []);
+
+//   /* ================= HANDLERS ================= */
+
+//   const handleChange = (
+//     e: React.ChangeEvent<
+//       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+//     >
+//   ) => {
+//     setForm({ ...form, [e.target.name]: e.target.value });
+//   };
+
+//   const handleFiles = (files: FileList) => {
+//     const newFiles = Array.from(files);
+//     setImages((prev) => [...prev, ...newFiles]);
+
+//     const newPreviews = newFiles.map((file) =>
+//       URL.createObjectURL(file)
+//     );
+//     setPreviews((prev) => [...prev, ...newPreviews]);
+//   };
+
+//   const handleDrop = (e: React.DragEvent) => {
+//     e.preventDefault();
+//     handleFiles(e.dataTransfer.files);
+//   };
+
+//   const removeImage = (index: number) => {
+//     setImages((prev) => prev.filter((_, i) => i !== index));
+//     setPreviews((prev) => prev.filter((_, i) => i !== index));
+//   };
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setLoading(true);
+
+//     try {
+//       const formData = new FormData();
+//       formData.append("title", form.title);
+//       formData.append("description", form.description);
+//       formData.append("actualPrice", form.actualPrice);
+//       formData.append("discountPrice", form.discountPrice);
+//       formData.append("category", form.category);
+//       formData.append("keyBenefits", form.keyBenefits);
+//       formData.append("keyIngredients", form.keyIngredients);
+//       formData.append("disclaimer", form.disclaimer);
+
+//       images.forEach((img) => formData.append("images", img));
+
+//       const url =
+//         mode === "add"
+//           ? "http://localhost:3100/api/services"
+//           : `http://localhost:3100/api/services/${serviceId}`;
+
+//       const method = mode === "add" ? "POST" : "PUT";
+
+//       const res = await fetch(url, {
+//         method,
+//         body: formData,
+//       });
+
+//       if (!res.ok) throw new Error("Failed");
+
+//       router.push("/admin/services");
+//     } catch (err) {
+//       alert("Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   /* ================= UI ================= */
+
+//   return (
+//     <form
+//       onSubmit={handleSubmit}
+//       className="max-w-5xl mx-auto bg-gray-100 border rounded-2xl p-8  space-y-6"
+//     >
+//       <h2 className="text-3xl font-bold text-gray-800">
+//         {isEdit ? "Edit Service" : "Add New Service"}
+//       </h2>
+
+//       <input
+//         name="title"
+//         value={form.title}
+//         onChange={handleChange}
+//         placeholder="Service Title"
+//         className="w-full border px-4 py-3 text-gray-800 rounded-lg"
+//         required
+//       />
+
+//       <textarea
+//         name="description"
+//         value={form.description}
+//         onChange={handleChange}
+//         placeholder="Description"
+//         className="w-full border px-4 text-gray-800 py-3 rounded-lg"
+//       />
+
+//       <div className="grid grid-cols-2 gap-4">
+//         <input
+//           type="number"
+//           name="actualPrice"
+//           value={form.actualPrice}
+//           onChange={handleChange}
+//           placeholder="Actual Price"
+//           className="border px-4 py-3 text-gray-800 rounded-lg"
+//         />
+//         <input
+//           type="number"
+//           name="discountPrice"
+//           value={form.discountPrice}
+//           onChange={handleChange}
+//           placeholder="Discount Price"
+//           className="border px-4 py-3 text-gray-800 rounded-lg"
+//         />
+//       </div>
+
+//       <select
+//         name="category"
+//         value={form.category}
+//         onChange={handleChange}
+//         className="w-full border px-4 py-3 text-gray-800 rounded-lg"
+//       >
+//         <option value="">Select Category</option>
+//         {categories.map((c) => (
+//           <option key={c._id} value={c.name}>
+//             {c.name}
+//           </option>
+//         ))}
+//       </select>
+
+//       <input
+//         name="keyBenefits"
+//         value={form.keyBenefits}
+//         onChange={handleChange}
+//         placeholder="Key Benefits (comma separated)"
+//         className="w-full border px-4 text-gray-800 py-3 rounded-lg"
+//       />
+
+//       <input
+//         name="keyIngredients"
+//         value={form.keyIngredients}
+//         onChange={handleChange}
+//         placeholder="Key Ingredients (comma separated)"
+//         className="w-full border px-4 text-gray-800 py-3 rounded-lg"
+//       />
+
+//       <textarea
+//         name="disclaimer"
+//         value={form.disclaimer}
+//         onChange={handleChange}
+//         placeholder="Disclaimer"
+//         className="w-full border px-4 text-gray-800 py-3 rounded-lg"
+//       />
+
+//       {/* ================= IMAGE UPLOAD ================= */}
+//       <div
+//         onDrop={handleDrop}
+//         onDragOver={(e) => e.preventDefault()}
+//         onClick={() => fileRef.current?.click()}
+//         className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-orange-500 transition"
+//       >
+//         <UploadCloud className="mx-auto text-orange-500" size={40} />
+//         <p className="mt-2 font-medium text-gray-700">
+//           Drag & drop images or click to upload
+//         </p>
+//         <input
+//           ref={fileRef}
+//           type="file"
+//           multiple
+//           accept="image/*"
+//           hidden
+//           onChange={(e) =>
+//             e.target.files && handleFiles(e.target.files)
+//           }
+//         />
+//       </div>
+
+//       {previews.length > 0 && (
+//         <div className="grid grid-cols-4 gap-4">
+//           {previews.map((src, i) => (
+//             <div
+//               key={i}
+//               className="relative border rounded-xl overflow-hidden"
+//             >
+//               <img
+//                 src={src}
+//                 className="w-full h-28 object-cover"
+//               />
+//               <button
+//                 type="button"
+//                 onClick={() => removeImage(i)}
+//                 className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full"
+//               >
+//                 <X size={14} />
+//               </button>
+//             </div>
+//           ))}
+//         </div>
+//       )}
+
+//       <button
+//         type="submit"
+//         disabled={loading}
+//         className={`w-full py-3 rounded-xl text-white font-semibold ${
+//           isEdit
+//             ? "bg-green-600 hover:bg-green-700"
+//             : "bg-orange-500 hover:bg-orange-600"
+//         }`}
+//       >
+//         {loading
+//           ? isEdit
+//             ? "Updating..."
+//             : "Creating..."
+//           : isEdit
+//           ? "Update Service"
+//           : "Create Service"}
+//       </button>
+//     </form>
+//   );
+// }
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { UploadCloud, X, Plus, Trash2 } from "lucide-react";
+
+interface Category {
+  _id: string;
+  name: string;
+}
+
+interface SubServiceResponse {
+  name: string;
+  price: number;
+}
+
+interface SubService {
+  name: string;
+  price: string;
+}
+
+interface ServiceFormProps {
+  mode: "add" | "edit";
+  serviceId?: string;
+}
+
+export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
+  const router = useRouter();
+  const isEdit = mode === "edit";
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const [images, setImages] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+
+  const [subServices, setSubServices] = useState<SubService[]>([]);
+
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    actualPrice: "",
+    category: "",
+    keyBenefits: "",
+    keyIngredients: "",
+    disclaimer: "",
+  });
+
+  /* ================= LOAD DATA ================= */
+
+  const loadCategories = async () => {
+    try {
+      const res = await fetch("http://localhost:3100/api/categories");
+      const data = await res.json();
+      setCategories(data.data || []);
+    } catch (err) {
+      console.error("Failed to load categories", err);
+    }
+  };
+
+  const loadService = async () => {
+    if (!isEdit || !serviceId) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:3100/api/services/${serviceId}`
+      );
+      const data = await res.json();
+      const s = data.data;
+
+      setForm({
+        title: s.title || "",
+        description: s.description || "",
+        actualPrice: s.actualPrice?.toString() || "",
+        category: s.category || "",
+        keyBenefits: s.keyBenefits?.join(", ") || "",
+        keyIngredients: s.keyIngredients?.join(", ") || "",
+        disclaimer: s.disclaimer || "",
+      });
+
+      if (s.subServices?.length) {
+        setSubServices(
+          (s.subServices as SubServiceResponse[]).map((ss) => ({
+            name: ss.name,
+            price: ss.price.toString(),
+          }))
+        );
+      }
+
+      if (s.images?.length) {
+        setPreviews(s.images);
+      }
+    } catch (err) {
+      console.error("Failed to load service", err);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+    loadService();
+  }, []);
+
+  /* ================= HANDLERS ================= */
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFiles = (files: FileList) => {
+    const newFiles = Array.from(files);
+    setImages((prev) => [...prev, ...newFiles]);
+    const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+    setPreviews((prev) => [...prev, ...newPreviews]);
+  };
+
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  /* ================= SUB SERVICES ================= */
+
+  const addSubService = () => {
+    setSubServices([...subServices, { name: "", price: "" }]);
+  };
+
+  const updateSubService = (
+    index: number,
+    field: keyof SubService,
+    value: string
+  ) => {
+    const updated = [...subServices];
+    updated[index][field] = value;
+    setSubServices(updated);
+  };
+
+  const removeSubService = (index: number) => {
+    setSubServices(subServices.filter((_, i) => i !== index));
+  };
+
+  /* ================= SUBMIT ================= */
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("actualPrice", form.actualPrice);
+      formData.append("category", form.category);
+      formData.append("keyBenefits", form.keyBenefits);
+      formData.append("keyIngredients", form.keyIngredients);
+      formData.append("disclaimer", form.disclaimer);
+
+      formData.append(
+        "subServices",
+        JSON.stringify(subServices.filter((s) => s.name && s.price))
+      );
+
+      images.forEach((img) => formData.append("images", img));
+
+      const url =
+        mode === "add"
+          ? "http://localhost:3100/api/services"
+          : `http://localhost:3100/api/services/${serviceId}`;
+
+      const method = mode === "add" ? "POST" : "PUT";
+
+      const res = await fetch(url, {
+        method,
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Failed");
+
+      router.push("/admin/services");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= UI ================= */
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-5xl mx-auto bg-white shadow-lg border border-gray-200 rounded-2xl p-8 space-y-6"
+    >
+      <h2 className="text-3xl font-bold text-gray-900">
+        {isEdit ? "Edit Service" : "Add New Service"}
+      </h2>
+
+      {/* TITLE */}
+      <input
+        name="title"
+        value={form.title}
+        onChange={handleChange}
+        placeholder="Service Title"
+        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        required
+      />
+
+      {/* DESCRIPTION */}
+      <textarea
+        name="description"
+        value={form.description}
+        onChange={handleChange}
+        placeholder="Description"
+        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+      />
+
+      {/* BASE PRICE */}
+      <input
+        type="number"
+        name="actualPrice"
+        value={form.actualPrice}
+        onChange={handleChange}
+        placeholder="Base Price"
+        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+      />
+
+      {/* CATEGORY */}
+      <select
+        name="category"
+        value={form.category}
+        onChange={handleChange}
+        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+      >
+        <option value="">Select Category</option>
+        {categories.map((c) => (
+          <option key={c._id} value={c.name}>
+            {c.name}
+          </option>
+        ))}
+      </select>
+
+      {/* KEY BENEFITS & INGREDIENTS */}
+      <input
+        name="keyBenefits"
+        value={form.keyBenefits}
+        onChange={handleChange}
+        placeholder="Key Benefits (comma separated)"
+        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+      />
+
+      <input
+        name="keyIngredients"
+        value={form.keyIngredients}
+        onChange={handleChange}
+        placeholder="Key Ingredients (comma separated)"
+        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+      />
+
+      {/* DISCLAIMER */}
+      <textarea
+        name="disclaimer"
+        value={form.disclaimer}
+        onChange={handleChange}
+        placeholder="Disclaimer"
+        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+      />
+
+      {/* ================= SUB SERVICES ================= */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Sub Services / Bundles
+          </h3>
+          <button
+            type="button"
+            onClick={addSubService}
+            className="flex items-center gap-1 text-sm bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition"
+          >
+            <Plus size={16} /> Add
+          </button>
+        </div>
+
+        {subServices.map((ss, index) => (
+          <div
+            key={index}
+            className="grid grid-cols-5 gap-3 items-center"
+          >
+            <input
+              value={ss.name}
+              onChange={(e) =>
+                updateSubService(index, "name", e.target.value)
+              }
+              placeholder="Bundle name (Buy 3 Get 1)"
+              className="col-span-3 border border-gray-300 px-3 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+
+            <input
+              type="number"
+              value={ss.price}
+              onChange={(e) =>
+                updateSubService(index, "price", e.target.value)
+              }
+              placeholder="Price"
+              className="border border-gray-300 px-3 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+
+            <button
+              type="button"
+              onClick={() => removeSubService(index)}
+              className="text-red-600 hover:text-red-800 transition"
+            >
+              <Trash2 size={18} />
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* ================= IMAGES ================= */}
+      <div
+        onClick={() => fileRef.current?.click()}
+        className="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition"
+      >
+        <UploadCloud className="mx-auto text-orange-500" size={36} />
+        <p className="text-gray-700 mt-2">Click or drag images</p>
+        <input
+          ref={fileRef}
+          type="file"
+          multiple
+          hidden
+          onChange={(e) => e.target.files && handleFiles(e.target.files)}
+        />
+      </div>
+
+      {previews.length > 0 && (
+        <div className="grid grid-cols-4 gap-3">
+          {previews.map((src, i) => (
+            <div key={i} className="relative rounded overflow-hidden">
+              <img src={src} className="h-24 w-full object-cover rounded" />
+              <button
+                type="button"
+                onClick={() => removeImage(i)}
+                className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full hover:bg-red-700 transition"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* SUBMIT BUTTON */}
+      <button
+        type="submit"
+        disabled={loading}
+        className={`w-full py-3 rounded-xl text-white font-semibold ${
+          isEdit ? "bg-green-600 hover:bg-green-700" : "bg-orange-500 hover:bg-orange-600"
+        } transition`}
+      >
+        {loading ? "Saving..." : isEdit ? "Update Service" : "Create Service"}
+      </button>
+    </form>
+  );
+}
