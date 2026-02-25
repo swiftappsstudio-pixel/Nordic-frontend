@@ -30,6 +30,10 @@ export default function SignInPage() {
       router.push("/");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Login failed";
+      if (message.includes("verify your email")) {
+        router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
+        return;
+      }
       setError(message);
     } finally {
       setLoading(false);

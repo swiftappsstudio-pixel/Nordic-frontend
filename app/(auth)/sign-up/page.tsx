@@ -3,12 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { registerUser, loginUser } from "@/app/_common/api";
-import { useAuth } from "@/app/_common/auth-context";
+import { registerUser } from "@/app/_common/api";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { login } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -39,11 +37,7 @@ export default function SignUpPage() {
     setLoading(true);
     try {
       await registerUser({ name, email, phone, password });
-
-      // Auto-login after registration
-      const loginRes = await loginUser({ email, password });
-      login(loginRes.token, loginRes.user);
-      router.push("/");
+      router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Registration failed";
       setError(message);

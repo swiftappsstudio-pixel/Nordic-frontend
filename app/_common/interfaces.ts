@@ -168,6 +168,19 @@ export interface RegisterResponse {
   user: AuthUser;
 }
 
+export interface VerifyOTPRequest {
+  email: string;
+  otp: string;
+}
+
+export interface ResendOTPRequest {
+  email: string;
+}
+
+export interface MessageResponse {
+  message: string;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;

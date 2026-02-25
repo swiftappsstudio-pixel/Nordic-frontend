@@ -7,6 +7,9 @@ import {
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
+  VerifyOTPRequest,
+  ResendOTPRequest,
+  MessageResponse,
 } from "@/app/_common/interfaces";
 
 // =========================================== Auth API CALLS ===========================================//
@@ -40,6 +43,42 @@ export const loginUser = async (data: LoginRequest): Promise<LoginResponse> => {
 
   if (!res.ok) {
     throw new Error(result.message || "Login failed");
+  }
+
+  return result;
+};
+
+export const verifyOTP = async (
+  data: VerifyOTPRequest,
+): Promise<MessageResponse> => {
+  const res = await fetch(`${API_BASE_URL}/users/verify-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "OTP verification failed");
+  }
+
+  return result;
+};
+
+export const resendOTP = async (
+  data: ResendOTPRequest,
+): Promise<MessageResponse> => {
+  const res = await fetch(`${API_BASE_URL}/users/resend-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to resend OTP");
   }
 
   return result;
