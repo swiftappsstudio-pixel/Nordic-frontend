@@ -1,5 +1,5 @@
 import express from 'express';
-import { createCategory, updateCategory,getAllCategories ,deleteCategory} from '../controllers/categoryController.js';
+import { createCategory, updateCategory, getAllCategories, getCategoryById, deleteCategory} from '../controllers/categoryController.js';
 
 const router = express.Router();
 
@@ -18,15 +18,12 @@ const router = express.Router();
  *     responses:
  *       201:
  *         description: Category created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Category'
  *       400:
  *         description: Bad request
  *       500:
  *         description: Server error
  */
+router.post('/', createCategory);
 
 /**
  * @swagger
@@ -50,18 +47,14 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: Category updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Category'
  *       400:
- *         description: Bad request
+ *         description: Invalid category ID
  *       404:
  *         description: Category not found
  *       500:
  *         description: Server error
  */
-
+router.put('/:id', updateCategory);
 
 /**
  * @swagger
@@ -72,37 +65,59 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: Categories fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Category'
  *       500:
  *         description: Server error
  */
+router.get('/', getAllCategories);
+
 /**
  * @swagger
- * /api/categories:
- *   delete:
- *     summary: delete a category
+ * /api/categories/{id}:
+ *   get:
+ *     summary: Get a category by ID
  *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Category ID
  *     responses:
  *       200:
- *         description: Categories deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Category'
+ *         description: Category retrieved successfully
+ *       400:
+ *         description: Invalid category ID
+ *       404:
+ *         description: Category not found
  *       500:
  *         description: Server error
  */
+router.get('/:id', getCategoryById);
 
-router.post('/', createCategory);
-router.put('/:id', updateCategory);
-router.get('/', getAllCategories);
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   delete:
+ *     summary: Delete a category
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Category ID
+ *     responses:
+ *       200:
+ *         description: Category deleted successfully
+ *       400:
+ *         description: Invalid category ID
+ *       404:
+ *         description: Category not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:id', deleteCategory);
 
 export default router;

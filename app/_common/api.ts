@@ -1,13 +1,58 @@
 // api.ts
 
 const API_BASE_URL = "http://localhost:3100/api";
-import { Service } from "@/app/_common/interfaces";
+import { Service, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "@/app/_common/interfaces";
 
+// =========================================== Auth API CALLS ===========================================//
+
+export const registerUser = async (data: RegisterRequest): Promise<RegisterResponse> => {
+  const res = await fetch(`${API_BASE_URL}/users/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Registration failed");
+  }
+
+  return result;
+};
+
+export const loginUser = async (data: LoginRequest): Promise<LoginResponse> => {
+  const res = await fetch(`${API_BASE_URL}/users/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Login failed");
+  }
+
+  return result;
+};
+
+export const getUserProfile = async (token: string) => {
+  const res = await fetch(`${API_BASE_URL}/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch profile");
+  }
+
+  return res.json();
+};
 
 // =========================================== getallservices  API CALLS ===========================================//
 
 export const getServices = async (): Promise<Service[]> => {
-  const res = await fetch("http://localhost:3100/api/services", {
+  const res = await fetch(`${API_BASE_URL}/services`, {
     cache: "no-store",
   });
 

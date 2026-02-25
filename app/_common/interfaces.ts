@@ -69,24 +69,23 @@ export interface UnavailableDate {
 
 //get order  interface
 export interface GenericButtonProps {
-   color: string;
+  color: string;
   title: string;
   disabled: boolean;
   onPress: () => void;
   roundedClass?: string;
-  height?: number;
-
+  height?: string;
   isLoader?: boolean;
-  textSize?: number;
-  paddinhHorizontal?: number;
-  paddingVertical?: number;
-  marginTop?: number;
-  marginInlineEnd?: number;
-  marginBottom?: number;
+  textSize?: string;
+  paddinhHorizontal?: string;
+  paddingVertical?: string;
+  marginTop?: string;
+  marginInlineEnd?: string;
+  marginBottom?: string;
   textColor?: string;
   icon?: React.ReactNode;
   loaderColor?: string;
-  btnTextSize?: number;
+  btnTextSize?: string;
   btnTextColor?: string;
 }
 // ============================================================================
@@ -150,46 +149,52 @@ export interface FAQItem {
 // AUTHENTICATION INTERFACES
 // ============================================================================
 
-export interface User {
-  id: string;
-  email: string;
-  role: number;
+export interface AuthUser {
+  _id: string;
   name: string;
+  email: string;
+  phone: string;
 }
 
 export interface RegisterRequest {
   name: string;
   email: string;
-  phoneNumber: string;
+  phone: string;
   password: string;
-  role: number;
 }
 
 export interface RegisterResponse {
-  success: boolean;
-  exception: string | null;
-  description: string;
-  content: {
-    access_token: string;
-    user: User;
-  };
+  message: string;
+  user: AuthUser;
 }
 
 export interface LoginRequest {
-  phoneNumber?: string;
-  email?: string;
+  email: string;
   password: string;
-  role: number;
 }
 
 export interface LoginResponse {
-  success: boolean;
-  exception: string | null;
-  description: string;
-  content: {
-    access_token: string;
-    user: User;
-  };
+  message: string;
+  token: string;
+  user: AuthUser;
+}
+
+export interface GenericInputFieldProps {
+  label?: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  placeholder?: string;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
+  endButton?: React.ReactNode;
+  disabled?: boolean;
+  inputClassName?: string;
+  wrapperClassName?: string;
+  prefix?: string;
+  error?: string;
+  showError?: boolean;
+  errorClassName?: string;
 }
 
 // ============================================================================
@@ -200,45 +205,15 @@ export interface UserProfile {
   _id: string;
   name: string;
   email: string;
-  phoneNumber: string;
-  role: number;
-  isActive: boolean;
-  isOTPVerified: boolean;
-  profilePic?: string;
+  phone: string;
   createdAt: string;
   updatedAt: string;
-  __v: number;
-  // Additional fields for UI
-  address?: string;
-  dateOfBirth?: string;
-  preferences?: {
-    notifications: boolean;
-    emailUpdates: boolean;
-    smsUpdates: boolean;
-  };
-}
-
-export interface GetProfileResponse {
-  success: boolean;
-  exception: string | null;
-  description: string;
-  content: {
-    user: UserProfile;
-  };
 }
 
 export interface UpdateProfileRequest {
   name?: string;
   email?: string;
-  phoneNumber?: string;
-  address?: string;
-  dateOfBirth?: string;
-  profilePic?: string;
-  preferences?: {
-    notifications?: boolean;
-    emailUpdates?: boolean;
-    smsUpdates?: boolean;
-  };
+  phone?: string;
 }
 
 
