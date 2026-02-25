@@ -1,11 +1,23 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { verifyOTP, resendOTP } from "@/app/_common/api";
 
 export default function VerifyOTPPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="border-4 border-[#543826] border-t-transparent rounded-full w-8 h-8 animate-spin" />
+      </div>
+    }>
+      <VerifyOTPContent />
+    </Suspense>
+  );
+}
+
+function VerifyOTPContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
