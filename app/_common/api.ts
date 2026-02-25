@@ -1,11 +1,19 @@
 // api.ts
 
-const API_BASE_URL = "http://localhost:3100/api";
-import { Service, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "@/app/_common/interfaces";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
+import {
+  Service,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from "@/app/_common/interfaces";
 
 // =========================================== Auth API CALLS ===========================================//
 
-export const registerUser = async (data: RegisterRequest): Promise<RegisterResponse> => {
+export const registerUser = async (
+  data: RegisterRequest,
+): Promise<RegisterResponse> => {
   const res = await fetch(`${API_BASE_URL}/users/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -70,7 +78,9 @@ export const getServices = async (): Promise<Service[]> => {
 
 export async function getService(id: string): Promise<Service> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3100";
-  const res = await fetch(`${baseUrl}/api/services/${id}`, { cache: "no-store" });
+  const res = await fetch(`${baseUrl}/api/services/${id}`, {
+    cache: "no-store",
+  });
 
   if (!res.ok) throw new Error("Failed to fetch service");
 
