@@ -68,8 +68,27 @@ export interface UnavailableDate {
 
 
 //get order  interface
-``
+export interface GenericButtonProps {
+   color: string;
+  title: string;
+  disabled: boolean;
+  onPress: () => void;
+  roundedClass?: string;
+  height?: number;
 
+  isLoader?: boolean;
+  textSize?: number;
+  paddinhHorizontal?: number;
+  paddingVertical?: number;
+  marginTop?: number;
+  marginInlineEnd?: number;
+  marginBottom?: number;
+  textColor?: string;
+  icon?: React.ReactNode;
+  loaderColor?: string;
+  btnTextSize?: number;
+  btnTextColor?: string;
+}
 // ============================================================================
 // TABLE INTERFACES
 // ============================================================================

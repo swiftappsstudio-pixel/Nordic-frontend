@@ -15,9 +15,12 @@ const BookingModal: React.FC<Props> = ({
   serviceName,
   price,
 }) => {
+  const [customerName, setCustomerName] = useState("");
+  const [address, setAddress] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const[phoneNumber, setPhoneNumber] = useState("");
 
   if (!isOpen) return null;
 
@@ -28,11 +31,14 @@ const BookingModal: React.FC<Props> = ({
   }
 
   const payload = {
+    customerName ,
     serviceName,
     price,
+    address,
     date,
     time,
     paymentMethod,
+    phoneNumber,
   };
 
   try {
@@ -67,38 +73,62 @@ const BookingModal: React.FC<Props> = ({
           ✕
         </button>
 
-        <h2 className="text-xl font-bold mb-4">Confirm Booking</h2>
 
-        <p className="mb-2 font-medium">{serviceName}</p>
+        <p className="mb-2 font-medium text-black">{serviceName}</p>
         <p className="mb-4 text-amber-700 font-semibold">
           AED {price}
         </p>
 
+{/*name */}
+  <label className="block text-sm mb-1 text-black">Name </label>
+        <input
+          type="text"
+          value={customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
+          className="w-full border rounded-md  text-black p-2 mb-4"
+        />
+{/* Address */}
+ <label className="block text-sm mb-1  text-black">Address </label>
+        <input
+          type="text"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="w-full border rounded-md  text-black p-2 mb-4"
+        />
+{/* Phone Number */}
+ <label className="block text-sm mb-1  text-black">Phone Number </label>
+        <input
+          type="text"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          className="w-full border rounded-md  text-black p-2 mb-4"
+        />
         {/* Date */}
-        <label className="block text-sm mb-1">Preferred Date</label>
+        <label className="block text-sm mb-1  text-black">Preferred Date</label>
         <input
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full border rounded-md p-2 mb-4"
+          className="w-full border rounded-md  text-black p-2 mb-4"
         />
 
         {/* Time */}
-        <label className="block text-sm mb-1">Preferred Time</label>
+        <label className="block text-sm mb-1  text-black">Preferred Time</label>
         <input
           type="time"
           value={time}
           onChange={(e) => setTime(e.target.value)}
-          className="w-full border rounded-md p-2 mb-4"
+          className="w-full border  text-black rounded-md p-2 mb-4"
         />
 
         {/* Payment */}
-        <label className="block text-sm mb-1">Payment Method</label>
+        <label className="block text-sm mb-1  text-black">Payment Method</label>
         <select
           value={paymentMethod}
           onChange={(e) => setPaymentMethod(e.target.value)}
-          className="w-full border rounded-md p-2 mb-6"
+          className="w-full border rounded-md  text-black p-2 mb-6"
         >
+
           <option value="cash">Cash</option>
           <option value="card">Card</option>
           <option value="online">Online</option>

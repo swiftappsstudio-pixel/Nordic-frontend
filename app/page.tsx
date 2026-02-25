@@ -6,12 +6,13 @@ import Image from "next/image";
 import ServiceCard from "@/app/_components/service-card";
 import { getServices } from "./_common/api";
 import { Service } from "@/app/_common/interfaces";
-
+import {CTASection} from "@/app/_components/cta-section";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
+import { Testimonials } from "./_components/testimonials";
 
 export default function Home() {
   const [services, setServices] = useState<Service[]>([]);
@@ -91,6 +92,22 @@ export default function Home() {
           </div>
         )}
       </section>
+      <CTASection
+        title="Ready to get started?"
+        phoneNumber="+923414415384"
+        message="Hello! I'm interested in booking a service. Can you provide more details?"
+        imageUrl="images/hero banner 4.png"
+        buttonText="Book Now"
+      />
+
+      {/* Testimonials */}
+      <section className="py-12 bg-gray-50">
+         
+          <div className="grid  gap-6">
+            <Testimonials/>
+          </div>
+      </section>
+              
     </>
   );
 }

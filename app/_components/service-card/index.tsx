@@ -20,7 +20,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }) => {
   return (
     <Link href={`/services/request/${id}`} className="block">
-      <div className="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition p-4 cursor-pointer">
+      <div className="bg-[#F4F4F4] shadow-md rounded-xl overflow-hidden hover:shadow-lg transition p-4 cursor-pointer">
         {image && (
           <div className="w-full h-48 relative">
             <Image
@@ -33,9 +33,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             />
           </div>
         )}
-        <h3 className="text-lg font-semibold mt-3">{title}</h3>
+        <h3 className="text-lg text-[#593E30] font-semibold mt-3">{title}</h3>
         {description && (
-          <p className="text-gray-600 text-sm mt-1 line-clamp-2">{description}</p>
+          <p className="text-black text-sm mt-1 line-clamp-2">{description}</p>
         )}
         <div className="mt-2 flex items-center gap-3">
           <span className="text-orange-600 font-bold text-xl">AED {price}</span>

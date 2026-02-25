@@ -7,6 +7,7 @@ import { Service, SubService } from "@/app/_common/interfaces";
 import { getService } from "@/app/_common/api";
 import Spacer from "@/app/_components/spacer";
 import BookingModal from "@/app/_components/booking-model";
+import { CTASection } from "@/app/_components/cta-section";
 
 const TABS = {
   BENEFITS: "benefits",
@@ -72,6 +73,7 @@ const [bookingData, setBookingData] = useState<{
   if (!service) return <p className="text-center py-10">Service not found</p>;
 
   return (
+    <>
     <div className="max-w-7xl mx-auto px-4 py-8">
       <Spacer />
 
@@ -118,8 +120,8 @@ const [bookingData, setBookingData] = useState<{
 
         {/* RIGHT – CONTENT */}
         <div className="lg:w-[60%] w-full">
-<h1 className="text-4xl font-bold mb-4">{service.title}</h1>
-          <p className="text-gray-700 mb-6">{service.description}</p>
+<h1 className="text-4xl font-bold text-[#593E30] mb-4">{service.title}</h1>
+          <p className="text-black mb-6">{service.description}</p>
 {/* tabs */}
       <div className="flex gap-8 border-b mb-6">
 
@@ -128,8 +130,8 @@ const [bookingData, setBookingData] = useState<{
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-3 font-medium capitalize ${
-                  activeTab === tab ? "border-b-2 border-black" : "text-gray-500"
+                className={`pb-3 font-medium text-[#593E30] capitalize ${
+                  activeTab === tab ? "border-b-2 border-black" : "text-black"
                 }`}
               >
                 {tab.replace("_", " ")}
@@ -165,7 +167,7 @@ const [bookingData, setBookingData] = useState<{
           {/* SERVICE OPTIONS TABLE */}
           <div className="border rounded-xl overflow-hidden shadow bg-white mb-10">
             {/* HEADER */}
-            <div className="grid grid-cols-3 bg-gray-100 px-6 py-3 text-sm font-semibold">
+            <div className="grid grid-cols-3 bg-gray-200 text-[#593E30] px-6 py-3 text-sm font-semibold">
               <span>Service</span>
               <span>Price</span>
               <span className="text-right">Action</span>
@@ -173,17 +175,17 @@ const [bookingData, setBookingData] = useState<{
 
             {/* MAIN SERVICE ROW */}
             <div
-              className={`grid grid-cols-3 px-6 py-4 items-center border-t cursor-pointer ${
+              className={`grid grid-cols-3 px-6 py-4 items-center text-black border-t cursor-pointer ${
                 selectedOption?.name === service.title
                   ? "bg-amber-50"
                   : "bg-white"
               }`}
             >
-              <span className="font-medium">{service.title}</span>
-              <span className="font-semibold">
+              <span className="font-medium text-black">{service.title}</span>
+              <span className="font-semibold text-black">
                 AED {service.discountPrice || service.actualPrice}
               </span>
-              <div className="text-right">
+              <div className="text-right ">
                <button
   onClick={() => {
     setBookingData({
@@ -192,7 +194,7 @@ const [bookingData, setBookingData] = useState<{
     });
     setIsModalOpen(true);
   }}
-  className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 rounded-md"
+  className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md"
 >
   Book Now
 </button>
@@ -210,14 +212,14 @@ const [bookingData, setBookingData] = useState<{
                   }`}
                 >
                   <div>
-                    <p className="font-medium">{sub.name}</p>
+                    <p className="font-medium text-black">{sub.name}</p>
                     {sub.discountPercent && (
-                      <p className="text-xs text-green-600">
+                      <p className="text-xs text-black">
                         {sub.discountPercent}% OFF
                       </p>
                     )}
                   </div>
-                  <span className="font-semibold">AED {sub.price}</span>
+                  <span className="font-semibold text-black">AED {sub.price}</span>
                   <div className="text-right">
                  <button
   onClick={() => {
@@ -227,7 +229,7 @@ const [bookingData, setBookingData] = useState<{
     });
     setIsModalOpen(true);
   }}
-  className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 rounded-md"
+  className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md"
 >
   Book Now
 </button>
@@ -238,14 +240,7 @@ const [bookingData, setBookingData] = useState<{
           </div>
 
           {/* SELECTED SUMMARY */}
-          {selectedOption && (
-            <div className="bg-green-50 border border-green-300 rounded-lg p-4 mb-10">
-              <p className="font-medium">Selected: {selectedOption.name}</p>
-              <p className="text-sm text-gray-700">
-                Price: AED {selectedOption.price}
-              </p>
-            </div>
-          )}
+       
 
           {/* TABS */}
     
@@ -261,7 +256,16 @@ const [bookingData, setBookingData] = useState<{
 )}
 
     </div>
+     <CTASection
+        title="Ready to get started?"
+        phoneNumber="+923414415384"
+        message="Hello! I'm interested in booking a service. Can you provide more details?"
+        imageUrl="images/hero banner 4.png"
+        buttonText="Book Now"
+      /> 
+   </>
   );
+  
 };
 
 export default ServiceDetailPage;
