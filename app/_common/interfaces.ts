@@ -236,6 +236,103 @@ export interface UpdateProfileRequest {
 // CATEGORY INTERFACES
 // ============================================================================
 
+export interface Category {
+  _id: string;
+  name: string;
+  description?: string;
+  image?: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+// ============================================================================
+// VARIANT INTERFACES
+// ============================================================================
+
+export interface Variant {
+  _id: string;
+  serviceId: string;
+  name: string;
+  description?: string;
+  price: number;
+  sessions: number;
+  freeSessions: number;
+  validityInDays: number;
+  isActive: boolean;
+  isDefault: boolean;
+}
+
+// ============================================================================
+// SLOT INTERFACES
+// ============================================================================
+
+export interface Slot {
+  _id: string;
+  serviceId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  capacity: number;
+  bookedCount: number;
+  isActive: boolean;
+}
+
+// ============================================================================
+// BOOKING INTERFACES
+// ============================================================================
+
+export interface GuestInfo {
+  fullName: string;
+  email: string;
+  phone: string;
+  gender?: "male" | "female" | "other";
+  dateOfBirth?: string;
+}
+
+export interface BookingRequest {
+  variantId: string;
+  slotId: string;
+  guestInfo?: GuestInfo;
+}
+
+export interface BookingResponse {
+  _id: string;
+  userId?: string;
+  guestInfo?: GuestInfo;
+  serviceSnapshot: {
+    _id: string;
+    title: string;
+    description?: string;
+    category?: string;
+    images?: string[];
+  };
+  variantSnapshot: {
+    _id: string;
+    name: string;
+    price: number;
+    sessions: number;
+    freeSessions: number;
+    validityInDays: number;
+  };
+  slotId: {
+    _id: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+  };
+  totalSessions: number;
+  remainingSessions: number;
+  totalAmount: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface ServiceWithVariants extends Service {
+  variants: Variant[];
+}
+
 
 
 

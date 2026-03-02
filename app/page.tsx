@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <>
       {/* ==================== FEATURED SERVICES HERO SLIDER ==================== */}
-      <section className="relative w-full h-screen bg-gray-900">
+      <section className="w-full bg-[#543826] pt-24 pb-16">
         {featuredServices.length > 0 ? (
           <Swiper
             modules={[Autoplay, Pagination, Navigation]}
@@ -59,93 +59,101 @@ export default function Home() {
             loop={featuredServices.length > 1}
             pagination={{ clickable: true }}
             navigation
-            className="h-full w-full featured-slider"
+            className="w-full featured-slider"
           >
-            {featuredServices.map((service) => (
-              <SwiperSlide key={service._id} className="relative h-full w-full">
-                {/* Background Image */}
-                {service.images?.[0] ? (
-                  <Image
-                    src={service.images[0]}
-                    alt={service.title}
-                    fill
-                    className="object-cover"
-                    priority
-                    unoptimized
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#543826] to-[#8B6914]" />
-                )}
-
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/40" />
-
-                {/* Content */}
-                <div className="absolute inset-0 flex items-center">
-                  <div className="max-w-6xl mx-auto px-6 w-full">
-                    <div className="max-w-xl">
-                      <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
-                        Featured Service
-                      </span>
-                      <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
-                        {service.title}
-                      </h1>
-                      {service.description && (
-                        <p className="text-white/90 text-lg mb-6 line-clamp-2">
-                          {service.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-4 mb-6">
-                        {service.discountPrice && service.actualPrice && service.discountPrice < service.actualPrice ? (
-                          <>
-                            <span className="text-3xl font-bold text-orange-400">
-                              AED {service.discountPrice}
-                            </span>
-                            <span className="text-xl text-white/60 line-through">
-                              AED {service.actualPrice}
-                            </span>
-                          </>
-                        ) : (
-                          service.actualPrice && (
-                            <span className="text-3xl font-bold text-orange-400">
-                              AED {service.actualPrice}
-                            </span>
-                          )
+            {featuredServices.map((service) => {
+              const images = (service.images || []).slice(0, 3);
+              return (
+                <SwiperSlide key={service._id}>
+                  <div className="max-w-6xl mx-auto px-6">
+                    <div className="flex flex-col md:flex-row gap-8 items-center">
+                      {/* Left — Title, Description, CTA */}
+                      <div className="md:w-2/5 flex flex-col justify-center">
+                        <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4 w-fit">
+                          Most Popular Service
+                        </span>
+                        <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 leading-tight">
+                          {service.title}
+                        </h1>
+                        {service.description && (
+                          <p className="text-white/80 text-base mb-5 line-clamp-3">
+                            {service.description}
+                          </p>
                         )}
+                        <div className="flex items-center gap-3 mb-5">
+                          {service.discountPrice &&
+                          service.actualPrice &&
+                          service.discountPrice < service.actualPrice ? (
+                            <>
+                              <span className="text-2xl font-bold text-orange-400">
+                                AED {service.discountPrice}
+                              </span>
+                              <span className="text-lg text-white/50 line-through">
+                                AED {service.actualPrice}
+                              </span>
+                            </>
+                          ) : (
+                            service.actualPrice && (
+                              <span className="text-2xl font-bold text-orange-400">
+                                AED {service.actualPrice}
+                              </span>
+                            )
+                          )}
+                        </div>
+                        <Link
+                          href={`/services/${service._id}`}
+                          className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition w-fit"
+                        >
+                          Book Now
+                        </Link>
                       </div>
-                      <Link
-                        href={`/services/request/${service._id}`}
-                        className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg transition"
-                      >
-                        Book Now
-                      </Link>
+
+                      {/* Right — 3 Images with border radius */}
+                      <div className="md:w-3/5 grid grid-cols-3 gap-4">
+                        {images.length > 0
+                          ? images.map((img, i) => (
+                              <div
+                                key={i}
+                                className="relative aspect-[3/4] overflow-hidden rounded-2xl"
+                              >
+                                <Image
+                                  src={img}
+                                  alt={`${service.title} ${i + 1}`}
+                                  fill
+                                  className="object-cover"
+                                  sizes="(max-width: 768px) 33vw, 20vw"
+                                  priority={i === 0}
+                                  unoptimized
+                                />
+                              </div>
+                            ))
+                          : /* Placeholder if no images */
+                            Array.from({ length: 3 }).map((_, i) => (
+                              <div
+                                key={i}
+                                className="aspect-[3/4] rounded-2xl bg-white/10 flex items-center justify-center"
+                              >
+                                <span className="text-white/30 text-sm">
+                                  No image
+                                </span>
+                              </div>
+                            ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
         ) : (
           /* Fallback — show a static hero if no featured services yet */
-          <div className="h-full w-full relative">
-            <Image
-              src="/images/hero banner 3.png"
-              alt="Nordic Home Healthcare"
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-black/40" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                  Nordic Home Healthcare
-                </h1>
-                <p className="text-white/90 text-lg">
-                  Quality healthcare at your doorstep
-                </p>
-              </div>
-            </div>
+          <div className="max-w-6xl mx-auto px-6 py-16 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Nordic Home Healthcare
+            </h1>
+            <p className="text-white/80 text-lg">
+              Quality healthcare at your doorstep
+            </p>
           </div>
         )}
       </section>

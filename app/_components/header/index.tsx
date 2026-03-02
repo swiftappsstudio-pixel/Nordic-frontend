@@ -5,13 +5,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { useAuth } from "@/app/_common/auth-context";
+import { getCategories } from "@/app/_common/api";
+import { Category } from "@/app/_common/interfaces";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
   const { user, logout, isLoading } = useAuth();
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    getCategories()
+      .then(setCategories)
+      .catch(() => setCategories([]));
+  }, []);
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -58,16 +68,20 @@ export default function Navbar() {
             </div>
 
             {dropdown && (
-              <div className="absolute left-0 top-8 bg-white shadow-lg rounded-md w-48 py-3">
-                <Link href="/services/service1" className="block px-4 py-2 hover:bg-gray-100 text-[#543826]">
-                  Service 1
-                </Link>
-                <Link href="/services/service2" className="block px-4 py-2 hover:bg-gray-100 text-[#543826]">
-                  Service 2
-                </Link>
-                <Link href="/services/service3" className="block px-4 py-2 hover:bg-gray-100 text-[#543826]">
-                  Service 3
-                </Link>
+              <div className="absolute left-0 top-8 bg-white shadow-lg rounded-md w-56 py-3">
+                {categories.length > 0 ? (
+                  categories.map((cat) => (
+                    <Link
+                      key={cat._id}
+                      href={`/services/category/${cat._id}`}
+                      className="block px-4 py-2 hover:bg-gray-100 text-[#543826] text-sm"
+                    >
+                      {cat.name}
+                    </Link>
+                  ))
+                ) : (
+                  <span className="block px-4 py-2 text-gray-400 text-sm">No categories</span>
+                )}
               </div>
             )}
           </li>
@@ -168,9 +182,20 @@ export default function Navbar() {
                   Services
                 </summary>
                 <div className="flex flex-col ml-4 mt-2 gap-2">
-                  <Link href="/services/service1">Service 1</Link>
-                  <Link href="/services/service2">Service 2</Link>
-                  <Link href="/services/service3">Service 3</Link>
+                  {categories.length > 0 ? (
+                    categories.map((cat) => (
+                      <Link
+                        key={cat._id}
+                        href={`/services/category/${cat._id}`}
+                        onClick={() => setOpen(false)}
+                        className="text-base"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <span className="text-gray-400 text-sm">No categories</span>
+                  )}
                 </div>
               </details>
             </li>

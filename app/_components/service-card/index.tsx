@@ -19,7 +19,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   description,
 }) => {
   return (
-    <Link href={`/services/request/${id}`} className="block">
+    <Link href={`/services/${id}`} className="block">
       <div className="bg-[#F4F4F4] shadow-md rounded-xl overflow-hidden hover:shadow-lg transition p-4 cursor-pointer">
         {image && (
           <div className="w-full h-48 relative">

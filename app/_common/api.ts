@@ -10,6 +10,11 @@ import {
   VerifyOTPRequest,
   ResendOTPRequest,
   MessageResponse,
+  Category,
+  ServiceWithVariants,
+  Slot,
+  BookingRequest,
+  BookingResponse,
 } from "@/app/_common/interfaces";
 
 // =========================================== Auth API CALLS ===========================================//
@@ -144,3 +149,84 @@ export async function getService(id: string): Promise<Service> {
   // API returns data inside "data"
   return result.data ?? result;
 }
+
+// =========================================== Catalog API CALLS ===========================================//
+
+export const getCategories = async (): Promise<Category[]> => {
+  const res = await fetch(`${API_BASE_URL}/catalog/categories`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch categories");
+
+  const data = await res.json();
+  return data.data;
+};
+
+export const getServicesByCategory = async (categoryId: string): Promise<Service[]> => {
+  const res = await fetch(`${API_BASE_URL}/catalog/categories/${categoryId}/services`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch services for category");
+
+  const data = await res.json();
+  return data.data;
+};
+
+export const getServiceDetail = async (id: string): Promise<ServiceWithVariants> => {
+  const res = await fetch(`${API_BASE_URL}/catalog/services/${id}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch service detail");
+
+  const data = await res.json();
+  return data.data;
+};
+
+// =========================================== Slots API CALLS ===========================================//
+
+export const getAvailableSlots = async (serviceId: string, date: string): Promise<Slot[]> => {
+  const res = await fetch(`${API_BASE_URL}/slots/service/${serviceId}?date=${date}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch available slots");
+
+  const data = await res.json();
+  return data.data;
+};
+
+// =========================================== Booking API CALLS ===========================================//
+
+export const createBooking = async (
+  data: BookingRequest,
+  token?: string,
+): Promise<BookingResponse> => {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE_URL}/bookings`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) throw new Error(result.message || "Booking failed");
+
+  return result.data;
+};
+
+export const getMyBookings = async (token: string): Promise<BookingResponse[]> => {
+  const res = await fetch(`${API_BASE_URL}/bookings/my`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch bookings");
+
+  const data = await res.json();
+  return data.data;
+};
