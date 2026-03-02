@@ -78,7 +78,7 @@ export default function Home() {
   return (
     <>
       {/* ==================== FEATURED SERVICES CAROUSEL ==================== */}
-      <section className="w-full bg-[#543826] pt-24 pb-16">
+      <section className="w-full bg-[#543826] pt-24 pb-16 mt-24">
         {featuredServices.length > 0 ? (
           <div className="max-w-6xl mx-auto px-6">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-8 text-center">
@@ -96,7 +96,20 @@ export default function Home() {
                   onClick={goPrev}
                   className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center transition backdrop-blur-sm"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
                 </button>
               )}
 
@@ -116,7 +129,10 @@ export default function Home() {
                         className="shrink-0 px-3"
                         style={{ width: `${100 / itemsPerView}%` }}
                       >
-                        <Link href={`/services/${service._id}`} className="block group">
+                        <Link
+                          href={`/services/${service._id}`}
+                          className="block group"
+                        >
                           <div className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden hover:bg-white/20 transition">
                             {/* Image */}
                             <div className="relative aspect-4/3 overflow-hidden">
@@ -131,7 +147,9 @@ export default function Home() {
                                 />
                               ) : (
                                 <div className="w-full h-full bg-white/10 flex items-center justify-center">
-                                  <span className="text-white/30 text-sm">No image</span>
+                                  <span className="text-white/30 text-sm">
+                                    No image
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -181,7 +199,20 @@ export default function Home() {
                   onClick={goNext}
                   className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center transition backdrop-blur-sm"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
                 </button>
               )}
 
