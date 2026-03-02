@@ -27,3 +27,34 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Featured slider navigation arrows */
+.featured-slider .swiper-button-next,
+.featured-slider .swiper-button-prev {
+  color: white;
+  background: rgba(0, 0, 0, 0.3);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.featured-slider .swiper-button-next:hover,
+.featured-slider .swiper-button-prev:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.featured-slider .swiper-button-next::after,
+.featured-slider .swiper-button-prev::after {
+  font-size: 18px;
+}
+
+.featured-slider .swiper-pagination-bullet {
+  background: white;
+  opacity: 0.5;
+}
+
+.featured-slider .swiper-pagination-bullet-active {
+  background: #f97316;
+  opacity: 1;
+}

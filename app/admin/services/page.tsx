@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Plus, Eye, Pencil, Trash2 } from "lucide-react";
+import { Plus, Eye, Pencil, Trash2, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/_common/auth-context";
 
@@ -14,6 +14,7 @@ interface Service {
   actualPrice?: number;
   discountPrice?: number;
   category?: string;
+  isFeatured?: boolean;
 }
 
 export default function ServicesPage() {
@@ -51,6 +52,22 @@ export default function ServicesPage() {
       setServices((prev) => prev.filter((s) => s._id !== id));
     } catch {
       alert("Failed to delete service");
+    }
+  };
+
+  const toggleFeatured = async (id: string) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/services/${id}/featured`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      setServices((prev) =>
+        prev.map((s) => (s._id === id ? { ...s, isFeatured: data.data.isFeatured } : s))
+      );
+    } catch {
+      alert("Failed to toggle featured status");
     }
   };
 
@@ -117,6 +134,19 @@ export default function ServicesPage() {
                   {/* ACTION ICONS */}
                   <td className="px-5 py-4">
                     <div className="flex justify-center gap-3">
+                      {/* Featured */}
+                      <button
+                        title={s.isFeatured ? "Remove from featured" : "Mark as featured"}
+                        onClick={() => toggleFeatured(s._id)}
+                        className={`p-2 rounded-lg transition ${
+                          s.isFeatured
+                            ? "bg-yellow-400 text-white hover:bg-yellow-500"
+                            : "bg-gray-100 text-gray-400 hover:bg-yellow-100 hover:text-yellow-500"
+                        }`}
+                      >
+                        <Star size={16} fill={s.isFeatured ? "currentColor" : "none"} />
+                      </button>
+
                       {/* View */}
                       <button
                         title="View"

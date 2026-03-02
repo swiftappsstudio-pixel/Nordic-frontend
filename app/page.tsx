@@ -2,49 +2,156 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 import ServiceCard from "@/app/_components/service-card";
-import { getServices } from "./_common/api";
+import { getServices, getFeaturedServices } from "./_common/api";
 import { Service } from "@/app/_common/interfaces";
-import {CTASection} from "@/app/_components/cta-section";
+import { CTASection } from "@/app/_components/cta-section";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 import { Testimonials } from "./_components/testimonials";
 
 export default function Home() {
   const [services, setServices] = useState<Service[]>([]);
+  const [featuredServices, setFeaturedServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const slides = [
-    "/images/hero banner 3.png",
-    "/images/hero banner 4.png",
-    "/images/banner2.png",
-  ];
+  // const slides = [
+  //   "/images/hero banner 3.png",
+  //   "/images/hero banner 4.png",
+  //   "/images/banner2.png",
+  // ];
 
   useEffect(() => {
-    const loadServices = async () => {
+    const loadData = async () => {
       try {
-        const servicesData = await getServices();
-        console.log("Fetched services:", servicesData);
+        const [servicesData, featured] = await Promise.all([
+          getServices(),
+          getFeaturedServices(),
+        ]);
         setServices(servicesData);
+        setFeaturedServices(featured);
       } catch (err: unknown) {
-        console.error("Service fetch error:", err);
+        console.error("Fetch error:", err);
         setServices([]);
+        setFeaturedServices([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadServices();
+    loadData();
   }, []);
 
   return (
     <>
-      {/* Hero Slider */}
-      <section className="relative h-screen w-full">
+      {/* ==================== FEATURED SERVICES HERO SLIDER ==================== */}
+      <section className="relative w-full h-screen bg-gray-900">
+        {featuredServices.length > 0 ? (
+          <Swiper
+            modules={[Autoplay, Pagination, Navigation]}
+            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            loop={featuredServices.length > 1}
+            pagination={{ clickable: true }}
+            navigation
+            className="h-full w-full featured-slider"
+          >
+            {featuredServices.map((service) => (
+              <SwiperSlide key={service._id} className="relative h-full w-full">
+                {/* Background Image */}
+                {service.images?.[0] ? (
+                  <Image
+                    src={service.images[0]}
+                    alt={service.title}
+                    fill
+                    className="object-cover"
+                    priority
+                    unoptimized
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#543826] to-[#8B6914]" />
+                )}
+
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-black/40" />
+
+                {/* Content */}
+                <div className="absolute inset-0 flex items-center">
+                  <div className="max-w-6xl mx-auto px-6 w-full">
+                    <div className="max-w-xl">
+                      <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                        Featured Service
+                      </span>
+                      <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+                        {service.title}
+                      </h1>
+                      {service.description && (
+                        <p className="text-white/90 text-lg mb-6 line-clamp-2">
+                          {service.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-4 mb-6">
+                        {service.discountPrice && service.actualPrice && service.discountPrice < service.actualPrice ? (
+                          <>
+                            <span className="text-3xl font-bold text-orange-400">
+                              AED {service.discountPrice}
+                            </span>
+                            <span className="text-xl text-white/60 line-through">
+                              AED {service.actualPrice}
+                            </span>
+                          </>
+                        ) : (
+                          service.actualPrice && (
+                            <span className="text-3xl font-bold text-orange-400">
+                              AED {service.actualPrice}
+                            </span>
+                          )
+                        )}
+                      </div>
+                      <Link
+                        href={`/services/request/${service._id}`}
+                        className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg transition"
+                      >
+                        Book Now
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          /* Fallback — show a static hero if no featured services yet */
+          <div className="h-full w-full relative">
+            <Image
+              src="/images/hero banner 3.png"
+              alt="Nordic Home Healthcare"
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                  Nordic Home Healthcare
+                </h1>
+                <p className="text-white/90 text-lg">
+                  Quality healthcare at your doorstep
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* ==================== OLD STATIC HERO SLIDER (COMMENTED OUT) ==================== */}
+      {/* <section className="relative h-screen w-full">
         <Swiper
           modules={[Autoplay, Pagination]}
           autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -64,7 +171,7 @@ export default function Home() {
             </SwiperSlide>
           ))}
         </Swiper>
-      </section>
+      </section> */}
 
       {/* Services Section */}
       <section className="max-w-6xl mx-auto py-10 px-5 md:px-0">
@@ -102,12 +209,10 @@ export default function Home() {
 
       {/* Testimonials */}
       <section className="py-12 bg-gray-50">
-         
-          <div className="grid  gap-6">
-            <Testimonials/>
-          </div>
+        <div className="grid gap-6">
+          <Testimonials />
+        </div>
       </section>
-              
     </>
   );
 }

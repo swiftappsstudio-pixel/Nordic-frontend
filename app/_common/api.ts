@@ -113,6 +113,21 @@ export const getServices = async (): Promise<Service[]> => {
   return data.data; // <- This should match your actual API structure
 };
 
+// =========================================== featured services API CALLS ===========================================//
+
+export const getFeaturedServices = async (): Promise<Service[]> => {
+  const res = await fetch(`${API_BASE_URL}/services/featured`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch featured services");
+  }
+
+  const data = await res.json();
+  return data.data;
+};
+
 // =========================================== single service   API CALLS ===========================================//
 
 export async function getService(id: string): Promise<Service> {

@@ -24,7 +24,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         {image && (
           <div className="w-full h-48 relative">
             <Image
-              src={`http://localhost:3100${image}`}
+              src={image}
               alt={title}
               fill
               className="object-cover rounded-lg"
@@ -40,7 +40,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         <div className="mt-2 flex items-center gap-3">
           <span className="text-orange-600 font-bold text-xl">AED {price}</span>
           {actualPrice && actualPrice > price && (
-            <span className="text-gray-400 line-through text-md">AED {actualPrice}</span>
+            <span className="text-gray-400 line-through text-md">
+              AED {actualPrice}
+            </span>
           )}
         </div>
       </div>
