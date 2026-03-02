@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 import AdminSideBar from "../_components/admin-side-bar";
 import AdminNavBar from "../_components/admin-nav-bar";
 import { useAuth } from "../_common/auth-context";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function AdminLayout({
   children,
@@ -14,12 +14,24 @@ export default function AdminLayout({
 }) {
   const { user, token, isLoading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isLoginPage = pathname === "/admin/login";
 
   useEffect(() => {
-    if (!isLoading && (!token || user?.role !== "admin")) {
-      router.replace("/sign-in");
+    if (isLoading) return;
+
+    // If on login page and already authenticated as admin, go to dashboard
+    if (isLoginPage && token && user?.role === "admin") {
+      router.replace("/admin");
+      return;
     }
-  }, [isLoading, token, user, router]);
+
+    // If on any other admin page and NOT authenticated, go to admin login
+    if (!isLoginPage && (!token || user?.role !== "admin")) {
+      router.replace("/admin/login");
+    }
+  }, [isLoading, token, user, router, isLoginPage, pathname]);
 
   if (isLoading) {
     return (
@@ -29,6 +41,17 @@ export default function AdminLayout({
     );
   }
 
+  // Login page renders without sidebar/navbar
+  if (isLoginPage) {
+    return (
+      <>
+        <Toaster position="top-right" />
+        {children}
+      </>
+    );
+  }
+
+  // Not authenticated — show nothing while redirect happens
   if (!token || user?.role !== "admin") {
     return null;
   }
