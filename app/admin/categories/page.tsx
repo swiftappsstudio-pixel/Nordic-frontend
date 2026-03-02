@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import AddCategoryModal from "./add-category-modal";
+import { useAuth } from "@/app/_common/auth-context";
+
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
 interface Category {
   _id: string;
@@ -16,12 +19,13 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
+  const { token } = useAuth();
 
   // Fetch categories
   const loadCategories = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3100/api/categories", {
+      const res = await fetch(`${API_BASE_URL}/categories`, {
         cache: "no-store",
       });
       if (!res.ok) throw new Error("Failed to load categories");
@@ -42,17 +46,17 @@ export default function CategoryPage() {
   const saveCategory = async (data: { name: string; description: string }) => {
     if (editCategory) {
       // Update
-      const res = await fetch(`http://localhost:3100/api/categories/${editCategory._id}`, {
+      const res = await fetch(`${API_BASE_URL}/categories/${editCategory._id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("Failed to update category");
     } else {
       // Add
-      const res = await fetch("http://localhost:3100/api/categories", {
+      const res = await fetch(`${API_BASE_URL}/categories`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("Failed to create category");
@@ -68,8 +72,9 @@ export default function CategoryPage() {
     if (!confirm("Are you sure you want to delete this category?")) return;
 
     try {
-      const res = await fetch(`http://localhost:3100/api/categories/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/categories/${id}`, {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to delete category");
       await loadCategories();

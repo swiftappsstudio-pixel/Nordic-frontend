@@ -300,6 +300,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud, X, Plus, Trash2 } from "lucide-react";
+import { useAuth } from "@/app/_common/auth-context";
+
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
 interface Category {
   _id: string;
@@ -323,6 +326,7 @@ interface ServiceFormProps {
 
 export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
   const router = useRouter();
+  const { token } = useAuth();
   const isEdit = mode === "edit";
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -330,6 +334,7 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
   const [loading, setLoading] = useState(false);
 
   const [images, setImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
 
   const [subServices, setSubServices] = useState<SubService[]>([]);
@@ -348,7 +353,7 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
 
   const loadCategories = async () => {
     try {
-      const res = await fetch("http://localhost:3100/api/categories");
+      const res = await fetch(`${API_BASE_URL}/categories`);
       const data = await res.json();
       setCategories(data.data || []);
     } catch (err) {
@@ -361,7 +366,7 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
 
     try {
       const res = await fetch(
-        `http://localhost:3100/api/services/${serviceId}`
+        `${API_BASE_URL}/services/${serviceId}`
       );
       const data = await res.json();
       const s = data.data;
@@ -386,6 +391,7 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
       }
 
       if (s.images?.length) {
+        setExistingImages(s.images);
         setPreviews(s.images);
       }
     } catch (err) {
@@ -416,8 +422,15 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
   };
 
   const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    const removedPreview = previews[index];
     setPreviews((prev) => prev.filter((_, i) => i !== index));
+
+    if (existingImages.includes(removedPreview)) {
+      setExistingImages((prev) => prev.filter((url) => url !== removedPreview));
+    } else {
+      const newFileIndex = index - existingImages.length;
+      setImages((prev) => prev.filter((_, i) => i !== newFileIndex));
+    }
   };
 
   /* ================= SUB SERVICES ================= */
@@ -466,13 +479,16 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
 
       const url =
         mode === "add"
-          ? "http://localhost:3100/api/services"
-          : `http://localhost:3100/api/services/${serviceId}`;
+          ? `${API_BASE_URL}/services`
+          : `${API_BASE_URL}/services/${serviceId}`;
 
       const method = mode === "add" ? "POST" : "PUT";
 
       const res = await fetch(url, {
         method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 

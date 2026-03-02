@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/_common/auth-context";
+
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
 interface Service {
   _id: string;
@@ -17,11 +20,12 @@ export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { token } = useAuth();
 
   const loadServices = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:3100/api/services", {
+      const res = await fetch(`${API_BASE_URL}/services`, {
         cache: "no-store",
       });
       const data = await res.json();
@@ -37,8 +41,9 @@ export default function ServicesPage() {
     if (!confirm("Are you sure you want to delete this service?")) return;
 
     try {
-      const res = await fetch(`http://localhost:3100/api/services/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/services/${id}`, {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) throw new Error("Delete failed");

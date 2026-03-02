@@ -1,37 +1,50 @@
+"use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import AdminSideBar from "../_components/admin-side-bar";
 import AdminNavBar from "../_components/admin-nav-bar";
-// import { useAuth } from "../_common/useAuth";
-
+import { useAuth } from "../_common/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // const { isAuthenticated, user } = useAuth();
+  const { user, token, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && (!token || user?.role !== "admin")) {
+      router.replace("/sign-in");
+    }
+  }, [isLoading, token, user, router]);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="border-4 border-[#543826] border-t-transparent rounded-full w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!token || user?.role !== "admin") {
+    return null;
+  }
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
       <Toaster position="top-right" />
-      {/* Sidebar - Only show if admin is logged in */}
-      {/* {isAuthenticated && user?.role == 3 && ( */}
-        <div className="shrink-0">
-          <AdminSideBar />
-        </div>
-      {/* ) */}
-      {/* } */}
+      <div className="shrink-0">
+        <AdminSideBar />
+      </div>
 
-      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Bar - Only show if admin is logged in */}
-?          <div className="flex-0 p-5 pb-0">
-            <AdminNavBar />
-          </div>
-?        
-        {/* Scrollable Content */}
+        <div className="flex-0 p-5 pb-0">
+          <AdminNavBar />
+        </div>
+
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-5 bg-gray rounded-tl-xl">
           {children}
         </div>
