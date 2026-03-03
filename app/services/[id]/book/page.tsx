@@ -323,7 +323,7 @@ function BookingContent() {
                   <select
                     value={guestInfo.gender || ""}
                     onChange={(e) => setGuestInfo({ ...guestInfo, gender: e.target.value as GuestInfo["gender"] })}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="">Select</option>
                     <option value="male">Male</option>
@@ -337,7 +337,7 @@ function BookingContent() {
                     type="date"
                     value={guestInfo.dateOfBirth || ""}
                     onChange={(e) => setGuestInfo({ ...guestInfo, dateOfBirth: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
               </div>
