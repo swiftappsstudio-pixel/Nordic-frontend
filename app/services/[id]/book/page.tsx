@@ -1,42 +1,58 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  getServiceDetail,
-  getAvailableSlots,
-  createBooking,
-} from "@/app/_common/api";
+import { getServiceDetail, createBooking } from "@/app/_common/api";
 import {
   ServiceWithVariants,
   Variant,
-  Slot,
   GuestInfo,
   BookingResponse,
 } from "@/app/_common/interfaces";
 import { useAuth } from "@/app/_common/auth-context";
 
-type Step = "slot" | "info" | "confirm" | "success";
+type Step = "datetime" | "info" | "confirm" | "success";
+
+// Time slots for the picker
+const TIME_OPTIONS = [
+  "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
+  "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
+  "14:00", "14:30", "15:00", "15:30", "16:00", "16:30",
+  "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
+  "20:00",
+];
 
 export default function BookingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center pt-24">
+          <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <BookingContent />
+    </Suspense>
+  );
+}
+
+function BookingContent() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user, token } = useAuth();
 
-  const [step, setStep] = useState<Step>("slot");
+  const [step, setStep] = useState<Step>("datetime");
   const [service, setService] = useState<ServiceWithVariants | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Slot selection
+  // Date & Time selection
   const [selectedDate, setSelectedDate] = useState("");
-  const [slots, setSlots] = useState<Slot[]>([]);
-  const [slotsLoading, setSlotsLoading] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+  const [selectedTime, setSelectedTime] = useState("");
 
-  // Patient info (for guest checkout)
+  // Patient info
   const [guestInfo, setGuestInfo] = useState<GuestInfo>({
     fullName: "",
     email: "",
@@ -70,18 +86,7 @@ export default function BookingPage() {
     setSelectedDate(today);
   }, []);
 
-  // Fetch slots when date changes
-  useEffect(() => {
-    if (!id || !selectedDate) return;
-    setSlotsLoading(true);
-    setSelectedSlot(null);
-    getAvailableSlots(id, selectedDate)
-      .then(setSlots)
-      .catch(() => setSlots([]))
-      .finally(() => setSlotsLoading(false));
-  }, [id, selectedDate]);
-
-  // Pre-fill guest info from user profile
+  // Pre-fill from user profile
   useEffect(() => {
     if (user) {
       setGuestInfo({
@@ -94,7 +99,7 @@ export default function BookingPage() {
     }
   }, [user]);
 
-  // Generate next 14 dates for date picker
+  // Generate next 14 dates
   const dates: string[] = [];
   for (let i = 0; i < 14; i++) {
     const d = new Date();
@@ -102,15 +107,25 @@ export default function BookingPage() {
     dates.push(d.toISOString().split("T")[0]);
   }
 
+  const formatTime = (t: string) => {
+    const [h, m] = t.split(":");
+    const hour = parseInt(h);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const h12 = hour % 12 || 12;
+    return `${h12}:${m} ${ampm}`;
+  };
+
   const handleConfirmBooking = async () => {
-    if (!selectedVariant || !selectedSlot) return;
+    if (!selectedDate || !selectedTime) return;
     setSubmitting(true);
     setBookingError("");
 
     try {
       const payload = {
-        variantId: selectedVariant._id,
-        slotId: selectedSlot._id,
+        serviceId: id,
+        preferredDate: selectedDate,
+        preferredTime: selectedTime,
+        ...(selectedVariant ? { variantId: selectedVariant._id } : {}),
         ...(user ? {} : { guestInfo }),
       };
       const result = await createBooking(payload, token || undefined);
@@ -140,6 +155,8 @@ export default function BookingPage() {
     );
   }
 
+  const totalPrice = selectedVariant?.price ?? service.discountPrice ?? service.actualPrice ?? 0;
+
   return (
     <div className="min-h-screen bg-gray-50 pt-28 pb-16">
       <div className="max-w-3xl mx-auto px-5">
@@ -154,9 +171,9 @@ export default function BookingPage() {
 
         {/* Progress Steps */}
         <div className="flex items-center gap-0 mb-8">
-          {(["slot", "info", "confirm"] as Step[]).map((s, i) => {
-            const labels = ["Select Slot", "Patient Info", "Confirm"];
-            const stepIndex = ["slot", "info", "confirm"].indexOf(step);
+          {(["datetime", "info", "confirm"] as Step[]).map((s, i) => {
+            const labels = ["Date & Time", "Your Info", "Confirm"];
+            const stepIndex = ["datetime", "info", "confirm"].indexOf(step);
             const isActive = i <= stepIndex;
             return (
               <div key={s} className="flex items-center flex-1">
@@ -176,25 +193,26 @@ export default function BookingPage() {
           })}
         </div>
 
-        {/* ======================= STEP 1: Select Slot ======================= */}
-        {step === "slot" && (
+        {/* ======================= STEP 1: Select Date & Time ======================= */}
+        {step === "datetime" && (
           <div className="bg-white rounded-2xl shadow-md p-6">
             <h2 className="text-xl font-bold text-[#543826] mb-1">Select Date & Time</h2>
             <p className="text-gray-500 text-sm mb-6">
-              {selectedVariant ? `Package: ${selectedVariant.name} — AED ${selectedVariant.price}` : service.title}
+              {service.title}
+              {selectedVariant && ` — ${selectedVariant.name} (AED ${selectedVariant.price})`}
             </p>
 
             {/* Variant change */}
             {service.variants && service.variants.length > 1 && (
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Change Package</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Select Package</label>
                 <select
                   value={selectedVariant?._id || ""}
                   onChange={(e) => {
                     const v = service.variants?.find((v) => v._id === e.target.value);
                     if (v) setSelectedVariant(v);
                   }}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   {service.variants.map((v) => (
                     <option key={v._id} value={v._id}>
@@ -205,8 +223,8 @@ export default function BookingPage() {
               </div>
             )}
 
-            {/* Date Picker (horizontal scroll) */}
-            <label className="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
+            {/* Date Picker */}
+            <label className="block text-sm font-medium text-gray-700 mb-2">Choose Date</label>
             <div className="flex gap-2 overflow-x-auto pb-3 mb-6">
               {dates.map((d) => {
                 const dateObj = new Date(d + "T00:00:00");
@@ -231,46 +249,38 @@ export default function BookingPage() {
               })}
             </div>
 
-            {/* Time Slots */}
-            <label className="block text-sm font-medium text-gray-700 mb-2">Select Time</label>
-            {slotsLoading ? (
-              <div className="flex justify-center py-8">
-                <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : slots.length === 0 ? (
-              <p className="text-gray-400 text-sm py-4">No available slots for this date.</p>
-            ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                {slots.map((slot) => (
-                  <button
-                    key={slot._id}
-                    onClick={() => setSelectedSlot(slot)}
-                    className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition ${
-                      selectedSlot?._id === slot._id
-                        ? "border-orange-500 bg-orange-50 text-orange-600"
-                        : "border-gray-200 text-gray-600 hover:border-gray-300"
-                    }`}
-                  >
-                    {slot.startTime} - {slot.endTime}
-                  </button>
-                ))}
-              </div>
-            )}
+            {/* Time Picker */}
+            <label className="block text-sm font-medium text-gray-700 mb-2">Choose Time</label>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+              {TIME_OPTIONS.map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setSelectedTime(t)}
+                  className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition ${
+                    selectedTime === t
+                      ? "border-orange-500 bg-orange-50 text-orange-600"
+                      : "border-gray-200 text-gray-600 hover:border-gray-300"
+                  }`}
+                >
+                  {formatTime(t)}
+                </button>
+              ))}
+            </div>
 
             <button
-              disabled={!selectedSlot}
+              disabled={!selectedDate || !selectedTime}
               onClick={() => setStep(user ? "confirm" : "info")}
               className="w-full mt-8 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl text-lg transition"
             >
-              {user ? "Review & Confirm" : "Next: Patient Info"}
+              {user ? "Review & Confirm" : "Next: Your Info"}
             </button>
           </div>
         )}
 
-        {/* ======================= STEP 2: Patient Info (Guest) ======================= */}
+        {/* ======================= STEP 2: Patient Info ======================= */}
         {step === "info" && (
           <div className="bg-white rounded-2xl shadow-md p-6">
-            <h2 className="text-xl font-bold text-[#543826] mb-1">Patient Information</h2>
+            <h2 className="text-xl font-bold text-[#543826] mb-1">Your Information</h2>
             <p className="text-gray-500 text-sm mb-6">Please provide your details to complete the booking.</p>
 
             <div className="space-y-4">
@@ -335,7 +345,7 @@ export default function BookingPage() {
 
             <div className="flex gap-4 mt-8">
               <button
-                onClick={() => setStep("slot")}
+                onClick={() => setStep("datetime")}
                 className="flex-1 border-2 border-gray-300 text-gray-600 font-semibold py-4 rounded-xl text-lg hover:border-gray-400 transition"
               >
                 Back
@@ -357,13 +367,11 @@ export default function BookingPage() {
             <h2 className="text-xl font-bold text-[#543826] mb-6">Review & Confirm</h2>
 
             <div className="space-y-4">
-              {/* Service */}
               <div className="flex justify-between py-3 border-b">
                 <span className="text-gray-500">Service</span>
                 <span className="font-medium text-[#543826]">{service.title}</span>
               </div>
 
-              {/* Variant */}
               {selectedVariant && (
                 <div className="flex justify-between py-3 border-b">
                   <span className="text-gray-500">Package</span>
@@ -371,22 +379,23 @@ export default function BookingPage() {
                 </div>
               )}
 
-              {/* Date & Time */}
-              {selectedSlot && (
-                <div className="flex justify-between py-3 border-b">
-                  <span className="text-gray-500">Date & Time</span>
-                  <span className="font-medium text-[#543826]">
-                    {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                    })}{" "}
-                    at {selectedSlot.startTime}
-                  </span>
-                </div>
-              )}
+              <div className="flex justify-between py-3 border-b">
+                <span className="text-gray-500">Date</span>
+                <span className="font-medium text-[#543826]">
+                  {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
 
-              {/* Sessions */}
+              <div className="flex justify-between py-3 border-b">
+                <span className="text-gray-500">Time</span>
+                <span className="font-medium text-[#543826]">{formatTime(selectedTime)}</span>
+              </div>
+
               {selectedVariant && (
                 <div className="flex justify-between py-3 border-b">
                   <span className="text-gray-500">Sessions</span>
@@ -397,7 +406,6 @@ export default function BookingPage() {
                 </div>
               )}
 
-              {/* Patient */}
               <div className="flex justify-between py-3 border-b">
                 <span className="text-gray-500">Patient</span>
                 <span className="font-medium text-[#543826]">
@@ -405,18 +413,14 @@ export default function BookingPage() {
                 </span>
               </div>
 
-              {/* Payment Method */}
               <div className="flex justify-between py-3 border-b">
                 <span className="text-gray-500">Payment</span>
                 <span className="font-medium text-[#543826]">Cash on Delivery</span>
               </div>
 
-              {/* Total */}
               <div className="flex justify-between py-4 bg-orange-50 rounded-xl px-4">
                 <span className="font-bold text-[#543826] text-lg">Total</span>
-                <span className="font-bold text-orange-600 text-lg">
-                  AED {selectedVariant?.price ?? service.discountPrice ?? service.actualPrice ?? 0}
-                </span>
+                <span className="font-bold text-orange-600 text-lg">AED {totalPrice}</span>
               </div>
             </div>
 
@@ -428,7 +432,7 @@ export default function BookingPage() {
 
             <div className="flex gap-4 mt-8">
               <button
-                onClick={() => setStep(user ? "slot" : "info")}
+                onClick={() => setStep(user ? "datetime" : "info")}
                 className="flex-1 border-2 border-gray-300 text-gray-600 font-semibold py-4 rounded-xl text-lg hover:border-gray-400 transition"
               >
                 Back
@@ -464,13 +468,17 @@ export default function BookingPage() {
                 <span className="text-gray-500">Service</span>
                 <span className="text-[#543826]">{booking.serviceSnapshot?.title}</span>
               </div>
+              {booking.variantSnapshot && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Package</span>
+                  <span className="text-[#543826]">{booking.variantSnapshot.name}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Package</span>
-                <span className="text-[#543826]">{booking.variantSnapshot?.name}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Total Sessions</span>
-                <span className="text-[#543826]">{booking.totalSessions}</span>
+                <span className="text-gray-500">Date & Time</span>
+                <span className="text-[#543826]">
+                  {booking.preferredDate} at {booking.preferredTime && formatTime(booking.preferredTime)}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Amount</span>

@@ -290,8 +290,11 @@ export interface GuestInfo {
 }
 
 export interface BookingRequest {
-  variantId: string;
-  slotId: string;
+  serviceId?: string;
+  preferredDate?: string;
+  preferredTime?: string;
+  variantId?: string;
+  slotId?: string;
   guestInfo?: GuestInfo;
 }
 
@@ -306,20 +309,22 @@ export interface BookingResponse {
     category?: string;
     images?: string[];
   };
-  variantSnapshot: {
+  variantSnapshot?: {
     _id: string;
     name: string;
     price: number;
     sessions: number;
     freeSessions: number;
     validityInDays: number;
-  };
-  slotId: {
+  } | null;
+  slotId?: {
     _id: string;
     date: string;
     startTime: string;
     endTime: string;
-  };
+  } | null;
+  preferredDate?: string;
+  preferredTime?: string;
   totalSessions: number;
   remainingSessions: number;
   totalAmount: number;
