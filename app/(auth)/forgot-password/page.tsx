@@ -3,37 +3,28 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { loginUser } from "@/app/_common/api";
-import { useAuth } from "@/app/_common/auth-context";
+import { forgotPassword } from "@/app/_common/api";
 
-export default function SignInPage() {
+export default function ForgotPasswordPage() {
   const router = useRouter();
-  const { login } = useAuth();
-
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     setError("");
 
-    if (!email || !password) {
-      setError("Email and password are required");
+    if (!email) {
+      setError("Email is required");
       return;
     }
 
     setLoading(true);
     try {
-      const res = await loginUser({ email, password });
-      login(res.token, res.user);
-      router.push("/");
+      await forgotPassword(email);
+      router.push(`/reset-password?email=${encodeURIComponent(email)}`);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Login failed";
-      if (message.includes("verify your email")) {
-        router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
-        return;
-      }
+      const message = err instanceof Error ? err.message : "Failed to send reset code";
       setError(message);
     } finally {
       setLoading(false);
@@ -44,10 +35,10 @@ export default function SignInPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         <h1 className="text-2xl font-bold text-[#543826] text-center mb-2">
-          Welcome Back
+          Forgot Password
         </h1>
         <p className="text-gray-500 text-center mb-6 text-sm">
-          Sign in to Nordic Home Healthcare
+          Enter your email and we&apos;ll send you a code to reset your password
         </p>
 
         {error && (
@@ -62,47 +53,30 @@ export default function SignInPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             placeholder="john@example.com"
             className="w-full p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-[#543826]"
           />
-
-          <label className="text-sm font-medium text-gray-700 mt-3">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            className="w-full p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-[#543826]"
-          />
-        </div>
-
-        <div className="flex justify-end mt-2">
-          <Link
-            href="/forgot-password"
-            className="text-sm text-[#543826] font-medium hover:underline"
-          >
-            Forgot Password?
-          </Link>
         </div>
 
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full mt-4 bg-[#543826] hover:bg-[#3e2a1c] text-white py-3 rounded-lg font-medium disabled:bg-gray-400 transition-colors"
+          className="w-full mt-6 bg-[#543826] hover:bg-[#3e2a1c] text-white py-3 rounded-lg font-medium disabled:bg-gray-400 transition-colors"
         >
           {loading ? (
             <div className="flex items-center justify-center">
               <div className="border-4 border-white border-t-transparent rounded-full w-5 h-5 animate-spin" />
             </div>
           ) : (
-            "Sign In"
+            "Send Reset Code"
           )}
         </button>
 
         <p className="text-center text-sm text-gray-500 mt-4">
-          Don&apos;t have an account?{" "}
-          <Link href="/sign-up" className="text-[#543826] font-semibold hover:underline">
-            Sign Up
+          Remember your password?{" "}
+          <Link href="/sign-in" className="text-[#543826] font-semibold hover:underline">
+            Sign In
           </Link>
         </p>
       </div>

@@ -89,6 +89,64 @@ export const resendOTP = async (
   return result;
 };
 
+// =========================================== Password API CALLS ===========================================//
+
+export const forgotPassword = async (email: string): Promise<MessageResponse> => {
+  const res = await fetch(`${API_BASE_URL}/users/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to send reset OTP");
+  }
+
+  return result;
+};
+
+export const resetPassword = async (
+  data: { email: string; otp: string; newPassword: string },
+): Promise<MessageResponse> => {
+  const res = await fetch(`${API_BASE_URL}/users/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Password reset failed");
+  }
+
+  return result;
+};
+
+export const changePassword = async (
+  data: { currentPassword: string; newPassword: string },
+  token: string,
+): Promise<MessageResponse> => {
+  const res = await fetch(`${API_BASE_URL}/users/change-password`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Password change failed");
+  }
+
+  return result;
+};
+
 export const getUserProfile = async (token: string) => {
   const res = await fetch(`${API_BASE_URL}/users/me`, {
     headers: { Authorization: `Bearer ${token}` },

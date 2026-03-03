@@ -116,6 +116,13 @@ export default function Navbar() {
                       <p className="text-sm font-semibold text-gray-800 truncate">{user.name}</p>
                       <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     </div>
+                    <Link
+                      href="/change-password"
+                      onClick={() => setUserMenu(false)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      Change Password
+                    </Link>
                     <button
                       onClick={() => {
                         logout();
@@ -210,20 +217,29 @@ export default function Navbar() {
           <div className="mt-4 pt-4 border-t">
             {!isLoading && (
               user ? (
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-sm">{user.name}</p>
-                    <p className="text-xs text-gray-500">{user.email}</p>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold text-sm">{user.name}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setOpen(false);
+                      }}
+                      className="text-red-600 text-sm font-medium"
+                    >
+                      Sign Out
+                    </button>
                   </div>
-                  <button
-                    onClick={() => {
-                      logout();
-                      setOpen(false);
-                    }}
-                    className="text-red-600 text-sm font-medium"
+                  <Link
+                    href="/change-password"
+                    onClick={() => setOpen(false)}
+                    className="block mt-3 text-sm text-[#543826] font-medium hover:underline"
                   >
-                    Sign Out
-                  </button>
+                    Change Password
+                  </Link>
                 </div>
               ) : (
                 <div className="flex gap-3">
