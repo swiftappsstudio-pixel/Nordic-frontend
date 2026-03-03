@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 import ServiceCard from "@/app/_components/service-card";
 import { getServices, getFeaturedServices } from "./_common/api";
@@ -60,6 +61,7 @@ export default function Home() {
           >
             {featuredServices.map((service, index) => (
               <SwiperSlide key={service._id} className="relative h-full w-full">
+                {/* Background Image */}
                 {service.images?.[0] ? (
                   <Image
                     src={service.images[0]}
@@ -72,6 +74,29 @@ export default function Home() {
                 ) : (
                   <div className="w-full h-full bg-[#543826]" />
                 )}
+
+                {/* Dark overlay */}
+                <div className="absolute inset-0 bg-black/50" />
+
+                {/* Text overlay */}
+                <div className="absolute inset-0 flex items-center">
+                  <div className="max-w-6xl mx-auto px-6 w-full">
+                    <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight max-w-2xl">
+                      {service.title}
+                    </h1>
+                    {service.description && (
+                      <p className="text-white/80 text-base md:text-lg mb-6 max-w-xl line-clamp-3">
+                        {service.description}
+                      </p>
+                    )}
+                    <Link
+                      href={`/services/${service._id}`}
+                      className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg transition"
+                    >
+                      Book Now
+                    </Link>
+                  </div>
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
