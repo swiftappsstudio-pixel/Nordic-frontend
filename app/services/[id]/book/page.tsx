@@ -181,7 +181,7 @@ function BookingContent() {
 
   const canProceed = () => {
     if (step === "addons") return true;
-    if (step === "datetime") return !!selectedDate;
+    if (step === "datetime") return !!(selectedDate && selectedTime);
     if (step === "cart") return true;
     if (step === "info") {
       if (user) return true;
@@ -647,6 +647,43 @@ function BookingContent() {
                     </div>
                   ))}
                 </div>
+
+                {/* Time Picker */}
+                {selectedDate && (
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Select Time
+                    </label>
+                    <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                      {[
+                        "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
+                        "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
+                        "14:00", "14:30", "15:00", "15:30", "16:00", "16:30",
+                        "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
+                        "20:00",
+                      ].map((t) => {
+                        const [h, m] = t.split(":");
+                        const hour = parseInt(h);
+                        const ampm = hour >= 12 ? "PM" : "AM";
+                        const h12 = hour % 12 || 12;
+                        const label = `${h12}:${m} ${ampm}`;
+                        return (
+                          <button
+                            key={t}
+                            onClick={() => setSelectedTime(t)}
+                            className={`py-2.5 px-2 rounded-lg border text-xs font-medium transition ${
+                              selectedTime === t
+                                ? "border-[#543826] bg-[#543826] text-white"
+                                : "border-gray-200 text-gray-600 hover:border-gray-300"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
