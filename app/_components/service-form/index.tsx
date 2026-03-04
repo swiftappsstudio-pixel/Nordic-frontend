@@ -453,6 +453,27 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
     setSubServices(subServices.filter((_, i) => i !== index));
   };
 
+  /* ================= UPLOAD HELPER ================= */
+
+  const uploadSingleFile = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append("file", file);
+
+    const res = await fetch(`${API_BASE_URL}/upload`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: fd,
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Failed to upload image");
+    }
+
+    const data = await res.json();
+    return data.url;
+  };
+
   /* ================= SUBMIT ================= */
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -460,23 +481,15 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
     setLoading(true);
 
     try {
-      const formData = new FormData();
-
-      formData.append("title", form.title);
-      formData.append("description", form.description);
-      formData.append("actualPrice", form.actualPrice);
-      formData.append("category", form.category);
-      formData.append("keyBenefits", form.keyBenefits);
-      formData.append("keyIngredients", form.keyIngredients);
-      formData.append("disclaimer", form.disclaimer);
-
-      formData.append(
-        "subServices",
-        JSON.stringify(subServices.filter((s) => s.name && s.price))
+      // Step 1: Upload new images individually to get Cloudinary URLs
+      const uploadedUrls = await Promise.all(
+        images.map((img) => uploadSingleFile(img))
       );
 
-      images.forEach((img) => formData.append("images", img));
+      // Step 2: Combine existing image URLs with newly uploaded URLs
+      const allImageUrls = [...existingImages, ...uploadedUrls];
 
+      // Step 3: Send service data as JSON (no file blobs)
       const url =
         mode === "add"
           ? `${API_BASE_URL}/services`
@@ -488,8 +501,19 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
         method,
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        body: formData,
+        body: JSON.stringify({
+          title: form.title,
+          description: form.description,
+          actualPrice: form.actualPrice,
+          category: form.category,
+          keyBenefits: form.keyBenefits,
+          keyIngredients: form.keyIngredients,
+          disclaimer: form.disclaimer,
+          subServices: subServices.filter((s) => s.name && s.price),
+          images: allImageUrls,
+        }),
       });
 
       if (!res.ok) throw new Error("Failed");
