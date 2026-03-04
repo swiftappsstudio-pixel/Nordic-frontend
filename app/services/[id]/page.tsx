@@ -314,6 +314,39 @@ export default function ServiceDetailPage() {
                   </button>
                 </div>
               )}
+
+            {/* ====== Base Price Only (no sub-services, no variants) ====== */}
+            {subServices.length === 0 &&
+              (!service.variants || service.variants.length === 0) && (
+                <div className="bg-white rounded-xl border border-gray-100 p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-gray-800 font-semibold">
+                      {service.title}
+                    </h3>
+                    <span className="text-orange-600 font-bold text-xl">
+                      AED{" "}
+                      {(
+                        service.discountPrice ??
+                        service.actualPrice ??
+                        0
+                      ).toFixed(2)}
+                    </span>
+                  </div>
+                  {service.actualPrice &&
+                    service.discountPrice &&
+                    service.discountPrice < service.actualPrice && (
+                      <p className="text-sm text-gray-400 line-through mb-4">
+                        AED {service.actualPrice.toFixed(2)}
+                      </p>
+                    )}
+                  <button
+                    onClick={() => router.push(`/services/${id}/book`)}
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 rounded-xl text-lg transition"
+                  >
+                    Book Now
+                  </button>
+                </div>
+              )}
           </div>
         </div>
       </div>
