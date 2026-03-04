@@ -19,6 +19,7 @@ const BookingModal: React.FC<Props> = ({
   const { user, token } = useAuth();
 
   const [customerName, setCustomerName] = useState("");
+  const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -35,6 +36,7 @@ const BookingModal: React.FC<Props> = ({
 
     const payload = {
       customerName: customerName || user?.name || "",
+      email: email || user?.email || "",
       serviceName,
       price,
       address,
@@ -54,7 +56,7 @@ const BookingModal: React.FC<Props> = ({
         headers["Authorization"] = `Bearer ${token}`;
       }
 
-      const res = await fetch("http://localhost:3100/api/orders", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
         method: "POST",
         headers,
         body: JSON.stringify(payload),
@@ -94,6 +96,16 @@ const BookingModal: React.FC<Props> = ({
           value={customerName}
           onChange={(e) => setCustomerName(e.target.value)}
           placeholder={user?.name || "Enter your name"}
+          className="w-full border rounded-md text-black p-2 mb-4"
+        />
+
+        {/* Email */}
+        <label className="block text-sm mb-1 text-black">Email</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={user?.email || "Enter your email"}
           className="w-full border rounded-md text-black p-2 mb-4"
         />
 

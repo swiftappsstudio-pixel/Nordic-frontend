@@ -466,7 +466,7 @@ function BookingContent() {
                         );
                         if (v) setSelectedVariant(v);
                       }}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     >
                       {service.variants.map((v) => (
                         <option key={v._id} value={v._id}>
@@ -749,7 +749,7 @@ function BookingContent() {
                       onChange={(e) =>
                         setGuestInfo({ ...guestInfo, fullName: e.target.value })
                       }
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -764,7 +764,7 @@ function BookingContent() {
                       onChange={(e) =>
                         setGuestInfo({ ...guestInfo, email: e.target.value })
                       }
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       placeholder="Enter your email"
                     />
                   </div>
@@ -779,7 +779,7 @@ function BookingContent() {
                       onChange={(e) =>
                         setGuestInfo({ ...guestInfo, phone: e.target.value })
                       }
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       placeholder="+971 XX XXX XXXX"
                     />
                   </div>
