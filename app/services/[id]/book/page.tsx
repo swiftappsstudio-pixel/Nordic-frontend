@@ -943,7 +943,7 @@ function BookingContent() {
                 <button
                   disabled={submitting}
                   onClick={handleConfirmBooking}
-                  className="bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-semibold px-8 py-3 rounded-xl transition"
+                  className="bg-[#543826] hover:bg-[#3e2a1c] disabled:opacity-50 text-white font-semibold px-8 py-3 rounded-xl transition"
                 >
                   {submitting ? "Booking..." : "Confirm Booking"}
                 </button>

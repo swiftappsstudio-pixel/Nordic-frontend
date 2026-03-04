@@ -308,7 +308,7 @@ export default function ServiceDetailPage() {
                         router.push(`/services/${id}/book`);
                       }
                     }}
-                    className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 rounded-xl text-lg transition"
+                    className="w-full mt-4 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-4 rounded-xl text-lg transition"
                   >
                     Book Now
                   </button>
@@ -341,7 +341,7 @@ export default function ServiceDetailPage() {
                     )}
                   <button
                     onClick={() => router.push(`/services/${id}/book`)}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 rounded-xl text-lg transition"
+                    className="w-full bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-4 rounded-xl text-lg transition"
                   >
                     Book Now
                   </button>
