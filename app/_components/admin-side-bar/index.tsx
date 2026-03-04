@@ -27,11 +27,12 @@ export const AdminSideBar = () => {
       {/* Logo */}
       <div className="shrink-0 my-5 px-5 py-10 flex items-center justify-center border-divider border-b">
         <Image
-          src="/images/zush-logo.svg"
+          src="https://nordichc.com/wp-content/uploads/2025/04/Horizental-Original-Logo-resized.png"
           alt="Nordic Home Healthcare Logo"
-          className="h-12 w-1/2"
-          height={12}
-          width={20}
+          className="h-12 w-auto"
+          height={48}
+          width={160}
+          unoptimized
         />
       </div>
 

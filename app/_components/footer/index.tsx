@@ -42,10 +42,11 @@ export default function Footer() {
         {/* Column 3 – Logo and Location */}
         <div className="text-center md:text-right">
           <Image
-            src="/public/next.svg"   // replace with your actual logo
+            src="https://nordichc.com/wp-content/uploads/2025/04/Horizental-Original-Logo-resized.png"
             width={180}
             height={80}
-            alt="Footer Logo"
+            alt="Nordic Home Healthcare"
+            unoptimized
             className="mx-auto md:ml-auto"
           />
 
@@ -90,10 +91,11 @@ export default function Footer() {
       {/* Floating Left Logo Bubble */}
       <div className="absolute bottom-4 left-4 w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-lg">
         <Image
-          src="/public/images/footer-logo.png"  // replace with correct small footer logo
-          alt="Logo Bubble"
+          src="https://nordichc.com/wp-content/uploads/2025/04/Horizental-Original-Logo-resized.png"
+          alt="Nordic Home Healthcare"
           width={40}
           height={40}
+          unoptimized
         />
       </div>
 

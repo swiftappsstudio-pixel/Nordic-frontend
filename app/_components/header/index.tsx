@@ -41,11 +41,12 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/">
           <Image
-            src="/public/images/logo.png"
-            alt="logo"
+            src="https://nordichc.com/wp-content/uploads/2025/04/Horizental-Original-Logo-resized.png"
+            alt="Nordic Home Healthcare"
             width={220}
             height={80}
             priority
+            unoptimized
           />
         </Link>
 

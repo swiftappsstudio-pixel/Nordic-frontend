@@ -231,7 +231,7 @@ export default function ServiceDetailPage() {
                           </p>
                         </div>
                         <span className="text-orange-600 font-bold whitespace-nowrap">
-                          &#x09F3; {sub.price.toFixed(2)}
+                          AED {sub.price.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-end mt-3">
