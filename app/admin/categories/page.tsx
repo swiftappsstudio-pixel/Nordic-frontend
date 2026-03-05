@@ -76,10 +76,15 @@ export default function CategoryPage() {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("Failed to delete category");
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Failed to delete category");
+        return;
+      }
       await loadCategories();
     } catch (err) {
       console.error(err);
+      alert("Failed to delete category");
     }
   };
 
