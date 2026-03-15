@@ -31,10 +31,10 @@ body {
 /* Featured slider navigation arrows */
 .featured-slider .swiper-button-next,
 .featured-slider .swiper-button-prev {
-  color: white;
+  color: black;
   background: rgba(255, 255, 255, 0.15);
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   transition: background 0.2s;
   top: 50%;
@@ -47,7 +47,8 @@ body {
 
 .featured-slider .swiper-button-next::after,
 .featured-slider .swiper-button-prev::after {
-  font-size: 16px;
+  font-size: 12px;
+  color: black;
 }
 
 .featured-slider .swiper-pagination {

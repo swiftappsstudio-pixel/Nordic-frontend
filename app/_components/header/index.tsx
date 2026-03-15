@@ -88,7 +88,7 @@ export default function Navbar() {
           </li>
 
           <li><Link href="/offers">Offers</Link></li>
-          <li><Link href="/about-us">About Us</Link></li>
+          <li><Link href="/about">About Us</Link></li>
           <li><Link href="/contact">Contact</Link></li>
           <li><Link href="/blog">Blog</Link></li>
         </ul>
@@ -155,17 +155,35 @@ export default function Navbar() {
             )
           )}
 
-          <div className="w-10 h-10 rounded-full bg-[#543826] flex items-center justify-center">
-            <FaFacebookF className="text-white text-lg" />
-          </div>
+         <a
+  href="https://www.facebook.com/nordichomehealthcare"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <div className="w-10 h-10 rounded-full bg-[#543826] flex items-center justify-center">
+    <FaFacebookF className="text-white text-lg" />
+  </div>
+</a>
 
-          <div className="w-10 h-10 rounded-full bg-[#543826] flex items-center justify-center">
-            <FaInstagram className="text-white text-lg" />
-          </div>
+                 <a
+  href="https://www.instagram.com/nordichomehealthcare?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <div className="w-10 h-10 rounded-full bg-[#543826] flex items-center justify-center">
+    <FaInstagram className="text-white text-lg" />
+  </div>
+</a>
 
-          <div className="w-10 h-10 rounded-full bg-[#543826] flex items-center justify-center">
-            <FaLinkedinIn className="text-white text-lg" />
-          </div>
+                <a
+  href="https://www.facebook.com/nordichomehealthcare"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <div className="w-10 h-10 rounded-full bg-[#543826] flex items-center justify-center">
+    <FaLinkedinIn className="text-white text-lg" />
+  </div>
+</a>
         </div>
 
         {/* Mobile Menu Icon */}

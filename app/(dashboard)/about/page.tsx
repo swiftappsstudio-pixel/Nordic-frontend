@@ -1,185 +1,162 @@
-"use client";
-
-import type { LucideIcon } from "lucide-react";
-import {
-  Zap,
-  Wrench,
-  Hammer,
-  Wind,
-  Sparkles,
-  Bug,
-  Users,
-  Package,
-  Drill,
-  Paintbrush2,
-  Phone,
-  Mail,
-  CheckCircle2,
-  Shield,
-  Clock,
-} from "lucide-react";
-
-/* -------------------- DATA -------------------- */
-
-interface Service {
-  icon: LucideIcon;
-  name: string;
-  description: string;
-}
-
-interface Standard {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-}
-
-const services: Service[] = [
-  { icon: Zap, name: "Electrician", description: "Professional electrical services" },
-  { icon: Wrench, name: "Plumber", description: "Expert plumbing solutions" },
-  { icon: Hammer, name: "Handyman", description: "General maintenance services" },
-  { icon: Paintbrush2, name: "Painter", description: "Professional painting services" },
-  { icon: Wind, name: "AC Services", description: "Air conditioning maintenance" },
-  { icon: Sparkles, name: "Cleaning", description: "Professional cleaning services" },
-  { icon: Bug, name: "Pest Control", description: "Safe pest management" },
-  { icon: Users, name: "Maid Services", description: "Household help" },
-  { icon: Package, name: "Packers & Movers", description: "Moving solutions" },
-  { icon: Drill, name: "Electronics Repair", description: "Device repair services" },
-  { icon: Paintbrush2, name: "Home Appliances", description: "Appliance repairs" },
-  { icon: Hammer, name: "Interior Renovation", description: "Home renovation services" },
-];
-
-const emirates = [
-  "Dubai",
-  "Abu Dhabi",
-  "Sharjah",
-  "Coming Soon: Other Emirates",
-];
-
-const standards: Standard[] = [
-  {
-    icon: Shield,
-    title: "Professional Background Verification",
-    description:
-      "All our service professionals are carefully selected and verified to ensure safety, reliability, and quality service.",
-  },
-  {
-    icon: CheckCircle2,
-    title: "Complete Customer Satisfaction",
-    description:
-      "With timely service, flexible pricing, and guaranteed quality, customer satisfaction is always our priority.",
-  },
-  {
-    icon: Clock,
-    title: "24/7 Availability",
-    description:
-      "Book services anytime with our round-the-clock availability, day or night.",
-  },
-  {
-    icon: Zap,
-    title: "Secure & Cost-Effective",
-    description:
-      "Our secure technology platform ensures safe payments and competitive pricing.",
-  },
-];
-
-/* -------------------- PAGE -------------------- */
+import Image from "next/image";
+import TeamCard from "@/app/_components/team-card";
 
 export default function AboutPage() {
+  const team = [
+    {
+      name: "John Carter",
+      role: "Physiotherapist",
+      image: "/images/team1.JPG",
+    },
+    {
+      name: "David Lee",
+      role: "Medical Assistant",
+      image: "/images/team2.JPG",
+    },
+    {
+      name: "Sarah Wilson",
+      role: "Nurse",
+      image: "/images/team2.JPG",
+    },
+    {
+      name: "Michael Smith",
+      role: "Caregiver",
+      image: "/images/team2.JPG",
+    },
+  ];
+
   return (
-    <main className="min-h-screen bg-background text-black">
-      {/* Header */}
-      <header className="bg-secondary text-white py-16 md:py-24 mt-24">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Your Home Services, Reimagined
-          </h1>
-          <p className="text-lg md:text-xl opacity-90 max-w-2xl">
-            A technology platform bringing home maintenance and lifestyle services closer to you, 24/7.
+    <div className="w-full">
+
+      {/* HERO SECTION */}
+
+      <div className="relative w-full h-[600px]">
+        <Image
+          src="/about-banner.jpg"
+          alt="about banner"
+          fill
+          className="object-cover"
+        />
+
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <h1 className="text-white text-4xl font-bold">About Us</h1>
+        </div>
+      </div>
+
+      {/* ABOUT SECTION */}
+
+      <div className="max-w-6xl mx-auto px-6 py-14 grid md:grid-cols-2 gap-10">
+
+        <div>
+
+          <p className="text-gray-600 leading-relaxed">
+           At Nordic Home Healthcare, we are dedicated to delivering compassionate, reliable, and professional home healthcare services that prioritize the comfort, dignity, and well-being of every patient we serve. Our goal is to make high-quality healthcare accessible in the place where patients feel safest and most comfortable — their own homes. We understand that every individual has unique healthcare needs, which is why our services are carefully tailored to provide personalized support for patients of all ages. From elderly care and post-surgery recovery to chronic illness management and daily assistance, our experienced team is committed to providing attentive and respectful care at every stage.
+          </p>
+
+          <p className="text-gray-600 mt-4">
+        Our team consists of qualified nurses, caregivers, and healthcare professionals who are highly trained, experienced, and passionate about helping others. Each member of our staff is dedicated to maintaining the highest standards of medical care while also offering emotional support and compassion to both patients and their families. By combining professional medical expertise with a patient-centered approach, we ensure that every individual receives the attention and care they truly deserve.
           </p>
         </div>
-      </header>
 
-      {/* Mission */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Mission</h2>
-            <p className="text-lg text-gray-600 mb-6">
-              We focus on understanding customer needs and integrating modern technology to deliver a seamless experience.
+        <div className="relative h-[400px]">
+          <Image
+            src="/images/demo.png"
+            alt="about"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
+      </div>
+
+      {/* TRUSTED CARE SECTION */}
+
+      <div className="max-w-6xl mx-auto px-6 py-10 grid md:grid-cols-2 gap-10 items-center">
+
+     <div className="relative h-[400px] w-full bg-gray-100">
+  <Image
+    src="/images/demo.png"
+    alt="care"
+    fill
+    className="object-contain rounded-lg"
+  />
+</div>
+
+        <div>
+          <h2 className="text-2xl text-black font-semibold mb-4">
+            Trusted, personalized healthcare.
+          </h2>
+
+          <p className="text-gray-600 leading-relaxed">
+
+At Nordic Home Healthcare, our focus is on delivering dependable and patient-centered healthcare services that families can trust. We understand that receiving care at home allows patients to feel more relaxed, secure, and supported during their recovery or daily health management. That is why our team works closely with each patient to understand their individual needs and provide care that is both professional and compassionate.
+
+Our qualified healthcare professionals are dedicated to ensuring safety, comfort, and consistent support for every patient. We provide a wide range of services including nursing care, elderly assistance, physiotherapy, and post-operative support. Each service is delivered with careful attention to detail, ensuring that patients receive the right level of care at the right time.
+          </p>
+        </div>
+      </div>
+
+      {/* MISSION VISION VALUES */}
+
+      <div className="bg-gray-100 py-14">
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-6">
+
+          {/* Mission */}
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-xl font-semibold text-black mb-2">Our Mission</h3>
+
+            <p className="text-gray-600">
+              To provide exceptional home healthcare services, improving
+              patients’ quality of life through compassionate, professional,
+              and personalized care.
             </p>
-            <p className="text-lg text-gray-600">
-              Our mission is to be your one-stop solution for reliable, affordable, and secure home services.
+          </div>
+
+          {/* Vision */}
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-xl font-semibold text-black mb-2">Vision</h3>
+
+            <p className="text-gray-600">
+              To become a trusted leader in home healthcare, delivering
+              innovative and compassionate services for communities.
             </p>
           </div>
 
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary/10 rounded-lg -rotate-3" />
-            <div className="relative bg-white rounded-lg p-8 shadow-lg">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-3xl font-bold text-primary">24/7</div>
-                  <p className="text-sm text-gray-500">Available</p>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-primary">∞</div>
-                  <p className="text-sm text-gray-500">Services</p>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-primary">✓</div>
-                  <p className="text-sm text-gray-500">Guaranteed</p>
-                </div>
-              </div>
-            </div>
+          {/* Values */}
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-xl font-semibold text-black mb-2">Values</h3>
+
+            <p className="text-gray-600">
+              Compassion, integrity, professionalism, and dedication are the
+              values that guide our healthcare services.
+            </p>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Services */}
-      <section className="py-16 md:py-24 bg-secondary/5">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-10">Our Services</h2>
+      {/* TEAM SECTION */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map(({ icon: Icon, name, description }) => (
-              <div
-                key={name}
-                className="bg-white rounded-lg p-6 border border-primary/10 hover:shadow-lg transition"
-              >
-                <Icon className="w-8 h-8 text-primary mb-4" />
-                <h3 className="text-xl font-semibold mb-2">{name}</h3>
-                <p className="text-gray-600">{description}</p>
-              </div>
-            ))}
-          </div>
+      <div className="max-w-6xl mx-auto px-6 py-16">
+
+        <h2 className="text-3xl text-black font-bold text-center mb-10">
+          Meet Our Team
+        </h2>
+
+        <div className="grid md:grid-cols-4 sm:grid-cols-2 gap-8">
+          {team.map((member, index) => (
+            <TeamCard
+              key={index}
+              name={member.name}
+              role={member.role}
+              image={member.image}
+            />
+          ))}
         </div>
-      </section>
 
-      {/* Contact */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 px-4">
-          <div className="bg-white p-8 rounded-lg border">
-            <div className="flex items-center gap-3 mb-3">
-              <Phone className="text-primary" />
-              <h3 className="font-semibold text-primary">Customer Care</h3>
-            </div>
-            <p className="text-2xl font-bold">600 576 365</p>
-            <p className="text-sm text-gray-500">Available 24/7</p>
-          </div>
+      </div>
 
-          <div className="bg-white p-8 rounded-lg border">
-            <div className="flex items-center gap-3 mb-3">
-              <Mail className="text-primary" />
-              <h3 className="font-semibold text-primary">Email</h3>
-            </div>
-            <a
-              href="mailto:info@zushh.com"
-              className="text-xl font-semibold text-secondary"
-            >
-              info@zushh.com
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
+    </div>
   );
 }
