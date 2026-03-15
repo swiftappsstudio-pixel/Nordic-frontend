@@ -5,11 +5,17 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { MdOutlineMiscellaneousServices } from "react-icons/md";
 import { BiCategoryAlt } from "react-icons/bi";
+import {BiShoppingBag} from "react-icons/bi";
 
 export const AdminSideBar = () => {
   const pathname = usePathname();
 
   const links = [
+     {
+      href: "/admin/orders",
+      label: "Orders",
+      icon: <BiShoppingBag className="h-7 w-7 mr-2" />,
+    },
     {
       href: "/admin/categories",
       label: "Categories",

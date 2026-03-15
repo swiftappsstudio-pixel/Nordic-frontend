@@ -144,7 +144,7 @@ export default function Home() {
         title="Ready to get started?"
         phoneNumber="+923414415384"
         message="Hello! I'm interested in booking a service. Can you provide more details?"
-        imageUrl="images/hero banner 4.png"
+        imageUrl="/images/CTA!.jpg"
         buttonText="Book Now"
       />
 

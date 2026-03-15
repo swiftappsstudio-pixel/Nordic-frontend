@@ -17,27 +17,28 @@ interface Testimonial {
 const testimonialsData: Testimonial[] = [
   {
     id: 1,
-    name: "John Doe",
-    feedback: "Amazing service! Highly recommended.",
-    avatarUrl: "/avatar1.jpg",
+    name: "Salim Kammalayil",
+    feedback: "It was really good, They came to my office and spend hours to complete the proceedure",
+
+    avatarUrl: "/images/team1.JPG",
   },
   {
     id: 2,
     name: "Sarah Khan",
     feedback: "Very professional and fast delivery.",
-    avatarUrl: "/avatar2.jpg",
+    avatarUrl: "/images/team2.JPG",
   },
   {
     id: 3,
-    name: "Ali Ahmed",
-    feedback: "Excellent experience from start to finish.",
-    avatarUrl: "/avatar3.jpg",
+    name: "Reza daryaeei",
+    feedback: "Thank you Nordic Home care center .thanks to Dr.Ali and Dr.Shakila for good service and the Nurses are so kind and helpful...highly recommended this centre for treatment.",
+    avatarUrl: "/images/team2.JPG",
   },
   {
     id: 4,
-    name: "Maria Ali",
-    feedback: "Outstanding support and quality work.",
-    avatarUrl: "/avatar4.jpg",
+    name: "Hanin rash",
+    feedback: "Excellent home healthcare centre for IV drips and nursing care. Very professional nurses and European standard . Highly recommended.",
+    avatarUrl: "/images/team2.JPG",
   },
 ];
 
@@ -66,26 +67,28 @@ export const Testimonials = () => {
           }}
         >
           {testimonialsData.map((item) => (
-            <SwiperSlide key={item.id}>
-              <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition h-full">
-                <div className="flex items-center gap-4 mb-4">
-                  <Image
-                    src={item.avatarUrl}
-                    alt={item.name}
-                    width={56}
-                    height={56}
-                    className="w-14 h-14 rounded-full object-cover"
-                  />
-                  <h3 className="font-semibold text-lg text-[#593E30]">
-                    {item.name}
-                  </h3>
-                </div>
+  <SwiperSlide key={item.id} className="h-auto ">
+  <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition h-50 flex flex-col">
+    
+    <div className="flex items-center gap-4 mb-4">
+      <Image
+        src={item.avatarUrl}
+        alt={item.name}
+        width={56}
+        height={56}
+        className="w-14 h-14 rounded-full object-cover"
+      />
+      <h3 className="font-semibold text-lg text-[#593E30]">
+        {item.name}
+      </h3>
+    </div>
 
-                <p className="text-black text-sm leading-relaxed">
-                  &quot;{item.feedback}&quot;
-                </p>
-              </div>
-            </SwiperSlide>
+    <p className="text-black text-sm leading-relaxed flex-grow">
+      &quot;{item.feedback}&quot;
+    </p>
+
+  </div>
+</SwiperSlide>
           ))}
         </Swiper>
       </div>

@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getServiceDetail } from "@/app/_common/api";
 import { ServiceWithVariants, Variant } from "@/app/_common/interfaces";
+import { CTASection } from "@/app/_components/cta-section";
 
 type Tab = "benefits" | "ingredients" | "disclaimer";
 
@@ -346,10 +347,21 @@ export default function ServiceDetailPage() {
                     Book Now
                   </button>
                 </div>
+                
               )}
+              
           </div>
+        
         </div>
+          
       </div>
+       <CTASection
+                      title="Ready to get started?"
+                      phoneNumber="+923414415384"
+                      message="Hello! I'm interested in booking a service. Can you provide more details?"
+                      imageUrl="/images/CTA!.jpg"
+                      buttonText="Book Now"
+                    />
     </div>
   );
 }
