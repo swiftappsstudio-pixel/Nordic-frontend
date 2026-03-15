@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import AddCategoryModal from "./add-category-modal";
 import { useAuth } from "@/app/_common/auth-context";
@@ -11,6 +12,7 @@ interface Category {
   _id: string;
   name: string;
   description: string;
+  image?: string;
   createdAt?: string;
 }
 
@@ -43,21 +45,24 @@ export default function CategoryPage() {
   }, []);
 
   // Add or Update category
-  const saveCategory = async (data: { name: string; description: string }) => {
+  const saveCategory = async (data: { name: string; description: string; imageFile?: File }) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("description", data.description);
+    if (data.imageFile) formData.append("image", data.imageFile);
+
     if (editCategory) {
-      // Update
       const res = await fetch(`${API_BASE_URL}/categories/${editCategory._id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
       });
       if (!res.ok) throw new Error("Failed to update category");
     } else {
-      // Add
       const res = await fetch(`${API_BASE_URL}/categories`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
       });
       if (!res.ok) throw new Error("Failed to create category");
     }
@@ -121,6 +126,9 @@ export default function CategoryPage() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                  Image
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Name
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
@@ -141,6 +149,23 @@ export default function CategoryPage() {
                   key={cat._id}
                   className="border-t hover:bg-gray-50 transition"
                 >
+                  <td className="px-4 py-3">
+                    {cat.image ? (
+                      <div className="relative w-12 h-12 rounded-md overflow-hidden">
+                        <Image
+                          src={cat.image}
+                          alt={cat.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+                        No img
+                      </div>
+                    )}
+                  </td>
+
                   <td className="px-4 py-3 font-medium text-gray-800">
                     {cat.name}
                   </td>
@@ -186,6 +211,7 @@ export default function CategoryPage() {
         <AddCategoryModal
           onSubmit={saveCategory}
           onCancel={() => { setShowModal(false); setEditCategory(null); }}
+          editData={editCategory ? { name: editCategory.name, description: editCategory.description, image: editCategory.image } : null}
         />
       )}
     </div>
