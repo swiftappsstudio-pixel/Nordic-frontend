@@ -1,5 +1,4 @@
 // api.ts
-
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 import {
   Service,
@@ -91,7 +90,9 @@ export const resendOTP = async (
 
 // =========================================== Password API CALLS ===========================================//
 
-export const forgotPassword = async (email: string): Promise<MessageResponse> => {
+export const forgotPassword = async (
+  email: string,
+): Promise<MessageResponse> => {
   const res = await fetch(`${API_BASE_URL}/users/forgot-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -107,9 +108,11 @@ export const forgotPassword = async (email: string): Promise<MessageResponse> =>
   return result;
 };
 
-export const resetPassword = async (
-  data: { email: string; otp: string; newPassword: string },
-): Promise<MessageResponse> => {
+export const resetPassword = async (data: {
+  email: string;
+  otp: string;
+  newPassword: string;
+}): Promise<MessageResponse> => {
   const res = await fetch(`${API_BASE_URL}/users/reset-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -221,10 +224,15 @@ export const getCategories = async (): Promise<Category[]> => {
   return data.data;
 };
 
-export const getServicesByCategory = async (categoryId: string): Promise<Service[]> => {
-  const res = await fetch(`${API_BASE_URL}/catalog/categories/${categoryId}/services`, {
-    cache: "no-store",
-  });
+export const getServicesByCategory = async (
+  categoryId: string,
+): Promise<Service[]> => {
+  const res = await fetch(
+    `${API_BASE_URL}/catalog/categories/${categoryId}/services`,
+    {
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) throw new Error("Failed to fetch services for category");
 
@@ -232,7 +240,9 @@ export const getServicesByCategory = async (categoryId: string): Promise<Service
   return data.data;
 };
 
-export const getServiceDetail = async (id: string): Promise<ServiceWithVariants> => {
+export const getServiceDetail = async (
+  id: string,
+): Promise<ServiceWithVariants> => {
   const res = await fetch(`${API_BASE_URL}/catalog/services/${id}`, {
     cache: "no-store",
   });
@@ -245,10 +255,16 @@ export const getServiceDetail = async (id: string): Promise<ServiceWithVariants>
 
 // =========================================== Slots API CALLS ===========================================//
 
-export const getAvailableSlots = async (serviceId: string, date: string): Promise<Slot[]> => {
-  const res = await fetch(`${API_BASE_URL}/slots/service/${serviceId}?date=${date}`, {
-    cache: "no-store",
-  });
+export const getAvailableSlots = async (
+  serviceId: string,
+  date: string,
+): Promise<Slot[]> => {
+  const res = await fetch(
+    `${API_BASE_URL}/slots/service/${serviceId}?date=${date}`,
+    {
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) throw new Error("Failed to fetch available slots");
 
@@ -262,7 +278,9 @@ export const createBooking = async (
   data: BookingRequest,
   token?: string,
 ): Promise<BookingResponse> => {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
   const res = await fetch(`${API_BASE_URL}/bookings`, {
@@ -278,7 +296,9 @@ export const createBooking = async (
   return result.data;
 };
 
-export const getMyBookings = async (token: string): Promise<BookingResponse[]> => {
+export const getMyBookings = async (
+  token: string,
+): Promise<BookingResponse[]> => {
   const res = await fetch(`${API_BASE_URL}/bookings/my`, {
     headers: { Authorization: `Bearer ${token}` },
   });
