@@ -298,6 +298,13 @@ export interface BookingRequest {
   guestInfo?: GuestInfo;
 }
 
+export interface CartItem {
+  serviceId: string;
+  title: string;
+  image?: string;
+  price: number;
+}
+
 export interface BookingResponse {
   _id: string;
   userId?: string;

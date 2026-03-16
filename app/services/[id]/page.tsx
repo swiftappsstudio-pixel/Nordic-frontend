@@ -15,6 +15,7 @@ export default function ServiceDetailPage() {
   const router = useRouter();
   const [service, setService] = useState<ServiceWithVariants | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [useBasePrice, setUseBasePrice] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>("benefits");
   const [loading, setLoading] = useState(true);
@@ -26,7 +27,12 @@ export default function ServiceDetailPage() {
         setService(data);
         const defaultVariant =
           data.variants?.find((v) => v.isDefault) || data.variants?.[0];
-        if (defaultVariant) setSelectedVariant(defaultVariant);
+        if (defaultVariant) {
+          setSelectedVariant(defaultVariant);
+        } else {
+          // No variants — base price is the only option, pre-select it
+          setUseBasePrice(true);
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -209,6 +215,114 @@ export default function ServiceDetailPage() {
               </div>
             </div>
 
+            {/* ====== Pricing / Package Selection ====== */}
+            {(service.discountPrice ?? service.actualPrice) != null || service.variants?.length ? (
+              <div>
+                <h3 className="font-semibold text-[#543826] mb-3">
+                  Select Package
+                </h3>
+                <div className="grid gap-3">
+                  {/* Base price option — always shown */}
+                  {(service.discountPrice ?? service.actualPrice) != null && (
+                    <button
+                      onClick={() => {
+                        setUseBasePrice(true);
+                        setSelectedVariant(null);
+                      }}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition ${
+                        useBasePrice || (!selectedVariant && !service.variants?.length)
+                          ? "border-orange-500 bg-orange-50"
+                          : "border-gray-200 bg-white hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-[#543826]">
+                            1 Session
+                          </p>
+                          <p className="text-gray-500 text-sm mt-1">
+                            Single session — pay per visit
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-orange-600 font-bold text-lg block">
+                            AED{" "}
+                            {(
+                              service.discountPrice ??
+                              service.actualPrice ??
+                              0
+                            ).toFixed(2)}
+                          </span>
+                          {service.actualPrice &&
+                            service.discountPrice &&
+                            service.discountPrice < service.actualPrice && (
+                              <span className="text-gray-400 line-through text-sm">
+                                AED {service.actualPrice.toFixed(2)}
+                              </span>
+                            )}
+                        </div>
+                      </div>
+                    </button>
+                  )}
+
+                  {/* Bundle variants */}
+                  {service.variants?.map((variant) => (
+                    <button
+                      key={variant._id}
+                      onClick={() => {
+                        setSelectedVariant(variant);
+                        setUseBasePrice(false);
+                      }}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition ${
+                        selectedVariant?._id === variant._id
+                          ? "border-orange-500 bg-orange-50"
+                          : "border-gray-200 bg-white hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-[#543826]">
+                            {variant.name}
+                          </p>
+                          {variant.description && (
+                            <p className="text-gray-500 text-sm mt-1">
+                              {variant.description}
+                            </p>
+                          )}
+                          <div className="flex gap-4 mt-2 text-xs text-gray-500">
+                            <span>{variant.sessions} sessions</span>
+                            {variant.freeSessions > 0 && (
+                              <span className="text-green-600">
+                                +{variant.freeSessions} free
+                              </span>
+                            )}
+                            <span>Valid {variant.validityInDays} days</span>
+                          </div>
+                        </div>
+                        <span className="text-orange-600 font-bold text-lg">
+                          AED {variant.price}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Book Now */}
+                <button
+                  onClick={() => {
+                    if (selectedVariant) {
+                      router.push(`/services/${id}/book?variant=${selectedVariant._id}`);
+                    } else {
+                      router.push(`/services/${id}/book`);
+                    }
+                  }}
+                  className="w-full mt-4 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-4 rounded-xl text-lg transition"
+                >
+                  Book Now
+                </button>
+              </div>
+            ) : null}
+
             {/* ====== Available Sub-Services ====== */}
             {subServices.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-100 p-5">
@@ -251,105 +365,6 @@ export default function ServiceDetailPage() {
               </div>
             )}
 
-            {/* ====== Variant Selection (if no sub-services) ====== */}
-            {subServices.length === 0 &&
-              service.variants &&
-              service.variants.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-[#543826] mb-3">
-                    Select Package
-                  </h3>
-                  <div className="grid gap-3">
-                    {service.variants.map((variant) => (
-                      <button
-                        key={variant._id}
-                        onClick={() => setSelectedVariant(variant)}
-                        className={`w-full text-left p-4 rounded-xl border-2 transition ${
-                          selectedVariant?._id === variant._id
-                            ? "border-orange-500 bg-orange-50"
-                            : "border-gray-200 bg-white hover:border-gray-300"
-                        }`}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-semibold text-[#543826]">
-                              {variant.name}
-                            </p>
-                            {variant.description && (
-                              <p className="text-gray-500 text-sm mt-1">
-                                {variant.description}
-                              </p>
-                            )}
-                            <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                              <span>{variant.sessions} sessions</span>
-                              {variant.freeSessions > 0 && (
-                                <span className="text-green-600">
-                                  +{variant.freeSessions} free
-                                </span>
-                              )}
-                              <span>Valid {variant.validityInDays} days</span>
-                            </div>
-                          </div>
-                          <span className="text-orange-600 font-bold text-lg">
-                            AED {variant.price}
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Book Now Button */}
-                  <button
-                    onClick={() => {
-                      if (selectedVariant) {
-                        router.push(
-                          `/services/${id}/book?variant=${selectedVariant._id}`
-                        );
-                      } else {
-                        router.push(`/services/${id}/book`);
-                      }
-                    }}
-                    className="w-full mt-4 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-4 rounded-xl text-lg transition"
-                  >
-                    Book Now
-                  </button>
-                </div>
-              )}
-
-            {/* ====== Base Price Only (no sub-services, no variants) ====== */}
-            {subServices.length === 0 &&
-              (!service.variants || service.variants.length === 0) && (
-                <div className="bg-white rounded-xl border border-gray-100 p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-gray-800 font-semibold">
-                      {service.title}
-                    </h3>
-                    <span className="text-orange-600 font-bold text-xl">
-                      AED{" "}
-                      {(
-                        service.discountPrice ??
-                        service.actualPrice ??
-                        0
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-                  {service.actualPrice &&
-                    service.discountPrice &&
-                    service.discountPrice < service.actualPrice && (
-                      <p className="text-sm text-gray-400 line-through mb-4">
-                        AED {service.actualPrice.toFixed(2)}
-                      </p>
-                    )}
-                  <button
-                    onClick={() => router.push(`/services/${id}/book`)}
-                    className="w-full bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-4 rounded-xl text-lg transition"
-                  >
-                    Book Now
-                  </button>
-                </div>
-                
-              )}
-              
           </div>
         
         </div>
