@@ -10,6 +10,7 @@ import { Service } from "@/app/_common/interfaces";
 import { CTASection } from "@/app/_components/cta-section";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
+import BrandSlider from "./_components/collobration-brands";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -149,11 +150,17 @@ export default function Home() {
       />
 
       {/* Testimonials */}
-      <section className="py-12 bg-gray-50">
-        <div className="grid gap-6">
+      <section className="py-2 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 text-center">
           <Testimonials />
         </div>
       </section>
+
+      <section className="py-2 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+<BrandSlider />
+          </div>
+        </section>
     </>
   );
 }

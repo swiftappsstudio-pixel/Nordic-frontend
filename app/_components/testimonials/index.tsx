@@ -68,7 +68,7 @@ export const Testimonials = () => {
         >
           {testimonialsData.map((item) => (
   <SwiperSlide key={item.id} className="h-auto ">
-  <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition h-50 flex flex-col">
+  <div className="bg-white m-2 p-6 rounded-2xl shadow-md hover:shadow-lg transition h-50 flex flex-col">
     
     <div className="flex items-center gap-4 mb-4">
       <Image
