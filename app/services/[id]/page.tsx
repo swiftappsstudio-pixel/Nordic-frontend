@@ -91,13 +91,13 @@ export default function ServiceDetailPage() {
           <div>
             {images.length > 0 ? (
               <>
-                <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-white shadow">
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-white shadow">
                   <Image
                     src={images[activeImage]}
                     alt={service.title}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    sizes="(max-width: 1024px) 50vw, 50vw"
                     unoptimized
                   />
                 </div>

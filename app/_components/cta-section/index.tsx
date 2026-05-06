@@ -39,7 +39,7 @@ export const CTASection: React.FC<CtaSectionProps> = ({
 
         <button
           onClick={handleClick}
-          className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition"
+          className="px-6 py-3 bg-[#593e30] text-white font-semibold rounded-lg hover:bg-[#593e30] transition"
         >
           {buttonText}
         </button>

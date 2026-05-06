@@ -69,3 +69,18 @@ body {
   width: 24px;
   border-radius: 4px;
 }
+
+
+
+
+
+
+@import "tailwindcss";
+
+/* Swiper Custom Styles */
+.swiper-button-prev,
+.swiper-button-next {
+  display: none !important;
+  
+}
+
