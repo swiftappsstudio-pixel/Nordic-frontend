@@ -1,6 +1,7 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",   // ⭐ IMPORTANT
   images: {
+    unoptimized: true, // ⭐ required for static hosting
     remotePatterns: [
       {
         protocol: "http",
