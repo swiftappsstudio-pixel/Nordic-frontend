@@ -14,6 +14,7 @@ import {
   Slot,
   BookingRequest,
   BookingResponse,
+  DashboardStats,
 } from "@/app/_common/interfaces";
 
 // =========================================== Auth API CALLS ===========================================//
@@ -307,4 +308,41 @@ export const getMyBookings = async (
 
   const data = await res.json();
   return data.data;
+};
+
+// =========================================== Admin Booking API CALLS ===========================================//
+
+export const getAdminBookings = async (
+  token: string,
+): Promise<BookingResponse[]> => {
+  const res = await fetch(`${API_BASE_URL}/admin/bookings?limit=100`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to fetch bookings");
+  }
+
+  // Admin endpoint responds with { success, data, pagination }
+  return result.data;
+};
+
+export const getAdminDashboardStats = async (
+  token: string,
+): Promise<DashboardStats> => {
+  const res = await fetch(`${API_BASE_URL}/admin/stats`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to fetch dashboard stats");
+  }
+
+  return result.data;
 };

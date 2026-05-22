@@ -295,6 +295,7 @@ export interface BookingRequest {
   preferredTime?: string;
   variantId?: string;
   slotId?: string;
+  subServiceName?: string;
   guestInfo?: GuestInfo;
 }
 
@@ -324,6 +325,10 @@ export interface BookingResponse {
     freeSessions: number;
     validityInDays: number;
   } | null;
+  subServiceSnapshot?: {
+    name: string;
+    price: number;
+  } | null;
   slotId?: {
     _id: string;
     date: string;
@@ -343,6 +348,18 @@ export interface BookingResponse {
 
 export interface ServiceWithVariants extends Service {
   variants: Variant[];
+}
+
+// ============================================================================
+// ADMIN DASHBOARD INTERFACES
+// ============================================================================
+
+export interface DashboardStats {
+  totalUsers: number;
+  totalBookings: number;
+  pendingPayments: number;
+  totalRevenue: number;
+  recentBookings: BookingResponse[];
 }
 
 

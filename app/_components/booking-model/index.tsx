@@ -2,31 +2,39 @@
 
 import { useState } from "react";
 import { useAuth } from "@/app/_common/auth-context";
+import { createBooking } from "@/app/_common/api";
+import { BookingRequest } from "@/app/_common/interfaces";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  serviceId: string;
   serviceName: string;
   price: number;
+  /** Set when the customer picked a sub-service pricing tier instead of the base service */
+  subServiceName?: string;
 }
 
 const BookingModal: React.FC<Props> = ({
   isOpen,
   onClose,
+  serviceId,
   serviceName,
   price,
+  subServiceName,
 }) => {
   const { user, token } = useAuth();
 
   const [customerName, setCustomerName] = useState("");
   const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   if (!isOpen) return null;
+
+  const isGuest = !token;
 
   const handleConfirm = async () => {
     if (!date || !time) {
@@ -34,43 +42,46 @@ const BookingModal: React.FC<Props> = ({
       return;
     }
 
-    const payload = {
-      customerName: customerName || user?.name || "",
-      email: email || user?.email || "",
-      serviceName,
-      price,
-      address,
-      date,
-      time,
-      paymentMethod,
-      phoneNumber: phoneNumber || user?.phone || "",
+    // Guest bookings require name, email and phone (the API rejects them otherwise)
+    const fullName = customerName || user?.name || "";
+    const guestEmail = email || user?.email || "";
+    const guestPhone = phoneNumber || user?.phone || "";
+
+    if (isGuest && (!fullName || !guestEmail || !guestPhone)) {
+      alert("Please enter your name, email and phone number");
+      return;
+    }
+
+    const payload: BookingRequest = {
+      serviceId,
+      preferredDate: date,
+      preferredTime: time,
     };
 
-    try {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
+    // Sub-service pricing tier, when one was selected
+    if (subServiceName) {
+      payload.subServiceName = subServiceName;
+    }
+
+    // Only guests send guestInfo — logged-in users are identified by their token
+    if (isGuest) {
+      payload.guestInfo = {
+        fullName,
+        email: guestEmail,
+        phone: guestPhone,
       };
+    }
 
-      // Send auth token if user is logged in
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to create order");
-      }
-
+    try {
+      setSubmitting(true);
+      await createBooking(payload, token || undefined);
       alert("Booking confirmed!");
       onClose();
     } catch (error) {
       console.error(error);
-      alert("Booking failed");
+      alert(error instanceof Error ? error.message : "Booking failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -85,48 +96,41 @@ const BookingModal: React.FC<Props> = ({
         </button>
 
         <p className="mb-2 font-medium text-black">{serviceName}</p>
-        <p className="mb-4 text-amber-700 font-semibold">
-          AED {price}
-        </p>
+        <p className="mb-4 text-amber-700 font-semibold">AED {price}</p>
 
-        {/* Name */}
-        <label className="block text-sm mb-1 text-black">Name</label>
-        <input
-          type="text"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-          placeholder={user?.name || "Enter your name"}
-          className="w-full border rounded-md text-black p-2 mb-4"
-        />
+        {/* Guest contact fields — only shown when not logged in */}
+        {isGuest && (
+          <>
+            <label className="block text-sm mb-1 text-black">Name</label>
+            <input
+              type="text"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              placeholder="Enter your name"
+              className="w-full border rounded-md text-black p-2 mb-4"
+            />
 
-        {/* Email */}
-        <label className="block text-sm mb-1 text-black">Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder={user?.email || "Enter your email"}
-          className="w-full border rounded-md text-black p-2 mb-4"
-        />
+            <label className="block text-sm mb-1 text-black">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="w-full border rounded-md text-black p-2 mb-4"
+            />
 
-        {/* Address */}
-        <label className="block text-sm mb-1 text-black">Address</label>
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          className="w-full border rounded-md text-black p-2 mb-4"
-        />
-
-        {/* Phone Number */}
-        <label className="block text-sm mb-1 text-black">Phone Number</label>
-        <input
-          type="text"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          placeholder={user?.phone || "Enter phone number"}
-          className="w-full border rounded-md text-black p-2 mb-4"
-        />
+            <label className="block text-sm mb-1 text-black">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="Enter phone number"
+              className="w-full border rounded-md text-black p-2 mb-4"
+            />
+          </>
+        )}
 
         {/* Date */}
         <label className="block text-sm mb-1 text-black">Preferred Date</label>
@@ -146,23 +150,16 @@ const BookingModal: React.FC<Props> = ({
           className="w-full border text-black rounded-md p-2 mb-4"
         />
 
-        {/* Payment */}
-        <label className="block text-sm mb-1 text-black">Payment Method</label>
-        <select
-          value={paymentMethod}
-          onChange={(e) => setPaymentMethod(e.target.value)}
-          className="w-full border rounded-md text-black p-2 mb-6"
-        >
-          <option value="cash">Cash</option>
-          <option value="card">Card</option>
-          <option value="online">Online</option>
-        </select>
+        <p className="text-sm text-gray-500 mb-6">
+          Payment Method: <strong>Cash on Delivery</strong>
+        </p>
 
         <button
           onClick={handleConfirm}
-          className="w-full bg-amber-700 hover:bg-amber-800 text-white py-3 rounded-md"
+          disabled={submitting}
+          className="w-full bg-amber-700 hover:bg-amber-800 disabled:opacity-60 text-white py-3 rounded-md"
         >
-          Confirm Booking
+          {submitting ? "Booking..." : "Confirm Booking"}
         </button>
       </div>
     </div>
