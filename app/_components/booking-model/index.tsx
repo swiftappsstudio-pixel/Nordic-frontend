@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_common/auth-context";
-import { createBooking } from "@/app/_common/api";
-import { BookingRequest } from "@/app/_common/interfaces";
+import { createBooking, getAddOnsByService } from "@/app/_common/api";
+import { AddOn, BookingRequest } from "@/app/_common/interfaces";
 
 interface Props {
   isOpen: boolean;
@@ -32,9 +32,62 @@ const BookingModal: React.FC<Props> = ({
   const [time, setTime] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // Add-ons for this service only
+  const [addOns, setAddOns] = useState<AddOn[]>([]);
+  const [selectedAddOnIds, setSelectedAddOnIds] = useState<Set<string>>(
+    new Set()
+  );
+  const [loadingAddOns, setLoadingAddOns] = useState(false);
+
+  // Fetch this service's add-ons when the modal opens
+  useEffect(() => {
+    if (!isOpen || !serviceId) return;
+
+    let cancelled = false;
+    setLoadingAddOns(true);
+
+    getAddOnsByService(serviceId)
+      .then((list) => {
+        if (cancelled) return;
+        setAddOns(list);
+        // Pre-select any required add-ons so the customer can't skip them
+        const required = new Set(
+          list.filter((a) => a.isRequired).map((a) => a._id)
+        );
+        setSelectedAddOnIds(required);
+      })
+      .catch((err) => {
+        console.error("Failed to load add-ons", err);
+        if (!cancelled) setAddOns([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingAddOns(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, serviceId]);
+
   if (!isOpen) return null;
 
   const isGuest = !token;
+
+  const toggleAddOn = (id: string, isRequired: boolean) => {
+    if (isRequired) return; // can't deselect required add-ons
+    setSelectedAddOnIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const addOnsTotal = addOns
+    .filter((a) => selectedAddOnIds.has(a._id))
+    .reduce((sum, a) => sum + a.price, 0);
+
+  const grandTotal = price + addOnsTotal;
 
   const handleConfirm = async () => {
     if (!date || !time) {
@@ -58,12 +111,14 @@ const BookingModal: React.FC<Props> = ({
       preferredTime: time,
     };
 
-    // Sub-service pricing tier, when one was selected
     if (subServiceName) {
       payload.subServiceName = subServiceName;
     }
 
-    // Only guests send guestInfo — logged-in users are identified by their token
+    if (selectedAddOnIds.size > 0) {
+      payload.addOnIds = Array.from(selectedAddOnIds);
+    }
+
     if (isGuest) {
       payload.guestInfo = {
         fullName,
@@ -86,8 +141,8 @@ const BookingModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-md rounded-xl p-6 relative">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-y-auto py-8">
+      <div className="bg-white w-full max-w-md rounded-xl p-6 relative my-auto">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 text-gray-500"
@@ -149,6 +204,68 @@ const BookingModal: React.FC<Props> = ({
           onChange={(e) => setTime(e.target.value)}
           className="w-full border text-black rounded-md p-2 mb-4"
         />
+
+        {/* Add-ons specific to this service */}
+        {loadingAddOns && (
+          <p className="text-xs text-gray-400 mb-4">Loading add-ons…</p>
+        )}
+
+        {!loadingAddOns && addOns.length > 0 && (
+          <div className="mb-4">
+            <label className="block text-sm mb-2 text-black font-medium">
+              Add-ons
+            </label>
+            <div className="space-y-2">
+              {addOns.map((a) => {
+                const checked = selectedAddOnIds.has(a._id);
+                return (
+                  <label
+                    key={a._id}
+                    className={`flex items-start justify-between gap-2 border rounded-md p-2 cursor-pointer ${
+                      checked ? "border-amber-700 bg-amber-50" : "border-gray-200"
+                    } ${a.isRequired ? "opacity-90" : ""}`}
+                  >
+                    <div className="flex items-start gap-2 flex-1">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        disabled={a.isRequired}
+                        onChange={() => toggleAddOn(a._id, a.isRequired)}
+                        className="mt-1"
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-black">
+                          {a.name}
+                          {a.isRequired && (
+                            <span className="ml-2 text-xs text-red-600">
+                              Required
+                            </span>
+                          )}
+                        </p>
+                        {a.description && (
+                          <p className="text-xs text-gray-500">
+                            {a.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-sm font-semibold text-amber-700 whitespace-nowrap">
+                      + AED {a.price}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Total */}
+        <div className="flex items-center justify-between mb-4 pt-3 border-t border-gray-200">
+          <span className="text-sm text-gray-600">Total</span>
+          <span className="text-lg font-bold text-amber-700">
+            AED {grandTotal}
+          </span>
+        </div>
 
         <p className="text-sm text-gray-500 mb-6">
           Payment Method: <strong>Cash on Delivery</strong>

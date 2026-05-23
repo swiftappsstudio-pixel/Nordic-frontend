@@ -296,7 +296,19 @@ export interface BookingRequest {
   variantId?: string;
   slotId?: string;
   subServiceName?: string;
+  addOnIds?: string[];
   guestInfo?: GuestInfo;
+}
+
+export interface AddOn {
+  _id: string;
+  serviceId: string;
+  name: string;
+  description?: string;
+  price: number;
+  isRequired: boolean;
+  isActive: boolean;
+  sortOrder?: number;
 }
 
 export interface CartItem {
@@ -329,6 +341,11 @@ export interface BookingResponse {
     name: string;
     price: number;
   } | null;
+  addOnsSnapshot?: {
+    addOnId: string;
+    name: string;
+    price: number;
+  }[];
   slotId?: {
     _id: string;
     date: string;

@@ -15,6 +15,7 @@ import {
   BookingRequest,
   BookingResponse,
   DashboardStats,
+  AddOn,
 } from "@/app/_common/interfaces";
 
 // =========================================== Auth API CALLS ===========================================//
@@ -327,6 +328,19 @@ export const getAdminBookings = async (
   }
 
   // Admin endpoint responds with { success, data, pagination }
+  return result.data;
+};
+
+// =========================================== Add-on API CALLS ===========================================//
+
+export const getAddOnsByService = async (serviceId: string): Promise<AddOn[]> => {
+  const res = await fetch(`${API_BASE_URL}/addons/service/${serviceId}`, {
+    cache: "no-store",
+  });
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to fetch add-ons");
+  }
   return result.data;
 };
 
