@@ -295,7 +295,20 @@ export interface BookingRequest {
   preferredTime?: string;
   variantId?: string;
   slotId?: string;
+  subServiceName?: string;
+  addOnIds?: string[];
   guestInfo?: GuestInfo;
+}
+
+export interface AddOn {
+  _id: string;
+  serviceId: string;
+  name: string;
+  description?: string;
+  price: number;
+  isRequired: boolean;
+  isActive: boolean;
+  sortOrder?: number;
 }
 
 export interface CartItem {
@@ -324,6 +337,15 @@ export interface BookingResponse {
     freeSessions: number;
     validityInDays: number;
   } | null;
+  subServiceSnapshot?: {
+    name: string;
+    price: number;
+  } | null;
+  addOnsSnapshot?: {
+    addOnId: string;
+    name: string;
+    price: number;
+  }[];
   slotId?: {
     _id: string;
     date: string;
@@ -343,6 +365,18 @@ export interface BookingResponse {
 
 export interface ServiceWithVariants extends Service {
   variants: Variant[];
+}
+
+// ============================================================================
+// ADMIN DASHBOARD INTERFACES
+// ============================================================================
+
+export interface DashboardStats {
+  totalUsers: number;
+  totalBookings: number;
+  pendingPayments: number;
+  totalRevenue: number;
+  recentBookings: BookingResponse[];
 }
 
 
