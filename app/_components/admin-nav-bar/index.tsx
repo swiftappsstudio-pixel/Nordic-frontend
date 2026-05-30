@@ -11,6 +11,7 @@ export  const AdminNavBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const getPageTitle = () => {
+    if (pathname.startsWith("/admin/bookings")) return "Bookings";
     if (pathname.startsWith("/admin/categories")) return "Categories";
     if (pathname.startsWith("/admin/services")) return "Services";
     return "Admin";

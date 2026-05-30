@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 
 const SOCIAL_LINKS = [
@@ -21,6 +22,10 @@ const SOCIAL_LINKS = [
 ];
 
 export const SocialSidebar = () => {
+  const pathname = usePathname();
+
+  if (pathname !== "/") return null;
+
   return (
     <aside className="hidden xl:block fixed right-4 top-1/2 -translate-y-1/2 z-40">
       <div className="flex flex-col gap-3 bg-white border border-gray-200 rounded-2xl shadow-md py-4 px-2">
