@@ -1,4 +1,3 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   // `output: "export"` was removed — static export requires every dynamic route
   // (e.g. /services/[id]) to enumerate its IDs at build time via
@@ -15,11 +14,7 @@ const nextConfig = {
         hostname: "papayawhip-leopard-118040.hostingersite.com",
         pathname: "/uploads/**",
       },
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-        pathname: "/**",
-      },
+      
     ],
   },
 };

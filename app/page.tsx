@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import ServiceCard from "@/app/_components/service-card";
-import { getServices, getFeaturedServices } from "./_common/api";
-import { Service } from "@/app/_common/interfaces";
+import { getFeaturedServices, getCategories, getServicesByCategory } from "./_common/api";
+import { Service, Category } from "@/app/_common/interfaces";
 import { CTASection } from "@/app/_components/cta-section";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -16,9 +16,14 @@ import "swiper/css/pagination";
 import { Testimonials } from "./_components/testimonials";
 
 export default function Home() {
-  const [services, setServices] = useState<Service[]>([]);
   const [featuredServices, setFeaturedServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categoryServices, setCategoryServices] = useState<Service[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoryServicesLoading, setCategoryServicesLoading] = useState(false);
+
+  const [featuredServicesLoading, setFeaturedServicesLoading] = useState(true);
 
   // const slides = [
   //   "/images/hero banner 3.png",
@@ -29,29 +34,77 @@ export default function Home() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [servicesData, featured] = await Promise.all([
-          getServices(),
+        setFeaturedServicesLoading(true);
+        const [featured] = await Promise.all([
           getFeaturedServices(),
         ]);
-        setServices(servicesData);
         setFeaturedServices(featured);
       } catch (err: unknown) {
         console.error("Fetch error:", err);
-        setServices([]);
         setFeaturedServices([]);
       } finally {
-        setLoading(false);
+        setFeaturedServicesLoading(false);
       }
     };
 
     loadData();
   }, []);
 
+  // Fetch categories on mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await getCategories();
+        const activeCategories = data.filter((cat) => cat.isActive);
+        setCategories(activeCategories);
+        if (activeCategories.length > 0) {
+          setSelectedCategory(activeCategories[0].name);
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+        setCategories([]);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // Fetch services when a category is selected
+  useEffect(() => {
+    if (!selectedCategory) return;
+
+    const loadCategoryServices = async () => {
+      setCategoryServicesLoading(true);
+      try {
+        const cat = categories.find((c) => c.name === selectedCategory);
+        if (!cat) {
+          setCategoryServices([]);
+          return;
+        }
+        const data = await getServicesByCategory(cat._id);
+        setCategoryServices(data);
+      } catch (err) {
+        console.error("Failed to fetch services for category:", err);
+        setCategoryServices([]);
+      } finally {
+        setCategoryServicesLoading(false);
+      }
+    };
+
+    loadCategoryServices();
+  }, [selectedCategory, categories]);
+
   return (
     <>
       {/* ==================== HERO SLIDER ==================== */}
       <section className="relative h-screen w-full">
-        {featuredServices.length > 0 ? (
+        {featuredServicesLoading ? (
+          <div className="flex items-center justify-center h-full bg-[#543826]">
+            <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+          </div>
+        ) : featuredServices.length > 0 ? (
           <Swiper
             modules={[Autoplay, Pagination]}
             autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -118,15 +171,35 @@ export default function Home() {
       <section className="max-w-6xl mx-auto py-10 px-5 md:px-0">
         <h2 className="text-2xl font-bold mb-6">Our Services</h2>
 
-        {loading && <p className="text-gray-500">Loading services...</p>}
-
-        {!loading && services.length === 0 && (
-          <p className="text-gray-500">No services available.</p>
+        {/* Category Tabs */}
+        {!categoriesLoading && categories.length > 0 && (
+          <div className="flex flex-wrap gap-3 mb-6">
+            {categories.map((cat) => (
+              <button
+                key={cat._id}
+                onClick={() => setSelectedCategory(cat.name)}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === cat.name
+                    ? "bg-[#543826] text-white"
+                    : "bg-[#F4F4F4] text-[#543826] hover:bg-[#e5e5e5]"
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
         )}
 
-        {!loading && services.length > 0 && (
+        {/* Services Grid for Selected Category */}
+        {categoryServicesLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="w-10 h-10 border-4 border-[#543826]/30 border-t-[#543826] rounded-full animate-spin" />
+          </div>
+        ) : categoryServices.length === 0 ? (
+          <p className="text-gray-500">No services available in this category.</p>
+        ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {services.map((service) => (
+            {categoryServices.map((service) => (
               <ServiceCard
                 key={service._id}
                 id={service._id}

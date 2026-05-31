@@ -6,12 +6,13 @@ import React from "react";
 import { MdOutlineMiscellaneousServices } from "react-icons/md";
 import { BiCategoryAlt } from "react-icons/bi";
 import {BiShoppingBag} from "react-icons/bi";
+import { BiCalendar } from "react-icons/bi";
 
 export const AdminSideBar = () => {
   const pathname = usePathname();
 
   const links = [
-     {
+    {
       href: "/admin/orders",
       label: "Orders",
       icon: <BiShoppingBag className="h-7 w-7 mr-2" />,
@@ -25,6 +26,11 @@ export const AdminSideBar = () => {
       href: "/admin/services",
       label: "Services",
       icon: <MdOutlineMiscellaneousServices className="h-7 w-7 mr-2" />,
+    },
+    {
+      href: "/admin/bookings",
+      label: "Bookings",
+      icon: <BiCalendar className="h-7 w-7 mr-2" />,
     },
   ];
 

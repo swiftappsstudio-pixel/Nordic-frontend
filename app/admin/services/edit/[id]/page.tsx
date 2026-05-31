@@ -1,13 +1,14 @@
-"use client";
-import { useParams } from "next/navigation";
-import { ServiceForm } from "@/app/_components/service-form";
+import EditServicePage from "./page-client";
 
-export default function EditServicePage() {
-  const params = useParams();
+export async function generateStaticParams() {
+  return [
+    { id: "1" },
+    { id: "2" },
+    { id: "3" },
+  ];
+}
 
-  return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <ServiceForm mode="edit" serviceId={params.id as string} />
-    </div>
-  );
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <EditServicePage id={id} />;
 }

@@ -16,6 +16,7 @@ import {
   BookingResponse,
   DashboardStats,
   AddOn,
+  GuestInfo,
 } from "@/app/_common/interfaces";
 
 // =========================================== Auth API CALLS ===========================================//
@@ -327,7 +328,97 @@ export const getAdminBookings = async (
     throw new Error(result.message || "Failed to fetch bookings");
   }
 
-  // Admin endpoint responds with { success, data, pagination }
+  return result.data;
+};
+
+export const getAdminBookingsByDateRange = async (
+  token: string,
+  startDate: string,
+  endDate: string,
+): Promise<BookingResponse[]> => {
+  const res = await fetch(
+    `${API_BASE_URL}/admin/bookings/calendar?startDate=${startDate}&endDate=${endDate}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    },
+  );
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to fetch bookings by date range");
+  }
+
+  return result.data;
+};
+
+export const adminCreateBooking = async (
+  token: string,
+  data: BookingRequest & { guestInfo: GuestInfo },
+): Promise<BookingResponse> => {
+  const res = await fetch(`${API_BASE_URL}/admin/bookings`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to create booking");
+  }
+
+  return result.data;
+};
+
+export const adminRescheduleBooking = async (
+  token: string,
+  bookingId: string,
+  preferredDate: string,
+  preferredTime: string,
+): Promise<BookingResponse> => {
+  const res = await fetch(`${API_BASE_URL}/admin/bookings/${bookingId}/reschedule`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ preferredDate, preferredTime }),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to reschedule booking");
+  }
+
+  return result.data;
+};
+
+export const adminUpdateBookingStatus = async (
+  token: string,
+  bookingId: string,
+  status: "confirmed" | "cancelled" | "completed",
+): Promise<BookingResponse> => {
+  const res = await fetch(`${API_BASE_URL}/admin/bookings/${bookingId}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to update booking status");
+  }
+
   return result.data;
 };
 
