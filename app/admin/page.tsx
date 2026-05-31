@@ -6,7 +6,7 @@ import { useAuth } from "@/app/_common/auth-context";
 import { getAdminDashboardStats } from "@/app/_common/api";
 import { DashboardStats } from "@/app/_common/interfaces";
 
-/* -------------------- HELPERS -------------------- */
+/* -------------------- HELPERS ------------------- */
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -54,7 +54,11 @@ export default function AdminDashboard() {
   const cardStats = stats
     ? [
         { label: "Total Users", color: "#041F54", value: stats.totalUsers },
-        { label: "Total Bookings", color: "#239800", value: stats.totalBookings },
+        {
+          label: "Total Bookings",
+          color: "#239800",
+          value: stats.totalBookings,
+        },
         {
           label: "Pending Payments",
           color: "#9000FF",
@@ -147,9 +151,7 @@ export default function AdminDashboard() {
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-center">
-                    AED {b.totalAmount}
-                  </td>
+                  <td className="px-6 py-4 text-center">AED {b.totalAmount}</td>
                   <td className="px-6 py-4 text-center">
                     {formatDate(b.createdAt)}
                   </td>
