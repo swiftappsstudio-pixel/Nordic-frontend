@@ -129,7 +129,11 @@ const BookingModal: React.FC<Props> = ({
 
     try {
       setSubmitting(true);
-      await createBooking(payload, token || undefined);
+      const result = await createBooking(payload, token || undefined);
+      const msg = encodeURIComponent(
+        `New Booking Confirmed!\n\nBooking ID: ${result._id}\nService: ${serviceId}\nDate: ${date}\nTime: ${time}\n${isGuest ? `Guest: ${fullName} | ${guestPhone} | ${guestEmail}` : ""}`
+      );
+      window.open(`https://wa.me/923414415384?text=${msg}`, "_blank");
       alert("Booking confirmed!");
       onClose();
     } catch (error) {

@@ -201,7 +201,7 @@ export default function ServiceDetailPage({ id }: Props) {
               </div>
             </div>
 
-            {(service.discountPrice ?? service.actualPrice) != null || service.variants?.length ? (
+            {!(service.category === "IV Therapy") && ((service.discountPrice ?? service.actualPrice) != null || service.variants?.length) ? (
               <div>
                 <h3 className="font-semibold text-[#543826] mb-3">Select Package</h3>
                 <div className="grid gap-3">
@@ -240,11 +240,17 @@ export default function ServiceDetailPage({ id }: Props) {
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="font-semibold text-[#543826]">{variant.name}</p>
+                          <p className="font-semibold text-[#543826]">
+                            {variant.name.split(/(Get \d+ Free)/i).map((part, i) =>
+                              /Get \d+ Free/i.test(part)
+                                ? <span key={i} className="font-bold underline text-[#543826]">{part}</span>
+                                : part
+                            )}
+                          </p>
                           {variant.description && <p className="text-gray-500 text-sm mt-1">{variant.description}</p>}
                           <div className="flex gap-4 mt-2 text-xs text-gray-500">
                             <span>{variant.sessions} sessions</span>
-                            {variant.freeSessions > 0 && <span className="text-green-600">+{variant.freeSessions} free</span>}
+                            {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}
                             <span>Valid {variant.validityInDays} days</span>
                           </div>
                         </div>

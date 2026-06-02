@@ -53,7 +53,7 @@ function BookingContent({ id }: Props) {
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
-  const [guestInfo, setGuestInfo] = useState<GuestInfo>({ fullName: "", email: "", phone: "", gender: undefined, dateOfBirth: "" });
+  const [guestInfo, setGuestInfo] = useState<GuestInfo>({ fullName: "", email: "", phone: "" });
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [bookingError, setBookingError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -88,7 +88,7 @@ function BookingContent({ id }: Props) {
 
   useEffect(() => {
     if (user) {
-      setGuestInfo({ fullName: user.name || "", email: user.email || "", phone: user.phone || "", gender: undefined, dateOfBirth: "" });
+      setGuestInfo({ fullName: user.name || "", email: user.email || "", phone: user.phone || "" });
     }
   }, [user]);
 
@@ -159,7 +159,24 @@ function BookingContent({ id }: Props) {
               <div className="flex justify-between text-sm"><span className="text-gray-500">Amount</span><span className="font-bold text-orange-600">AED {booking.totalAmount}</span></div>
               <div className="flex justify-between text-sm"><span className="text-gray-500">Status</span><span className="text-green-600 font-medium capitalize">{booking.status}</span></div>
             </div>
-            <button onClick={() => router.push("/")} className="w-full bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-4 rounded-xl text-lg transition">Back to Home</button>
+            <button
+              onClick={() => {
+                const msg = encodeURIComponent(
+                  `New Booking Confirmed!\n\nBooking ID: ${booking._id}\nService: ${booking.serviceSnapshot?.title}\n${booking.variantSnapshot ? `Package: ${booking.variantSnapshot.name}\n` : ""}Date: ${booking.preferredDate}\nTime: ${booking.preferredTime}\nAmount: AED ${booking.totalAmount}\nStatus: ${booking.status}\n${booking.guestInfo ? `Guest: ${booking.guestInfo.fullName} | ${booking.guestInfo.phone} | ${booking.guestInfo.email}` : ""}`
+                );
+                window.open(`https://wa.me/923414415384?text=${msg}`, "_blank");
+              }}
+              className="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1eb954] text-white font-brand font-semibold py-5 rounded-xl text-lg transition-all duration-300 hover:shadow-lg"
+            >
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/>
+              </svg>
+              Send Booking Receipt via WhatsApp
+            </button>
+
+            <p className="text-xs text-gray-400 mt-4 font-brand">
+              Share your booking details with us on WhatsApp for quick follow-up
+            </p>
           </div>
         </div>
       </div>
@@ -292,10 +309,7 @@ function BookingContent({ id }: Props) {
                     <div><label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label><input type="text" value={guestInfo.fullName} onChange={(e) => setGuestInfo({ ...guestInfo, fullName: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="Enter your full name" /></div>
                     <div><label className="block text-sm font-medium text-gray-700 mb-1">Email *</label><input type="email" value={guestInfo.email} onChange={(e) => setGuestInfo({ ...guestInfo, email: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="Enter your email" /></div>
                     <div><label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label><input type="tel" value={guestInfo.phone} onChange={(e) => setGuestInfo({ ...guestInfo, phone: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="+971 XX XXX XXXX" /></div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div><label className="block text-sm font-medium text-gray-700 mb-1">Gender</label><select value={guestInfo.gender || ""} onChange={(e) => setGuestInfo({ ...guestInfo, gender: e.target.value as GuestInfo["gender"] })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></div>
-                      <div><label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label><input type="date" value={guestInfo.dateOfBirth || ""} onChange={(e) => setGuestInfo({ ...guestInfo, dateOfBirth: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" /></div>
-                    </div>
+                    
                   </div>
                 </div>
               )}
