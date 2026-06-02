@@ -1,113 +1,101 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
-import { FiPhone } from "react-icons/fi";
+import { getServices } from "@/app/_common/api";
+import { Service } from "@/app/_common/interfaces";
 
 export default function Footer() {
+  const [services, setServices] = useState<Service[]>([]);
+
+  useEffect(() => {
+    getServices()
+      .then((data) => setServices(data.slice(0, 6)))
+      .catch(() => setServices([]));
+  }, []);
+
   return (
-    <footer className="bg-[#5b3c2a] text-white pt-16 pb-6 relative">
+    <footer className="bg-[#543826] text-white pt-12 pb-6">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-10 mb-10">
+          <div className="flex flex-col items-center md:items-start">
+            <Image
+              src="/images/logo.jpeg"
+              width={90}
+              height={38}
+              alt="Nordic"
+              unoptimized
+              className="mb-4 rounded-full"
+            />
+            <p className="font-brand text-sm text-white/50 max-w-xs text-center md:text-left">
+              UAE&apos;s fastest growing home healthcare platform
+            </p>
+          </div>
 
-      {/* Main Section */}
-      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12">
-
-        {/* Column 1 – Services */}
-        <div>
-          <h3 className="text-xl  font-semibold mb-4">Services</h3>
-          <ul className="space-y-2 text-[#e6d9d0]">
-            <li>Nursing</li>
-            <li>Physiotherapy</li>
-            <li>Laboratory Test</li>
-            <li>IV Therapy</li>
-            <li>Doctor On Call</li>
-            <li>Create Your Own Test</li>
-          </ul>
-        </div>
-
-        {/* Column 2 – Contact Us */}
-        <div>
-          <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
-          <div className="space-y-3 text-[#e6d9d0]">
-            <div className="flex items-center gap-3">
-              <FaWhatsapp className="text-lg" />
-              <span>+971 58 164 9910</span>
+          <div className="flex flex-wrap justify-center md:justify-start gap-x-10 gap-y-4">
+            <div>
+              <h4 className="font-brand font-semibold text-sm mb-3 text-white/80">Services</h4>
+              <ul className="space-y-2 text-sm text-white/50">
+                {services.map((s) => (
+                  <li key={s._id}>
+                    <Link href={`/services/${s._id}`} className="hover:text-white transition">
+                      {s.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div className="flex items-center gap-3">
-              <FiPhone className="text-lg" />
-              <span>+971 58 624 1964</span>
+
+            <div>
+              <h4 className="font-brand font-semibold text-sm mb-3 text-white/80">Company</h4>
+              <ul className="space-y-2 text-sm text-white/50">
+                <li><Link href="/about" className="hover:text-white transition">About Us</Link></li>
+                <li><Link href="/blog" className="hover:text-white transition">Blogs</Link></li>
+                <li><Link href="/offers" className="hover:text-white transition">Offers</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center md:items-end">
+            <h4 className="font-brand font-semibold text-sm mb-3 text-white/80">Contact Us</h4>
+            <div className="space-y-2 text-sm text-white/50">
+              <a href="https://wa.me/971581649910" target="_blank" className="flex items-center gap-2 hover:text-white transition">
+                <FaWhatsapp className="text-base" />
+                +971 58 164 9910
+              </a>
+              <a href="tel:+971586241964" className="flex items-center gap-2 hover:text-white transition">
+                <FaWhatsapp className="text-base" />
+                +971 58 624 1964
+              </a>
+            </div>
+
+            <div className="flex gap-3 mt-5">
+              <a href="#" className="w-9 h-9 bg-white/10 hover:bg-white rounded-full flex items-center justify-center transition">
+                <FaFacebookF className="text-sm text-white" />
+              </a>
+              <a href="#" className="w-9 h-9 bg-white/10 hover:bg-white rounded-full flex items-center justify-center transition">
+                <FaLinkedinIn className="text-sm text-white" />
+              </a>
+              <a href="#" className="w-9 h-9 bg-white/10 hover:bg-white rounded-full flex items-center justify-center transition">
+                <FaInstagram className="text-sm text-white" />
+              </a>
             </div>
           </div>
         </div>
 
-        {/* Column 3 – Logo and Location */}
-        <div className="text-center md:text-right">
-          <Image
-            src="https://nordichc.com/wp-content/uploads/2025/04/Horizental-Original-Logo-resized.png"
-            width={180}
-            height={80}
-            alt="Nordic Home Healthcare"
-            unoptimized
-            className="mx-auto md:ml-auto"
-          />
+        <div className="border-t border-white/10" />
 
-          <p className="text-lg font-semibold mt-2">
-            Located in: Dubai Real Estate Center
-          </p>
-
-          <button className="mt-4 px-6 py-2 bg-[#d6c5b8] text-[#5b3c2a] rounded-full font-semibold">
-            Get Directions!
-          </button>
-
-          {/* Social Icons */}
-          <div className="flex justify-center md:justify-end mt-5 gap-4">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <FaFacebookF className="text-[#5b3c2a] text-xl" />
-            </div>
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <FaLinkedinIn className="text-[#5b3c2a] text-xl" />
-            </div>
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <FaInstagram className="text-[#5b3c2a] text-xl" />
-            </div>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-2 pt-6 text-xs text-white/40">
+          <p>&copy; 2025 Nordic Home Health Care Center &ndash; All Rights Reserved</p>
+          <p>DHA License No.: 3171506</p>
+          <div className="flex gap-4">
+            <Link href="#" className="hover:text-white transition">Terms &amp; Conditions</Link>
+            <Link href="#" className="hover:text-white transition">Privacy Policy</Link>
           </div>
         </div>
       </div>
-
-      {/* Divider */}
-      <div className="border-t border-[#ab9a90] my-6"></div>
-
-      {/* Bottom Row */}
-      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-[#e6d9d0] text-sm">
-
-        <p>© 2025 Nordic Home Health Care Center – All Rights Reserved<br />
-          DHA License No. : 3171506
-        </p>
-
-        <p className="mt-3 md:mt-0">
-          Terms & Conditions | Privacy Policy
-        </p>
-      </div>
-
-      {/* Floating Left Logo Bubble */}
-      <div className="absolute bottom-4 left-4 w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-lg">
-        <Image
-          src="https://nordichc.com/wp-content/uploads/2025/04/Horizental-Original-Logo-resized.png"
-          alt="Nordic Home Healthcare"
-          width={40}
-          height={40}
-          unoptimized
-        />
-      </div>
-
-      {/* Floating WhatsApp Button */}
-      <a
-        href="https://wa.me/971581649910"
-        target="_blank"
-        className="absolute bottom-4 right-4 w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br from-green-500 to-green-700"
-      >
-        <FaWhatsapp className="text-white text-4xl" />
-      </a>
-
     </footer>
   );
 }

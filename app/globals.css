@@ -3,8 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #ffffff;
-   --primary: #593e30;     
-
+  --primary: #593e30;
 }
 
 @theme inline {
@@ -12,6 +11,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-brand: sans-serif;
   --color-primary: var(--primary);
 }
 
@@ -28,44 +28,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Featured slider navigation arrows */
-.featured-slider .swiper-button-next,
-.featured-slider .swiper-button-prev {
-  color: black;
-  background: rgba(255, 255, 255, 0.15);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  transition: background 0.2s;
-  top: 50%;
-}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-.featured-slider .swiper-button-next:hover,
-.featured-slider .swiper-button-prev:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.featured-slider .swiper-button-next::after,
-.featured-slider .swiper-button-prev::after {
-  font-size: 12px;
-  color: black;
-}
-
-.featured-slider .swiper-pagination {
-  position: relative;
-  margin-top: 24px;
-}
-
-.featured-slider .swiper-pagination-bullet {
-  background: white;
-  opacity: 0.4;
-  width: 8px;
-  height: 8px;
-}
-
-.featured-slider .swiper-pagination-bullet-active {
-  background: #f97316;
-  opacity: 1;
-  width: 24px;
-  border-radius: 4px;
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.33%); }
 }

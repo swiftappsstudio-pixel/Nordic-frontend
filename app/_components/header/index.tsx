@@ -3,23 +3,30 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaSearch } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/app/_common/auth-context";
-import { getCategories } from "@/app/_common/api";
-import { Category } from "@/app/_common/interfaces";
+
+const NAV_ITEMS = [
+  { label: "Home", href: "/" },
+  { label: "Services", href: "/#our-services", isAnchor: true },
+  { label: "Offers", href: "/offers" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
+  { label: "Blog", href: "/blog" },
+];
+
+const SCROLL_THRESHOLD = 80;
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [dropdown, setDropdown] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [scrolled, setScrolled] = useState(false);
+  const [hoverExpand, setHoverExpand] = useState(false);
   const { user, logout, isLoading } = useAuth();
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    getCategories().then(setCategories).catch(() => setCategories([]));
-  }, []);
+  const expanded = !scrolled || hoverExpand;
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -29,41 +36,94 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleAnchorClick = (href: string, isAnchor?: boolean) => {
+    if (isAnchor && pathname === "/") {
+      const el = document.querySelector(href.replace("/", ""));
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      setOpen(false);
+      return;
+    }
+  };
+
+  const isActive = (href: string, isAnchor?: boolean) => {
+    if (isAnchor) return pathname === "/";
+    return pathname === href;
+  };
+
+  const getActiveLabel = () => {
+    const found = NAV_ITEMS.find((n) => isActive(n.href, n.isAnchor));
+    return found?.label ?? null;
+  };
+
+  const activeLabel = getActiveLabel();
+
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
-      {/* ── Row 1: Logo | Search | Auth ── */}
-      <div className="max-w-7xl mx-auto flex items-center gap-4 py-2.5 px-5 lg:px-8">
+    <nav
+      onMouseEnter={() => setHoverExpand(true)}
+      onMouseLeave={() => setHoverExpand(false)}
+      className={`fixed z-50 bg-white/70 backdrop-blur-xl border border-white/20 shadow-sm transition-all duration-500 ease-in-out ${
+        expanded
+          ? "top-4 left-4 right-4 rounded-[20px] py-3"
+          : "top-4 left-1/2 -translate-x-1/2 w-auto max-w-md rounded-[16px] py-2.5"
+      }`}
+    >
+      <div className={`flex items-center justify-between px-5 lg:px-8 transition-all duration-500 ${expanded ? "max-w-7xl mx-auto" : "gap-4"}`}>
         <Link href="/" className="shrink-0">
           <Image
-            src="https://nordichc.com/wp-content/uploads/2025/04/Horizental-Original-Logo-resized.png"
+            src="/images/logo.jpeg"
             alt="Nordic Home Healthcare"
-            width={180}
-            height={54}
+            width={60}
+            height={18}
             priority
             unoptimized
+            className="rounded-full transition-all duration-500"
           />
         </Link>
 
-        {/* Search Bar */}
-        <div className="hidden lg:flex flex-1 items-center max-w-xl mx-4">
-          <div className="relative w-full flex items-center">
-            <FaSearch className="absolute left-3 text-gray-400 text-base pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Search services, treatments..."
-              className="w-full pl-10 pr-20 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#543826]/20 focus:border-[#543826] focus:bg-white transition-all"
-            />
-            <button
-              type="button"
-              className="absolute right-1.5 bg-[#543826] text-white px-4 py-1 rounded-full text-xs font-semibold hover:bg-[#3e2a1c] transition-colors"
-            >
-              Search
-            </button>
-          </div>
+        <div className={`hidden lg:flex items-center gap-6 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"}`}>
+          {NAV_ITEMS.map((item) =>
+            item.isAnchor ? (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={(e) => {
+                  if (pathname === "/") {
+                    e.preventDefault();
+                    handleAnchorClick(item.href, item.isAnchor);
+                  }
+                }}
+                className={`whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full transition flex items-center gap-1.5 ${
+                  isActive(item.href, item.isAnchor)
+                    ? "bg-[#C9C3B3] text-[#543826]"
+                    : "text-[#543826] hover:bg-[#C9C3B3]/40"
+                }`}
+              >
+                {item.label}
+                {item.label === "Services" && <span className="bg-red-500 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none">New</span>}
+              </Link>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full transition ${
+                  isActive(item.href)
+                    ? "bg-[#C9C3B3] text-[#543826]"
+                    : "text-[#543826] hover:bg-[#C9C3B3]/40"
+                }`}
+              >
+                {item.label}
+              </Link>
+            )
+          )}
         </div>
 
-        {/* Auth */}
-        <div className="hidden lg:flex items-center gap-2 shrink-0">
+        <div className={`hidden lg:flex items-center gap-3 shrink-0 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"}`}>
           {!isLoading &&
             (user ? (
               <div className="relative" ref={userMenuRef}>
@@ -77,98 +137,94 @@ export default function Navbar() {
                   <span className="text-sm font-medium max-w-[110px] truncate">{user.name}</span>
                 </button>
                 {userMenu && (
-                  <div className="absolute right-0 top-12 bg-white shadow-lg rounded-lg w-48 py-2 border">
+                  <div className="absolute right-0 top-12 bg-white/80 backdrop-blur-xl shadow-lg rounded-xl w-48 py-2 border border-white/20">
                     <div className="px-4 py-2 border-b">
                       <p className="text-sm font-semibold text-gray-800 truncate">{user.name}</p>
                       <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     </div>
-                    <Link href="/change-password" onClick={() => setUserMenu(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Change Password</Link>
-                    <button onClick={() => { logout(); setUserMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Sign Out</button>
+                    <Link href="/change-password" onClick={() => setUserMenu(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#C9C3B3]/30 transition-colors font-brand">Change Password</Link>
+                    <button onClick={() => { logout(); setUserMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-brand">Sign Out</button>
                   </div>
                 )}
               </div>
             ) : (
               <>
-                <Link href="/sign-in" className="text-[#543826] font-semibold text-xs uppercase tracking-wide hover:underline">Sign In</Link>
-                <Link href="/sign-up" className="bg-[#543826] text-white px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-wide hover:bg-[#3e2a1c] transition-colors">Sign Up</Link>
+                <Link href="/sign-in" className="whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full text-[#543826] hover:bg-[#C9C3B3]/40 transition">
+                  Sign In
+                </Link>
+                <Link href="/sign-up" className="whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full bg-[#543826] text-white hover:bg-[#3e2a1c] transition">
+                  Sign Up
+                </Link>
               </>
             ))}
         </div>
 
-        {/* Mobile Search + Hamburger */}
-        <div className="flex lg:hidden items-center gap-2 ml-auto">
-          <button className="text-[#543826] text-lg p-1" onClick={() => setSearchOpen(!searchOpen)} aria-label="Toggle search"><FaSearch /></button>
-          <button className="text-[#543826] text-3xl p-1" onClick={() => setOpen(!open)}>{open ? "✕" : "☰"}</button>
-        </div>
+        {!expanded && activeLabel && (
+          <Link
+            href="/#our-services"
+            onClick={(e) => {
+              if (pathname === "/") {
+                e.preventDefault();
+                const el = document.querySelector("#our-services");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+            className="whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full bg-[#C9C3B3] text-[#543826] transition"
+          >
+            {activeLabel}
+          </Link>
+        )}
+
+        <button className="flex lg:hidden text-[#543826] text-2xl p-1 ml-auto" onClick={() => setOpen(!open)}>
+          {open ? "✕" : "☰"}
+        </button>
       </div>
 
-      {/* Mobile Search Bar */}
-      {searchOpen && (
-        <div className="lg:hidden px-5 pb-3 bg-white border-b border-gray-100">
-          <div className="relative flex items-center">
-            <FaSearch className="absolute left-3 text-gray-400 text-sm pointer-events-none" />
-            <input type="text" placeholder="Search services, treatments..." className="w-full pl-9 pr-3 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#543826]/20 focus:border-[#543826] focus:bg-white" />
-          </div>
-        </div>
-      )}
-
-      {/* ── Row 2: Slim nav bar ── */}
-      <div className="border-t border-gray-100 bg-white lg:block hidden">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-10 px-6 py-2.5">
-          <Link href="/" className="text-[#543826] text-sm font-semibold hover:text-orange-600 transition-colors relative group">Home<span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300" /></Link>
-          <div className="relative cursor-pointer" onMouseEnter={() => setDropdown(true)} onMouseLeave={() => setDropdown(false)}>
-            <div className="flex items-center gap-1 text-[#543826] text-sm font-semibold hover:text-orange-600 transition-colors">
-              Services<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-            </div>
-            {dropdown && (
-              <div className="absolute left-0 top-6 bg-white shadow-lg rounded-md w-56 py-3 z-50 border">
-                {categories.length > 0 ? (
-                  categories.map((c) => (<Link key={c._id} href={`/services/category/${c._id}`} className="block px-4 py-2 hover:bg-gray-100 text-[#543826] text-sm">{c.name}</Link>))
-                ) : (<span className="block px-4 py-2 text-gray-400 text-sm">No categories</span>)}
-              </div>
-            )}
-          </div>
-          <Link href="/offers" className="text-[#543826] text-sm font-semibold hover:text-orange-600 transition-colors relative group">Offers<span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300" /></Link>
-          <Link href="/about" className="text-[#543826] text-sm font-semibold hover:text-orange-600 transition-colors relative group">About Us<span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300" /></Link>
-          <Link href="/contact" className="text-[#543826] text-sm font-semibold hover:text-orange-600 transition-colors relative group">Contact<span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300" /></Link>
-          <Link href="/blog" className="text-[#543826] text-sm font-semibold hover:text-orange-600 transition-colors relative group">Blog<span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300" /></Link>
-        </div>
-      </div>
-
-      {/* ── Mobile Dropdown ── */}
       {open && (
-        <div className="lg:hidden bg-white shadow-md py-4 px-6 text-[#543826]">
-          <ul className="flex flex-col gap-4 text-base font-semibold">
-            <li><Link href="/" onClick={() => setOpen(false)}>Home</Link></li>
-            <li>
-              <details className="cursor-pointer">
-                <summary className="flex items-center justify-between py-1">Services</summary>
-                <div className="flex flex-col ml-4 mt-2 gap-2">
-                  {categories.length > 0 ? (
-                    categories.map((cat) => (<Link key={cat._id} href={`/services/category/${cat._id}`} onClick={() => setOpen(false)} className="text-sm text-gray-600">{cat.name}</Link>))
-                  ) : (<span className="text-gray-400 text-sm">No categories</span>)}
-                </div>
-              </details>
-            </li>
-            <li><Link href="/offers" onClick={() => setOpen(false)}>Offers</Link></li>
-            <li><Link href="/about" onClick={() => setOpen(false)}>About Us</Link></li>
-            <li><Link href="/contact" onClick={() => setOpen(false)}>Contact</Link></li>
-            <li><Link href="/blog" onClick={() => setOpen(false)}>Blog</Link></li>
+        <div className="lg:hidden bg-white/80 backdrop-blur-xl py-4 px-6">
+          <ul className="flex flex-col gap-3">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.label}>
+                <Link
+                  href={item.href}
+                  onClick={(e) => {
+                    if (item.isAnchor && pathname === "/") {
+                      e.preventDefault();
+                      handleAnchorClick(item.href, item.isAnchor);
+                    } else {
+                      setOpen(false);
+                    }
+                  }}
+                  className={`whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full transition flex items-center gap-1.5 ${
+                    isActive(item.href, item.isAnchor)
+                      ? "bg-[#C9C3B3] text-[#543826]"
+                      : "text-[#543826] hover:bg-[#C9C3B3]/40"
+                  }`}
+                >
+                  {item.label}
+                  {item.label === "Services" && <span className="bg-red-500 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none">New</span>}
+                </Link>
+              </li>
+            ))}
           </ul>
-          <div className="mt-4 pt-4 border-t">
+
+          <div className="mt-4 pt-4 border-t border-white/20">
             {!isLoading && (
               user ? (
                 <div>
                   <div className="flex items-center justify-between">
-                    <div><p className="font-semibold text-sm">{user.name}</p><p className="text-xs text-gray-500">{user.email}</p></div>
-                    <button onClick={() => { logout(); setOpen(false); }} className="text-red-600 text-sm font-medium">Sign Out</button>
+                    <div>
+                      <p className="font-semibold text-sm font-brand">{user.name}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                    <button onClick={() => { logout(); setOpen(false); }} className="text-red-600 text-sm font-medium font-brand">Sign Out</button>
                   </div>
-                  <Link href="/change-password" onClick={() => setOpen(false)} className="block mt-3 text-sm text-[#543826] font-medium hover:underline">Change Password</Link>
+                  <Link href="/change-password" onClick={() => setOpen(false)} className="block mt-3 text-sm text-[#543826] font-brand font-medium hover:underline">Change Password</Link>
                 </div>
               ) : (
                 <div className="flex gap-3">
-                  <Link href="/sign-in" onClick={() => setOpen(false)} className="flex-1 text-center border border-[#543826] text-[#543826] py-2 rounded-lg text-sm font-medium">Sign In</Link>
-                  <Link href="/sign-up" onClick={() => setOpen(false)} className="flex-1 text-center bg-[#543826] text-white py-2 rounded-lg text-sm font-medium">Sign Up</Link>
+                  <Link href="/sign-in" onClick={() => setOpen(false)} className="flex-1 text-center whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full border border-[#543826] text-[#543826]">Sign In</Link>
+                  <Link href="/sign-up" onClick={() => setOpen(false)} className="flex-1 text-center whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full bg-[#543826] text-white">Sign Up</Link>
                 </div>
               )
             )}

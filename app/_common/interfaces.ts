@@ -285,8 +285,6 @@ export interface GuestInfo {
   fullName: string;
   email: string;
   phone: string;
-  gender?: "male" | "female" | "other";
-  dateOfBirth?: string;
 }
 
 export interface BookingRequest {
