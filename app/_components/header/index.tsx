@@ -8,11 +8,13 @@ import { useAuth } from "@/app/_common/auth-context";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
-  { label: "Services", href: "/#our-services", isAnchor: true },
-  { label: "Offers", href: "/offers" },
-  { label: "About Us", href: "/about" },
-  { label: "Contact", href: "/contact" },
-  { label: "Blog", href: "/blog" },
+  { label: "Mother & Baby", href: "/#our-services", isAnchor: true },
+  { label: "Elderly Care ", href: "/offers" },
+  { label: "Blood Test ", href: "/about" },
+  { label: "Peptides", href: "/contact" },
+  { label: "IV Therapy", href: "/blog" },
+    { label: "Weight Loss", href: "/blog" },
+
 ];
 
 const SCROLL_THRESHOLD = 80;

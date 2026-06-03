@@ -95,10 +95,9 @@ export default function TeamSection() {
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <h2 className="font-brand text-2xl md:text-3xl font-semibold text-[#543826] mb-12 text-center leading-tight">
-          Built by people who&apos;ve built surgical rooms, studied<br />longevity, and shipped code.
-        </h2>
+Built by healthcare professionals, wellness experts, and technology specialists committed to delivering exceptional care.        </h2>
 
-        <div className="relative flex items-center justify-center mb-12">
+        {/* <div className="relative flex items-center justify-center mb-12">
           <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-[#C9C3B3] -translate-y-1/2" />
 
           <div className="flex gap-6 relative z-10">
@@ -156,9 +155,9 @@ export default function TeamSection() {
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <div className="flex flex-col md:flex-row gap-8 items-start">
+        {/* <div className="flex flex-col md:flex-row gap-8 items-start">
           <div className="w-full md:w-1/2 bg-[#F7EEE0] rounded-2xl min-h-[340px] flex items-center justify-center overflow-hidden">
             <Image
               src={member.image}
@@ -198,7 +197,7 @@ export default function TeamSection() {
               <span className="text-3xl font-bold">&rdquo;</span>
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );
