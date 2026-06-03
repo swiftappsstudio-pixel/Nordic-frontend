@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { label: "Elderly Care ", href: "/offers" },
   { label: "Blood Test ", href: "/about" },
   { label: "Peptides", href: "/contact" },
-  { label: "IV Therapy", href: "/blog" },
+  { label: "IV Therapy", href: "/iv-therapy" },
     { label: "Weight Loss", href: "/blog" },
 
 ];
