@@ -1,72 +1,12 @@
-"use client";
+import ServiceDetailPage from "./page-client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import { getServiceDetail } from "@/app/_common/api";
-import { ServiceWithVariants, Variant } from "@/app/_common/interfaces";
-import { CTASection } from "@/app/_components/cta-section";
-
-type Tab = "benefits" | "ingredients" | "disclaimer";
-
-export default function ServiceDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const [service, setService] = useState<ServiceWithVariants | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
-  const [useBasePrice, setUseBasePrice] = useState(false);
-  const [activeImage, setActiveImage] = useState(0);
-  const [activeTab, setActiveTab] = useState<Tab>("benefits");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!id) return;
-    getServiceDetail(id)
-      .then((data) => {
-        setService(data);
-        const defaultVariant =
-          data.variants?.find((v) => v.isDefault) || data.variants?.[0];
-        if (defaultVariant) {
-          setSelectedVariant(defaultVariant);
-        } else {
-          // No variants — base price is the only option, pre-select it
-          setUseBasePrice(true);
-        }
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pt-24">
-        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  if (!service) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center pt-24">
-        <p className="text-gray-500 text-lg">Service not found.</p>
-        <Link href="/" className="text-orange-500 hover:underline mt-2">
-          Back to Home
-        </Link>
-      </div>
-    );
-  }
-
-  const images = service.images || [];
-  const subServices = service.subServices || [];
-  const benefits = service.keyBenefits || [];
-  const ingredients = service.keyIngredients || [];
-
-  const tabs: { key: Tab; label: string }[] = [
-    { key: "benefits", label: "Key Benefits" },
-    { key: "ingredients", label: "Key Ingredients" },
-    { key: "disclaimer", label: "Disclaimer" },
+export async function generateStaticParams() {
+  return [
+    { id: "1" },
+    { id: "2" },
+    { id: "3" },
   ];
+<<<<<<< HEAD
 
   return (
     <div className="min-h-screen bg-gray-50 pt-28 pb-16">
@@ -379,4 +319,11 @@ export default function ServiceDetailPage() {
                     />
     </div>
   );
+=======
+}
+
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <ServiceDetailPage id={id} />;
+>>>>>>> 76eaa5c9d7a7b755553367f0708b4370b76ca5f1
 }

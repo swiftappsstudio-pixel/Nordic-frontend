@@ -34,6 +34,7 @@ const ServiceDetailPage: React.FC = () => {
 const [bookingData, setBookingData] = useState<{
   serviceName: string;
   price: number;
+  subServiceName?: string;
 } | null>(null);
 
 
@@ -226,6 +227,7 @@ const [bookingData, setBookingData] = useState<{
     setBookingData({
       serviceName: sub.name,
       price: sub.price,
+      subServiceName: sub.name,
     });
     setIsModalOpen(true);
   }}
@@ -250,8 +252,10 @@ const [bookingData, setBookingData] = useState<{
   <BookingModal
     isOpen={isModalOpen}
     onClose={() => setIsModalOpen(false)}
+    serviceId={service._id}
     serviceName={bookingData.serviceName}
     price={bookingData.price}
+    subServiceName={bookingData.subServiceName}
   />
 )}
 

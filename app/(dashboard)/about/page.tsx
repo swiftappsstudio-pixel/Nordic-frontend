@@ -1,30 +1,7 @@
 import Image from "next/image";
-import TeamCard from "@/app/_components/team-card";
+import TeamSection from "@/app/_components/team-section";
 
 export default function AboutPage() {
-  const team = [
-    {
-      name: "John Carter",
-      role: "Physiotherapist",
-      image: "/images/team1.JPG",
-    },
-    {
-      name: "David Lee",
-      role: "Medical Assistant",
-      image: "/images/team2.JPG",
-    },
-    {
-      name: "Sarah Wilson",
-      role: "Nurse",
-      image: "/images/team2.JPG",
-    },
-    {
-      name: "Michael Smith",
-      role: "Caregiver",
-      image: "/images/team2.JPG",
-    },
-  ];
-
   return (
     <div className="w-full">
 
@@ -32,7 +9,7 @@ export default function AboutPage() {
 
       <div className="relative w-full h-[600px]">
         <Image
-          src="/about-banner.jpg"
+          src="/images/CTA!.jpg"
           alt="about banner"
           fill
           className="object-cover"
@@ -107,7 +84,7 @@ Our qualified healthcare professionals are dedicated to ensuring safety, comfort
 
             <p className="text-gray-600">
               To provide exceptional home healthcare services, improving
-              patients’ quality of life through compassionate, professional,
+              patients&apos; quality of life through compassionate, professional,
               and personalized care.
             </p>
           </div>
@@ -138,24 +115,7 @@ Our qualified healthcare professionals are dedicated to ensuring safety, comfort
 
       {/* TEAM SECTION */}
 
-      <div className="max-w-6xl mx-auto px-6 py-16">
-
-        <h2 className="text-3xl text-black font-bold text-center mb-10">
-          Meet Our Team
-        </h2>
-
-        <div className="grid md:grid-cols-4 sm:grid-cols-2 gap-8">
-          {team.map((member, index) => (
-            <TeamCard
-              key={index}
-              name={member.name}
-              role={member.role}
-              image={member.image}
-            />
-          ))}
-        </div>
-
-      </div>
+      <TeamSection />
 
     </div>
   );

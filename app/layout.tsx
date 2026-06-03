@@ -4,6 +4,8 @@ import "./globals.css";
 
 import { ConditionalFooter } from "./_components/conditional-footer";
 import { ConditionalNavBar } from "./_components/conditional-header";
+import { SocialSidebar } from "./_components/social-sidebar";
+import CookieConsent from "./_components/cookie-consent";
 import { AuthProvider } from "./_common/auth-context";
 
 const geistSans = Geist({
@@ -31,11 +33,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <ConditionalNavBar />
-          {children}
-          <ConditionalFooter />
-        </AuthProvider>
+<AuthProvider>
+            <ConditionalNavBar />
+            <SocialSidebar />
+            {children}
+            <ConditionalFooter />
+            <CookieConsent />
+          </AuthProvider>
       </body>
     </html>
   );
