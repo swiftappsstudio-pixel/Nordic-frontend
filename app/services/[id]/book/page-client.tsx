@@ -164,7 +164,7 @@ function BookingContent({ id }: Props) {
                 const msg = encodeURIComponent(
                   `New Booking Confirmed!\n\nBooking ID: ${booking._id}\nService: ${booking.serviceSnapshot?.title}\n${booking.variantSnapshot ? `Package: ${booking.variantSnapshot.name}\n` : ""}Date: ${booking.preferredDate}\nTime: ${booking.preferredTime}\nAmount: AED ${booking.totalAmount}\nStatus: ${booking.status}\n${booking.guestInfo ? `Guest: ${booking.guestInfo.fullName} | ${booking.guestInfo.phone} | ${booking.guestInfo.email}` : ""}`
                 );
-                window.open(`https://wa.me/923414415384?text=${msg}`, "_blank");
+                window.open(`https://wa.me/971555828945?text=${msg}`, "_blank");
               }}
               className="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1eb954] text-white font-brand font-semibold py-5 rounded-xl text-lg transition-all duration-300 hover:shadow-lg"
             >
@@ -203,7 +203,7 @@ function BookingContent({ id }: Props) {
               )}
             </div>
             <div className="mt-8 border-t pt-4">
-              {!sidebarCollapsed && <div className="text-center mb-4"><p className="text-xs text-gray-400 font-medium">Get in Touch</p><p className="text-sm text-gray-700 font-medium mt-1">+971581649910</p><p className="text-sm text-gray-500">operation@nordichc.ae</p></div>}
+              {!sidebarCollapsed && <div className="text-center mb-4"><p className="text-xs text-gray-400 font-medium">Get in Touch</p><p className="text-sm text-gray-700 font-medium mt-1">+971555828945</p><p className="text-sm text-gray-500">operation@nordichc.ae</p></div>}
               <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 w-full justify-center">{sidebarCollapsed ? "Expand" : "Collapse menu"}<span className={`transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`}>&#10132;</span></button>
             </div>
           </div>

@@ -8,13 +8,12 @@ import { useAuth } from "@/app/_common/auth-context";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
-  { label: "Mother & Baby", href: "/#our-services", isAnchor: true },
-  { label: "Elderly Care ", href: "/offers" },
-  { label: "Blood Test ", href: "/about" },
-  { label: "Peptides", href: "/contact" },
+  { label: "Mother & Baby", href: "/mother-and-baby" },
+  { label: "Elderly Care", href: "/elderly-care" },
+  { label: "Blood Test", href: "/blood-test" },
+  { label: "Peptides", href: "/peptides" },
   { label: "IV Therapy", href: "/iv-therapy" },
-    { label: "Weight Loss", href: "/blog" },
-
+  { label: "Weight Loss", href: "/weight-loss" },
 ];
 
 const SCROLL_THRESHOLD = 80;
@@ -32,7 +31,8 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenu(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node))
+        setUserMenu(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -44,189 +44,197 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleAnchorClick = (href: string, isAnchor?: boolean) => {
-    if (isAnchor && pathname === "/") {
-      const el = document.querySelector(href.replace("/", ""));
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-      setOpen(false);
-      return;
-    }
+  useEffect(() => { setOpen(false); }, [pathname]);
+
+  const handleAnchorClick = (e: React.MouseEvent, href: string, isAnchor?: boolean) => {
+    setOpen(false);
   };
 
-  const isActive = (href: string, isAnchor?: boolean) => {
-    if (isAnchor) return pathname === "/";
+  const isActive = (href: string) => {
     return pathname === href;
   };
-
-  const getActiveLabel = () => {
-    const found = NAV_ITEMS.find((n) => isActive(n.href, n.isAnchor));
-    return found?.label ?? null;
-  };
-
-  const activeLabel = getActiveLabel();
 
   return (
     <nav
       onMouseEnter={() => setHoverExpand(true)}
       onMouseLeave={() => setHoverExpand(false)}
-      className={`fixed z-50 bg-white/70 backdrop-blur-xl border border-white/20 shadow-sm transition-all duration-500 ease-in-out ${
+      className={`fixed z-50 bg-white/75 backdrop-blur-xl border border-white/30 shadow-sm transition-all duration-500 ease-in-out ${
         expanded
-          ? "top-4 left-4 right-4 rounded-[20px] py-3"
-          : "top-4 left-1/2 -translate-x-1/2 w-auto max-w-md rounded-[16px] py-2.5"
+          ? "top-3 left-3 right-3 rounded-[22px] py-2.5"
+          : "top-3 left-1/2 -translate-x-1/2 w-auto max-w-xs rounded-2xl py-2"
       }`}
     >
-      <div className={`flex items-center justify-between px-5 lg:px-8 transition-all duration-500 ${expanded ? "max-w-7xl mx-auto" : "gap-4"}`}>
+      <div
+        className={`flex items-center justify-between px-4 lg:px-6 transition-all duration-500 ${
+          expanded ? "max-w-7xl mx-auto" : "gap-3"
+        }`}
+      >
+        {/* Logo */}
         <Link href="/" className="shrink-0">
           <Image
             src="/images/logo.jpeg"
             alt="Nordic Home Healthcare"
-            width={60}
-            height={18}
+            width={52}
+            height={52}
             priority
             unoptimized
-            className="rounded-full transition-all duration-500"
+            className="rounded-full"
           />
         </Link>
 
-        <div className={`hidden lg:flex items-center gap-6 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"}`}>
-          {NAV_ITEMS.map((item) =>
-            item.isAnchor ? (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={(e) => {
-                  if (pathname === "/") {
-                    e.preventDefault();
-                    handleAnchorClick(item.href, item.isAnchor);
-                  }
-                }}
-                className={`whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full transition flex items-center gap-1.5 ${
-                  isActive(item.href, item.isAnchor)
-                    ? "bg-[#C9C3B3] text-[#543826]"
-                    : "text-[#543826] hover:bg-[#C9C3B3]/40"
-                }`}
-              >
-                {item.label}
-                {item.label === "Services" && <span className="bg-red-500 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none">New</span>}
-              </Link>
-            ) : (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full transition ${
-                  isActive(item.href)
-                    ? "bg-[#C9C3B3] text-[#543826]"
-                    : "text-[#543826] hover:bg-[#C9C3B3]/40"
-                }`}
-              >
-                {item.label}
-              </Link>
-            )
-          )}
+        {/* Desktop nav links */}
+        <div
+          className={`hidden lg:flex items-center gap-1 transition-all duration-500 ${
+            expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
+          }`}
+        >
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              onClick={(e) => handleAnchorClick(e, item.href)}
+              className={`relative whitespace-nowrap text-sm font-medium px-3.5 py-1.5 rounded-full transition-all duration-200 flex items-center gap-1.5 ${
+                isActive(item.href)
+                  ? "bg-[#C9C3B3]/60 text-[#543826] font-semibold"
+                  : "text-[#543826]/80 hover:bg-[#C9C3B3]/30 hover:text-[#543826]"
+              }`}
+            >
+              {item.label}
+              {item.label === "Services" && (
+                <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                  New
+                </span>
+              )}
+              {item.label === "IV Therapy" && (
+                <span className="bg-[#543826] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                  HOT
+                </span>
+              )}
+            </Link>
+          ))}
         </div>
 
-        <div className={`hidden lg:flex items-center gap-3 shrink-0 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"}`}>
+        {/* Desktop auth */}
+        <div
+          className={`hidden lg:flex items-center gap-2 shrink-0 transition-all duration-500 ${
+            expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
+          }`}
+        >
           {!isLoading &&
             (user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setUserMenu(!userMenu)}
-                  className="flex items-center gap-2 bg-[#543826] text-white px-4 py-2 rounded-full hover:bg-[#3e2a1c] transition-colors"
+                  className="flex items-center gap-2 bg-[#543826] text-white pl-2 pr-4 py-1.5 rounded-full hover:bg-[#3e2a1c] transition-colors"
                 >
                   <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium max-w-[110px] truncate">{user.name}</span>
+                  <span className="text-sm font-medium max-w-[100px] truncate">{user.name}</span>
                 </button>
                 {userMenu && (
-                  <div className="absolute right-0 top-12 bg-white/80 backdrop-blur-xl shadow-lg rounded-xl w-48 py-2 border border-white/20">
-                    <div className="px-4 py-2 border-b">
-                      <p className="text-sm font-semibold text-gray-800 truncate">{user.name}</p>
-                      <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  <div className="absolute right-0 top-11 bg-white shadow-xl rounded-2xl w-48 py-2 border border-gray-100 z-50">
+                    <div className="px-4 py-2.5 border-b border-gray-100">
+                      <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
+                      <p className="text-xs text-gray-400 truncate mt-0.5">{user.email}</p>
                     </div>
-                    <Link href="/change-password" onClick={() => setUserMenu(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#C9C3B3]/30 transition-colors font-brand">Change Password</Link>
-                    <button onClick={() => { logout(); setUserMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-brand">Sign Out</button>
+                    <Link href="/change-password" onClick={() => setUserMenu(false)} className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      Change Password
+                    </Link>
+                    <button onClick={() => { logout(); setUserMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                      Sign Out
+                    </button>
                   </div>
                 )}
               </div>
             ) : (
               <>
-                <Link href="/sign-in" className="whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full text-[#543826] hover:bg-[#C9C3B3]/40 transition">
+                <Link href="/sign-in" className="whitespace-nowrap text-sm font-medium text-[#543826]/80 hover:text-[#543826] px-4 py-1.5 rounded-full hover:bg-[#C9C3B3]/30 transition">
                   Sign In
                 </Link>
-                <Link href="/sign-up" className="whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full bg-[#543826] text-white hover:bg-[#3e2a1c] transition">
+                <Link href="/sign-up" className="whitespace-nowrap text-sm font-semibold bg-[#543826] text-white px-4 py-1.5 rounded-full hover:bg-[#3e2a1c] transition shadow-sm">
                   Sign Up
                 </Link>
               </>
             ))}
         </div>
 
-        {!expanded && activeLabel && (
-          <Link
-            href="/#our-services"
-            onClick={(e) => {
-              if (pathname === "/") {
-                e.preventDefault();
-                const el = document.querySelector("#our-services");
-                if (el) el.scrollIntoView({ behavior: "smooth" });
-              }
-            }}
-            className="whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full bg-[#C9C3B3] text-[#543826] transition"
-          >
-            {activeLabel}
-          </Link>
+        {/* Collapsed state pill label */}
+        {!expanded && (
+          <span className="hidden lg:block whitespace-nowrap text-sm font-medium text-[#543826] px-3 py-1">
+            {NAV_ITEMS.find((n) => isActive(n.href))?.label ?? "Menu"}
+          </span>
         )}
 
-        <button className="flex lg:hidden text-[#543826] text-2xl p-1 ml-auto" onClick={() => setOpen(!open)}>
-          {open ? "✕" : "☰"}
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="flex lg:hidden flex-col justify-center items-center w-9 h-9 rounded-xl hover:bg-[#C9C3B3]/30 transition gap-1.5 ml-auto"
+          aria-label="Toggle menu"
+        >
+          <span className={`block w-4.5 h-0.5 bg-[#543826] rounded-full transition-all duration-300 ${open ? "rotate-45 translate-y-[7px]" : ""}`} style={{ width: "18px" }} />
+          <span className={`block h-0.5 bg-[#543826] rounded-full transition-all duration-300 ${open ? "opacity-0 scale-x-0" : ""}`} style={{ width: "18px" }} />
+          <span className={`block h-0.5 bg-[#543826] rounded-full transition-all duration-300 ${open ? "-rotate-45 -translate-y-[7px]" : ""}`} style={{ width: "18px" }} />
         </button>
       </div>
 
+      {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden bg-white/80 backdrop-blur-xl py-4 px-6">
-          <ul className="flex flex-col gap-3">
+        <div className="lg:hidden bg-white/90 backdrop-blur-xl rounded-b-[18px] px-4 pt-2 pb-4 mt-1 border-t border-white/20">
+          <ul className="flex flex-col gap-1 mb-3">
             {NAV_ITEMS.map((item) => (
               <li key={item.label}>
                 <Link
                   href={item.href}
-                  onClick={(e) => {
-                    if (item.isAnchor && pathname === "/") {
-                      e.preventDefault();
-                      handleAnchorClick(item.href, item.isAnchor);
-                    } else {
-                      setOpen(false);
-                    }
-                  }}
-                  className={`whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full transition flex items-center gap-1.5 ${
-                    isActive(item.href, item.isAnchor)
-                      ? "bg-[#C9C3B3] text-[#543826]"
-                      : "text-[#543826] hover:bg-[#C9C3B3]/40"
+                  onClick={(e) => handleAnchorClick(e, item.href)}
+                  className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                    isActive(item.href)
+                      ? "bg-[#C9C3B3]/50 text-[#543826] font-semibold"
+                      : "text-[#543826]/80 hover:bg-[#C9C3B3]/20"
                   }`}
                 >
-                  {item.label}
-                  {item.label === "Services" && <span className="bg-red-500 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none">New</span>}
+                  <span>{item.label}</span>
+                  <div className="flex items-center gap-1.5">
+                    {item.label === "Services" && (
+                      <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">New</span>
+                    )}
+                    {item.label === "IV Therapy" && (
+                      <span className="bg-[#543826] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">HOT</span>
+                    )}
+                  </div>
                 </Link>
               </li>
             ))}
           </ul>
 
-          <div className="mt-4 pt-4 border-t border-white/20">
+          <div className="border-t border-gray-100 pt-3">
             {!isLoading && (
               user ? (
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-sm font-brand">{user.name}</p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2.5 px-3 py-2 bg-gray-50 rounded-xl">
+                    <div className="w-8 h-8 rounded-full bg-[#543826] flex items-center justify-center text-white font-bold text-sm shrink-0">
+                      {user.name.charAt(0).toUpperCase()}
                     </div>
-                    <button onClick={() => { logout(); setOpen(false); }} className="text-red-600 text-sm font-medium font-brand">Sign Out</button>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm text-gray-900 truncate">{user.name}</p>
+                      <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                    </div>
                   </div>
-                  <Link href="/change-password" onClick={() => setOpen(false)} className="block mt-3 text-sm text-[#543826] font-brand font-medium hover:underline">Change Password</Link>
+                  <Link href="/change-password" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm text-gray-700 rounded-xl hover:bg-gray-50 transition">
+                    Change Password
+                  </Link>
+                  <button onClick={() => { logout(); setOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 rounded-xl hover:bg-red-50 transition">
+                    Sign Out
+                  </button>
                 </div>
               ) : (
-                <div className="flex gap-3">
-                  <Link href="/sign-in" onClick={() => setOpen(false)} className="flex-1 text-center whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full border border-[#543826] text-[#543826]">Sign In</Link>
-                  <Link href="/sign-up" onClick={() => setOpen(false)} className="flex-1 text-center whitespace-nowrap font-brand text-sm font-normal leading-5 px-4 py-1.5 rounded-full bg-[#543826] text-white">Sign Up</Link>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/sign-in" onClick={() => setOpen(false)} className="text-center text-sm font-medium text-[#543826] border border-[#543826]/30 py-2.5 rounded-full hover:bg-[#543826]/5 transition">
+                    Sign In
+                  </Link>
+                  <Link href="/sign-up" onClick={() => setOpen(false)} className="text-center text-sm font-semibold bg-[#543826] text-white py-2.5 rounded-full hover:bg-[#3e2a1c] transition">
+                    Sign Up
+                  </Link>
                 </div>
               )
             )}
