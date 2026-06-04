@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView, AnimatePresence } from "framer-motion";
@@ -60,7 +60,7 @@ export default function CategoryPageClient({ category, services }: CategoryPageC
 
   const scrollToCta = () => ctaRef.current?.scrollIntoView({ behavior: "smooth" });
 
-  useState(() => {
+  useEffect(() => {
     getCategories().then((cats) => setOtherCategories(cats.filter((c) => c._id !== category._id))).catch(() => {});
   }, [category._id]);
 

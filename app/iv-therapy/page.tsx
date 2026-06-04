@@ -319,7 +319,7 @@ export default function IVTherapyPage() {
   const scrollToServices = () =>
     servicesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const categories = ["All", ...Array.from(new Set(services.map((s) => s.category).filter(Boolean)))];
+  const categories: string[] = ["All", ...Array.from(new Set(services.map((s) => s.category).filter(Boolean) as string[]))];
   const filteredServices = activeCategory === "All" ? services : services.filter((s) => s.category === activeCategory);
 
   return (
