@@ -12,6 +12,7 @@ interface Category {
   _id: string;
   name: string;
   description: string;
+  link?: string;
   image?: string;
   createdAt?: string;
 }
@@ -45,10 +46,11 @@ export default function CategoryPage() {
   }, []);
 
   // Add or Update category
-  const saveCategory = async (data: { name: string; description: string; imageFile?: File }) => {
+  const saveCategory = async (data: { name: string; description: string; link: string; imageFile?: File }) => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
+    formData.append("link", data.link);
     if (data.imageFile) formData.append("image", data.imageFile);
 
     if (editCategory) {
@@ -132,6 +134,9 @@ export default function CategoryPage() {
                   Name
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                  Link
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Description
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
@@ -168,6 +173,10 @@ export default function CategoryPage() {
 
                   <td className="px-4 py-3 font-medium text-gray-800">
                     {cat.name}
+                  </td>
+
+                  <td className="px-4 py-3 text-sm text-gray-600">
+                    {cat.link || "-"}
                   </td>
 
                   <td className="px-4 py-3 text-sm text-gray-600">
@@ -211,7 +220,7 @@ export default function CategoryPage() {
         <AddCategoryModal
           onSubmit={saveCategory}
           onCancel={() => { setShowModal(false); setEditCategory(null); }}
-          editData={editCategory ? { name: editCategory.name, description: editCategory.description, image: editCategory.image } : null}
+          editData={editCategory ? { name: editCategory.name, description: editCategory.description, link: editCategory.link, image: editCategory.image } : null}
         />
       )}
     </div>

@@ -173,8 +173,8 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getFeaturedServices } from "./_common/api";
-import { Service } from "@/app/_common/interfaces";
+import { getFeaturedServices, getBanners } from "./_common/api";
+import { Service, Banner } from "@/app/_common/interfaces";
 import { CTASection } from "@/app/_components/cta-section";
 import { Testimonials } from "./_components/testimonials";
 import ExploreOurServices from "@/app/_components/explore-services";
@@ -190,6 +190,7 @@ const SLIDE_DURATION = 4000;
 
 export default function Home() {
   const [featuredServices, setFeaturedServices] = useState<Service[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [featuredServicesLoading, setFeaturedServicesLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -197,10 +198,10 @@ export default function Home() {
   const progressRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    getFeaturedServices()
-      .then((data) => setFeaturedServices(data))
-      .catch(() => setFeaturedServices([]))
-      .finally(() => setFeaturedServicesLoading(false));
+    Promise.all([
+      getFeaturedServices().then((data) => setFeaturedServices(data)).catch(() => setFeaturedServices([])),
+      getBanners().then((data) => setBanners(data)).catch(() => setBanners([])),
+    ]).finally(() => setFeaturedServicesLoading(false));
   }, []);
 
   const startProgress = useCallback(() => {
@@ -219,21 +220,23 @@ export default function Home() {
     }, 50);
   }, []);
 
+  const heroSlides = banners.length > 0 ? banners : featuredServices;
+
   const nextSlide = useCallback(() => {
-    if (featuredServices.length === 0) return;
-    setCurrentSlide((prev) => (prev + 1) % featuredServices.length);
+    if (heroSlides.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     startProgress();
-  }, [featuredServices.length, startProgress]);
+  }, [heroSlides.length, startProgress]);
 
   useEffect(() => {
-    if (featuredServices.length === 0) return;
+    if (heroSlides.length === 0) return;
     startProgress();
     intervalRef.current = setInterval(nextSlide, SLIDE_DURATION);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       if (progressRef.current) clearInterval(progressRef.current);
     };
-  }, [featuredServices.length, nextSlide, startProgress]);
+  }, [heroSlides.length, nextSlide, startProgress]);
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
@@ -249,21 +252,21 @@ export default function Home() {
           <div className="flex items-center justify-center h-full bg-[#543826]">
             <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
           </div>
-        ) : featuredServices.length > 0 ? (
+        ) : heroSlides.length > 0 ? (
           <>
-            {featuredServices.map((service, index) => (
+            {heroSlides.map((slide, index) => (
               <div
-                key={service._id}
+                key={slide._id}
                 className={`absolute inset-0 transition-all duration-700 ease-in-out ${
                   index === currentSlide
                     ? "opacity-100 scale-100"
                     : "opacity-0 scale-105"
                 }`}
               >
-                {service.images?.[0] ? (
+                {(banners.length > 0 ? (slide as Banner).image : (slide as Service).images?.[0]) ? (
                   <Image
-                    src={service.images[0]}
-                    alt={service.title}
+                    src={banners.length > 0 ? (slide as Banner).image! : (slide as Service).images![0]}
+                    alt={(slide as Banner).title || (slide as Service).title}
                     fill
                     className="object-cover"
                     priority={index === 0}
@@ -278,35 +281,63 @@ export default function Home() {
                 <div className="absolute inset-0 flex items-center">
                   <div className="max-w-6xl mx-auto px-6 w-full">
                     <div className="max-w-lg">
-                      <p className="font-brand text-sm text-[#C9C3B3] tracking-widest uppercase mb-3">
-                        {service.category}
-                      </p>
-                      <h1 className="text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
-                        {service.title}
-                      </h1>
-                      {service.description && (
-                        <p className="text-white/70 text-base md:text-lg mb-8 line-clamp-3 leading-relaxed">
-                          {service.description}
-                        </p>
+                      {banners.length > 0 ? (
+                        <>
+                          <h1 className="text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
+                            {(slide as Banner).title}
+                          </h1>
+                          {(slide as Banner).description && (
+                            <p className="text-white/70 text-base md:text-lg mb-8 line-clamp-3 leading-relaxed">
+                              {(slide as Banner).description}
+                            </p>
+                          )}
+                          {(slide as Banner).price && (
+                            <p className="text-[#C9C3B3] font-brand text-2xl font-semibold mb-6">
+                              AED {(slide as Banner).price}
+                            </p>
+                          )}
+                          <Link
+                            href={(slide as Banner).bookNowLink || "/services"}
+                            className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full transition-all duration-300 hover:gap-4"
+                          >
+                            {(slide as Banner).bookNowButtonText || "Book Now"}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-brand text-sm text-[#C9C3B3] tracking-widest uppercase mb-3">
+                            {(slide as Service).category}
+                          </p>
+                          <h1 className="text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
+                            {(slide as Service).title}
+                          </h1>
+                          {(slide as Service).description && (
+                            <p className="text-white/70 text-base md:text-lg mb-8 line-clamp-3 leading-relaxed">
+                              {(slide as Service).description}
+                            </p>
+                          )}
+                          {(slide as Service).actualPrice && (
+                            <p className="text-[#C9C3B3] font-brand text-2xl font-semibold mb-6">
+                              AED {(slide as Service).actualPrice}
+                            </p>
+                          )}
+                          <Link
+                            href={`/services/${(slide as Service)._id}`}
+                            className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full transition-all duration-300 hover:gap-4"
+                          >
+                            Book Now
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </Link>
+                        </>
                       )}
-                      {service.actualPrice && (
-                        <p className="text-[#C9C3B3] font-brand text-2xl font-semibold mb-6">
-                          AED {service.actualPrice}
-                        </p>
-                      )}
-                      <Link
-                        href={`/services/${service._id}`}
-                        className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full transition-all duration-300 hover:gap-4"
-                      >
-                        Book Now
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
 
-                      {/* Mini timeline below Book Now */}
                       <div className="flex gap-3 mt-6 max-w-[280px]">
-                        {featuredServices.map((_, i) => (
+                        {heroSlides.map((_, i) => (
                           <button
                             key={i}
                             className={`flex-1 rounded-full overflow-hidden cursor-pointer transition-all duration-300 ${
@@ -332,7 +363,7 @@ export default function Home() {
             ))}
 
             <div className="absolute bottom-10 right-6 z-20 font-brand text-white/50 text-sm">
-              {currentSlide + 1} / {featuredServices.length}
+              {currentSlide + 1} / {heroSlides.length}
             </div>
           </>
         ) : (
@@ -363,7 +394,7 @@ export default function Home() {
 
       <AppDownloadSection />
 
-      <FooterInfoSection />
+      {/* <FooterInfoSection />
 
       <CTASection
         title="Ready to get started?"
@@ -371,7 +402,7 @@ export default function Home() {
         message="Hello! I'm interested in booking a service. Can you provide more details?"
         imageUrl="/images/CTA!.jpg"
         buttonText="Book Now"
-      />
+      /> */}
 
       {/* <section className="py-12 bg-gray-50">
         <div className="grid gap-6">

@@ -240,6 +240,7 @@ export interface Category {
   _id: string;
   name: string;
   description?: string;
+  link?: string;
   image?: string;
   isActive: boolean;
   sortOrder: number;
@@ -375,6 +376,18 @@ export interface DashboardStats {
   pendingPayments: number;
   totalRevenue: number;
   recentBookings: BookingResponse[];
+}
+
+export interface Banner {
+  _id: string;
+  title: string;
+  description?: string;
+  bookNowLink?: string;
+  bookNowButtonText?: string;
+  price?: number;
+  image?: string;
+  isActive?: boolean;
+  sortOrder?: number;
 }
 
 

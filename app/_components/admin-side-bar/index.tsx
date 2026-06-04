@@ -7,6 +7,7 @@ import { MdOutlineMiscellaneousServices } from "react-icons/md";
 import { BiCategoryAlt } from "react-icons/bi";
 import {BiShoppingBag} from "react-icons/bi";
 import { BiCalendar } from "react-icons/bi";
+import { MdOutlineViewCarousel } from "react-icons/md";
 
 export const AdminSideBar = () => {
   const pathname = usePathname();
@@ -32,14 +33,19 @@ export const AdminSideBar = () => {
       label: "Bookings",
       icon: <BiCalendar className="h-7 w-7 mr-2" />,
     },
+    {
+      href: "/admin/banners",
+      label: "Banner Management",
+      icon: <MdOutlineViewCarousel className="h-7 w-7 mr-2" />,
+    },
   ];
 
   return (
     <div className="w-64 bg-[#5b3c2a] shadow-lg md:block h-screen flex flex-col overflow-hidden">
       {/* Logo */}
-      <div className="shrink-0 my-5 px-5 py-10 flex items-center justify-center border-divider border-b">
+      <div className="shrink-0 my-5 px-5 py-10 flex items-center justify-center border-b-2 border-divider">
         <Image
-          src="https://nordichc.com/wp-content/uploads/2025/04/Horizental-Original-Logo-resized.png"
+          src="/images/logo.jpeg"
           alt="Nordic Home Healthcare Logo"
           className="h-12 w-auto"
           height={48}
