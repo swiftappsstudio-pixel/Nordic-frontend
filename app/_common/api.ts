@@ -17,6 +17,7 @@ import {
   DashboardStats,
   AddOn,
   GuestInfo,
+  Banner,
 } from "@/app/_common/interfaces";
 
 // =========================================== Auth API CALLS ===========================================//
@@ -450,4 +451,17 @@ export const getAdminDashboardStats = async (
   }
 
   return result.data;
+};
+
+// =========================================== Banner API CALLS ===========================================//
+
+export const getBanners = async (): Promise<Banner[]> => {
+  const res = await fetch(`${API_BASE_URL}/banners`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch banners");
+
+  const data = await res.json();
+  return data.data;
 };

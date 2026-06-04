@@ -65,6 +65,10 @@ export default function Footer() {
                 <FaWhatsapp className="text-base" />
                 +971 55 582 8945
               </a>
+              <a href="https://wa.me/971581649910" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition">
+                <FaWhatsapp className="text-base" />
+                +971 58 164 9910
+              </a>
             </div>
 
             <div className="flex gap-3 mt-5">

@@ -4,14 +4,15 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 
 interface AddCategoryModalProps {
-  onSubmit: (data: { name: string; description: string; imageFile?: File }) => Promise<void>;
+  onSubmit: (data: { name: string; description: string; link: string; imageFile?: File }) => Promise<void>;
   onCancel: () => void;
-  editData?: { name: string; description: string; image?: string } | null;
+  editData?: { name: string; description: string; link?: string; image?: string } | null;
 }
 
 export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCategoryModalProps) {
   const [name, setName] = useState(editData?.name ?? "");
   const [description, setDescription] = useState(editData?.description ?? "");
+  const [link, setLink] = useState(editData?.link ?? "");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(editData?.image ?? null);
   const [loading, setLoading] = useState(false);
@@ -40,6 +41,7 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
       await onSubmit({
         name: name.trim(),
         description: description.trim(),
+        link: link.trim(),
         ...(imageFile && { imageFile }),
       });
       onCancel();
@@ -78,6 +80,17 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
               className="w-full border border-gray-300 rounded-md text-black px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
               disabled={loading}
               placeholder="Enter category name"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-black mb-1">Link</label>
+            <input
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              className="w-full border border-gray-300 rounded-md text-black px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+              disabled={loading}
+              placeholder="e.g. /services/category/123 or https://..."
             />
           </div>
 

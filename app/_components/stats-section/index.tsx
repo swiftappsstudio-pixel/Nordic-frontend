@@ -28,8 +28,8 @@ export default function StatsSection() {
     <section className="bg-[#543826] py-16 px-6">
       <div className="max-w-6xl mx-auto">
         <p className="font-brand text-lg md:text-xl text-[#C9C3B3] mb-12 leading-relaxed max-w-2xl">
-          Care that comes to you. Online or at your door, NordicHC is the full
-          stack of healthcare across the UAE.
+          Compassionate care. Professional expertise. Delivered to you.
+Nordic Home Healthcare Centre provides personalized healthcare services across the UAE.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
