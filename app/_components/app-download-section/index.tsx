@@ -8,7 +8,7 @@ export default function AppDownloadSection() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
         <div className="w-full md:w-1/2 flex flex-col items-start">
           <div className="mb-6 flex items-center gap-6">
-            <div className="w-28 h-28 bg-white rounded-xl flex items-center justify-center overflow-hidden border-2 border-[#543826]">
+            {/* <div className="w-28 h-28 bg-white rounded-xl flex items-center justify-center overflow-hidden border-2 border-[#543826]">
               <Image
                 src="/images/footer-download-qr.webp"
                 alt="QR Code"
@@ -17,7 +17,7 @@ export default function AppDownloadSection() {
                 className="w-full h-full object-cover"
                 unoptimized
               />
-            </div>
+            </div> */}
           </div>
 
           <h2 className="font-brand text-[#543826] text-3xl md:text-4xl font-semibold leading-tight mb-3">
@@ -27,7 +27,7 @@ export default function AppDownloadSection() {
             UAE&apos;s fastest growing health and wellness App
           </p>
 
-          <a
+          {/* <a
             href="#"
             className="inline-flex items-center gap-3 bg-[#543826] text-white font-brand font-semibold px-8 py-4 rounded-full transition-all duration-300 hover:bg-[#C9C3B3] hover:text-[#543826] hover:gap-5"
           >
@@ -45,7 +45,7 @@ export default function AppDownloadSection() {
                 d="M9 5l7 7-7 7"
               />
             </svg>
-          </a>
+          </a> */}
         </div>
 
         <div className="w-full md:w-1/2 flex items-center justify-center">

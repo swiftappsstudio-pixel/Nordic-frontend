@@ -3,30 +3,49 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { getServicesByCategory, getCategories } from "@/app/_common/api";
 import { Service, Category } from "@/app/_common/interfaces";
 
-interface Props {
-  id: string;
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
-export default function CategoryServicesPage({ id }: Props) {
+interface Props {
+  slug: string;
+}
+
+export default function CategoryServicesPage({ slug }: Props) {
   const [services, setServices] = useState<Service[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    if (!id) return;
+    if (!slug) return;
 
     const load = async () => {
       try {
-        const [servicesData, categories] = await Promise.all([
-          getServicesByCategory(id),
-          getCategories(),
-        ]);
+        const categories = await getCategories();
+        const found = categories.find((c) => {
+          if (c.link) {
+            const linkSlug = c.link.replace(/^\/+|\/+$/g, "").split("/").pop();
+            return linkSlug === slug;
+          }
+          return slugify(c.name) === slug;
+        });
+
+        if (!found) {
+          router.replace("/");
+          return;
+        }
+
+        setCategory(found);
+        const servicesData = await getServicesByCategory(found._id);
         setServices(servicesData);
-        const found = categories.find((c) => c._id === id);
-        setCategory(found || null);
       } catch (err) {
         console.error(err);
       } finally {
@@ -35,12 +54,11 @@ export default function CategoryServicesPage({ id }: Props) {
     };
 
     load();
-  }, [id]);
+  }, [slug, router]);
 
   return (
     <div className="min-h-screen bg-gray-50 pt-28 pb-16">
       <div className="max-w-6xl mx-auto px-5">
-        {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
           <Link href="/" className="hover:text-[#543826]">Home</Link>
           <span>/</span>
@@ -49,7 +67,6 @@ export default function CategoryServicesPage({ id }: Props) {
           </span>
         </nav>
 
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#543826]">
             {category?.name || "Services"}

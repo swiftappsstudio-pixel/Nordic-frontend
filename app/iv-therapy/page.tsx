@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getServices, getAddOnsByService, createBooking } from "@/app/_common/api";
-import { Service, AddOn, BookingRequest } from "@/app/_common/interfaces";
+import { Service, AddOn, BookingRequest, Category } from "@/app/_common/interfaces";
 import { useAuth } from "@/app/_common/auth-context";
 
 // ─── Config ────────────────────────────────────────────────────────────────
@@ -230,7 +230,7 @@ function BookingModal({ service, onClose }: { service: Service; onClose: () => v
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">{label}</label>
                     <input type={type} placeholder={ph} value={form[key as keyof typeof form]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#543826]/20 focus:border-[#543826]/40 transition" />
                   </div>
-                ))}
+))}
               </div>
             )}
 
@@ -295,6 +295,7 @@ export default function IVTherapyPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [loadingSvc, setLoadingSvc] = useState(true);
   const [selected, setSelected] = useState<Service | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>("All");
   const servicesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -317,6 +318,9 @@ export default function IVTherapyPage() {
 
   const scrollToServices = () =>
     servicesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const categories = ["All", ...Array.from(new Set(services.map((s) => s.category).filter(Boolean)))];
+  const filteredServices = activeCategory === "All" ? services : services.filter((s) => s.category === activeCategory);
 
   return (
     <div className="bg-white min-h-screen">
@@ -446,8 +450,27 @@ export default function IVTherapyPage() {
               <div className="w-10 h-10 border-4 border-[#543826]/20 border-t-[#543826] rounded-full animate-spin" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {services.map((svc) => (
+            <>
+              {categories.length > 2 && (
+                <div className="flex flex-wrap gap-2 mb-8">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                        activeCategory === cat
+                          ? "bg-[#543826] text-white shadow-sm"
+                          : "bg-[#F7EEE0] text-[#543826] hover:bg-[#543826]/10"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {filteredServices.map((svc) => (
                 <div key={svc._id} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden bg-gray-100">
@@ -498,7 +521,8 @@ export default function IVTherapyPage() {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
+            </>
           )}
         </div>
       </section>
