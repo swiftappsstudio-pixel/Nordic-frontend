@@ -4,36 +4,12 @@ import { useState, useRef } from "react";
 
 const REVIEWS = [
   {
-    text: "Was nervous about starting Wegovy but the doctor consult was super thorough. Down 9kg in 3 months and they check in every 2 weeks. Easiest part of my week.",
+    text: "I've been using Nordic Home Healthcare for a while now, and I love their services! :) The nurses are very friendly and well trained. The products are very high-quality, I've been checking the labels. I can highly recommend this home service, it's so convenient and the prices are also much better than in other places! Thank you so much. I'm very satisfied.",
     name: "Aisha A",
     badge: "Verified user",
     video: "/images/video_4.mp4",
+    videoAfter: "/images/video_2.mp4",
   },
-  {
-    text: "Ordered BPC-157 on a Tuesday afternoon. Was at my door Wednesday morning with the pharmacy receipt in the box. No shady stuff, exactly what I ordered.",
-    name: "Vikram P",
-    badge: "Verified user",
-    video: "/images/video_2.mp4",
-  },
-  {
-    text: "Called at 2am when my baby wouldn't latch. The nurse was at our place within the hour and stayed for two. I don't know what we would have done without her.",
-    name: "Layla H",
-    badge: "Verified user",
-    video: "/images/video_3.mp4",
-  },
-  {
-    text: "Six weeks on GHK-Cu and my skin honestly looks better than it has in years. Started telling friends because people keep asking what I changed.",
-    name: "Sofia M",
-    badge: "Verified user",
-    video: "/images/video_1.mp4",
-  },
-  {
-    text: "Booked a full blood panel for 8am. Phlebotomist was on time, done in fifteen minutes, super gentle. Results were on the app by the next afternoon.",
-    name: "Ahmed S",
-    badge: "Verified user",
-    video: "/images/video_5.mp4",
-  },
-  
 ];
 
 function Stars() {
@@ -70,7 +46,7 @@ function VideoCard({ src }: { src: string }) {
   };
 
   return (
-    <div className="shrink-0 w-[260px] h-[230px] bg-[#F7EEE0] rounded-xl relative overflow-hidden cursor-pointer group">
+    <div className="shrink-0 w-[260px] min-h-[230px] bg-[#F7EEE0] rounded-xl relative overflow-hidden cursor-pointer group flex-1">
       <video
         ref={videoRef}
         src={src}
@@ -117,34 +93,34 @@ export default function ReviewsSection() {
         className="flex gap-4 overflow-x-auto scroll-smooth pb-4 pl-6"
         style={{ scrollbarWidth: "none" }}
       >
-        {REVIEWS.map((review, i) => (
-          <>
-            <div
-              key={`review-${i}`}
-              className="shrink-0 w-[260px] min-h-[230px] bg-[#F7EEE0] rounded-xl p-4 relative flex flex-col items-center text-center"
-            >
-              <Stars />
+{REVIEWS.map((review, i) => (
+            <div key={`pair-${i}`} className="flex shrink-0 gap-4 items-stretch">
+              {review.video && <VideoCard key={`video-before-${i}`} src={review.video} />}
+              <div
+                key={`review-${i}`}
+                className="shrink-0 w-[260px] min-h-[230px] bg-[#F7EEE0] rounded-xl p-4 relative flex flex-col items-center text-center"
+              >
+                <Stars />
 
-              <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-2">
-                <span className="text-xl font-bold">&ldquo;</span>
-                {review.text}
-                <span className="text-xl font-bold">&rdquo;</span>
-              </p>
+                <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-2">
+                  <span className="text-xl font-bold">&ldquo;</span>
+                  {review.text}
+                  <span className="text-xl font-bold">&rdquo;</span>
+                </p>
 
-              <div className="flex-1" />
+                <div className="flex-1" />
 
-              <div className="flex flex-col items-center gap-0.5 mt-6">
-                <p className="font-bold text-xs text-[#543826]">{review.name}</p>
-                <div className="flex items-center gap-1">
-                  <p className="text-[11px] text-gray-500">{review.badge}</p>
-                  <BlueTick />
+                <div className="flex flex-col items-center gap-0.5 mt-6">
+                  <p className="font-bold text-xs text-[#543826]">{review.name}</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-[11px] text-gray-500">{review.badge}</p>
+                    <BlueTick />
+                  </div>
                 </div>
               </div>
+              {review.videoAfter && <VideoCard key={`video-after-${i}`} src={review.videoAfter} />}
             </div>
-
-            {review.video && <VideoCard key={`video-${i}`} src={review.video} />}
-          </>
-        ))}
+          ))}
       </div>
     </section>
   );
