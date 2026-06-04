@@ -351,7 +351,7 @@ function BookingContent() {
                 const msg = encodeURIComponent(
                   `New Booking Confirmed!\n\nBooking ID: ${booking._id}\nService: ${booking.serviceSnapshot?.title}\n${booking.variantSnapshot ? `Package: ${booking.variantSnapshot.name}\n` : ""}${booking.addOnsSnapshot?.length ? `Add-ons: ${booking.addOnsSnapshot.map((a) => a.name).join(", ")}\n` : ""}Date: ${booking.preferredDate}\nTime: ${booking.preferredTime}\nAmount: AED ${booking.totalAmount}\nStatus: ${booking.status}\n${booking.guestInfo ? `Guest: ${booking.guestInfo.fullName} | ${booking.guestInfo.phone} | ${booking.guestInfo.email}` : ""}`
                 );
-                window.open(`https://wa.me/923414415384?text=${msg}`, "_blank");
+                window.open(`https://wa.me/971555828945?text=${msg}`, "_blank");
               }}
               className="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1eb954] text-white font-brand font-semibold py-5 rounded-xl text-lg transition-all duration-300 hover:shadow-lg"
             >
@@ -443,7 +443,7 @@ function BookingContent() {
                     Get in Touch
                   </p>
                   <p className="text-sm text-gray-700 font-medium mt-1">
-                    +971581649910
+                    +971555828945
                   </p>
                   <p className="text-sm text-gray-500">
                     operation@nordichc.ae

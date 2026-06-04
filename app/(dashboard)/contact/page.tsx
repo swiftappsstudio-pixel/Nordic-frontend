@@ -208,7 +208,7 @@ export default function ContactUsPage() {
                 Need immediate help? Chat with us directly on WhatsApp.
               </p>
               <a
-                href="https://wa.me/971581649910?text=Hello! I need help with a service."
+                href="https://wa.me/971555828945?text=Hello! I need help with a service."
                 target="_blank"
                 className="inline-flex items-center justify-center gap-3 w-full bg-[#25D366] hover:bg-[#1eb954] text-white font-brand font-semibold py-3.5 rounded-xl transition"
               >
