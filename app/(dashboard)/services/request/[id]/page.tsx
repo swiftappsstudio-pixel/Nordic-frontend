@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Service, SubService } from "@/app/_common/interfaces";
 import { getService } from "@/app/_common/api";
 import Spacer from "@/app/_components/spacer";
-import BookingModal from "@/app/_components/booking-model";
 import { CTASection } from "@/app/_components/cta-section";
 
 const TABS = {
@@ -17,10 +16,10 @@ const TABS = {
 
 const ServiceDetailPage: React.FC = () => {
   const { id } = useParams();
+  const router = useRouter();
 
   const [service, setService] = useState<Service | null>(null);
 
-  // unified selection for service/subservice
   const [selectedOption, setSelectedOption] = useState<{
     name: string;
     price: number;
@@ -28,15 +27,6 @@ const ServiceDetailPage: React.FC = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-const [bookingData, setBookingData] = useState<{
-  serviceName: string;
-  price: number;
-  subServiceName?: string;
-} | null>(null);
-
 
   const [activeTab, setActiveTab] = useState(TABS.BENEFITS);
   const [activeImage, setActiveImage] = useState<string | null>(null);
@@ -188,13 +178,7 @@ const [bookingData, setBookingData] = useState<{
               </span>
               <div className="text-right ">
                <button
-  onClick={() => {
-    setBookingData({
-      serviceName: service.title,
-      price: service.discountPrice || service.actualPrice || 0,
-    });
-    setIsModalOpen(true);
-  }}
+  onClick={() => router.push(`/services/${id}/book`)}
   className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md"
 >
   Book Now
@@ -223,14 +207,7 @@ const [bookingData, setBookingData] = useState<{
                   <span className="font-semibold text-black">AED {sub.price}</span>
                   <div className="text-right">
                  <button
-  onClick={() => {
-    setBookingData({
-      serviceName: sub.name,
-      price: sub.price,
-      subServiceName: sub.name,
-    });
-    setIsModalOpen(true);
-  }}
+  onClick={() => router.push(`/services/${id}/book?sub=${index}`)}
   className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md"
 >
   Book Now
@@ -248,19 +225,8 @@ const [bookingData, setBookingData] = useState<{
     
         </div>
       </div>
-      {bookingData && (
-  <BookingModal
-    isOpen={isModalOpen}
-    onClose={() => setIsModalOpen(false)}
-    serviceId={service._id}
-    serviceName={bookingData.serviceName}
-    price={bookingData.price}
-    subServiceName={bookingData.subServiceName}
-  />
-)}
-
-    </div>
-     <CTASection
+      </div>
+      <CTASection
         title="Ready to get started?"
         phoneNumber="+971555828945"
         message="Hello! I'm interested in booking a service. Can you provide more details?"

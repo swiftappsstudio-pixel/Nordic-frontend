@@ -5,21 +5,45 @@ import { useState, useRef } from "react";
 const REVIEWS = [
   {
     text: "I've been using Nordic Home Healthcare for a while now, and I love their services! :) The nurses are very friendly and well trained. The products are very high-quality, I've been checking the labels. I can highly recommend this home service, it's so convenient and the prices are also much better than in other places! Thank you so much. I'm very satisfied.",
-    name: "Aisha A",
+    name: "Valeria Costa Martínez",
     badge: "Verified user",
+    rating: 5,
     video: "/images/video_4.mp4",
-    videoAfter: "/images/video_2.mp4",
+  },
+  {
+    text: "Nordic changed my routine completely. The home visits are punctual, the staff is incredibly caring, and I feel safe knowing a professional is looking after my health at home. It saved me so much time compared to going to the clinic every week. Truly a blessing for seniors like me!",
+    name: "Erik Johansson",
+    badge: "Verified user",
+    rating: 4.8,
+    video: "/images/video_1.mp4",
+  },
+  {
+    text: "I was skeptical at first, but Nordic exceeded all my expectations. The nurse who visits me is so kind and knowledgeable. The products they recommended have really improved my daily comfort. And the pricing is fair — no hidden fees. I've already told all my friends about it!",
+    name: "Sofia Andersen",
+    badge: "Verified user",
+    rating: 4.9,
+    video: "/images/video_5.mp4",
+    videoAfter: "/images/video_3.mp4",
   },
 ];
 
-function Stars() {
+function Stars({ rating }: { rating: number }) {
   return (
-    <div className="flex gap-1 items-center justify-center">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <svg key={i} className="w-4 h-4 text-[#C9C3B3]" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.948a1 1 0 00.95.69h4.168c.969 0 1.371 1.24.588 1.81l-3.392 2.463a1 1 0 00-.364 1.118l1.287 3.948c.3.921-.755 1.688-1.54 1.118l-3.392-2.463a1 1 0 00-1.175 0l-3.392 2.463c-.784.487-1.838-.197-1.539-1.118l1.287-3.948a1 1 0 00-.364-1.118L2.014 8.427c-.783-.487-.38-1.81.588-1.81h4.168a1 1 0 00.95-.69l1.286-3.948z" />
-        </svg>
-      ))}
+    <div className="flex gap-0.5 items-center justify-center">
+      {[1, 2, 3, 4, 5].map((i) => {
+        const filled = i <= Math.floor(rating);
+        const partial = !filled && i === Math.ceil(rating);
+        const fraction = partial ? rating - Math.floor(rating) : 0;
+        return (
+          <svg key={i} className="w-5 h-5" viewBox="0 0 20 20" fill="none">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.948a1 1 0 00.95.69h4.168c.969 0 1.371 1.24.588 1.81l-3.392 2.463a1 1 0 00-.364 1.118l1.287 3.948c.3.921-.755 1.688-1.54 1.118l-3.392-2.463a1 1 0 00-1.175 0l-3.392 2.463c-.784.487-1.838-.197-1.539-1.118l1.287-3.948a1 1 0 00-.364-1.118L2.014 8.427c-.783-.487-.38-1.81.588-1.81h4.168a1 1 0 00.95-.69l1.286-3.948z" fill="#543826" clipPath={partial ? `inset(0 ${(1 - fraction) * 100}% 0 0)` : undefined} />
+            {!filled && !partial && (
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.948a1 1 0 00.95.69h4.168c.969 0 1.371 1.24.588 1.81l-3.392 2.463a1 1 0 00-.364 1.118l1.287 3.948c.3.921-.755 1.688-1.54 1.118l-3.392-2.463a1 1 0 00-1.175 0l-3.392 2.463c-.784.487-1.838-.197-1.539-1.118l1.287-3.948a1 1 0 00-.364-1.118L2.014 8.427c-.783-.487-.38-1.81.588-1.81h4.168a1 1 0 00.95-.69l1.286-3.948z" fill="#C9C3B3" />
+            )}
+          </svg>
+        );
+      })}
+      <span className="font-brand text-sm font-extrabold text-[#543826] ml-1">{rating}</span>
     </div>
   );
 }
@@ -93,34 +117,34 @@ export default function ReviewsSection() {
         className="flex gap-4 overflow-x-auto scroll-smooth pb-4 pl-6"
         style={{ scrollbarWidth: "none" }}
       >
-{REVIEWS.map((review, i) => (
-            <div key={`pair-${i}`} className="flex shrink-0 gap-4 items-stretch">
-              {review.video && <VideoCard key={`video-before-${i}`} src={review.video} />}
-              <div
-                key={`review-${i}`}
-                className="shrink-0 w-[260px] min-h-[230px] bg-[#F7EEE0] rounded-xl p-4 relative flex flex-col items-center text-center"
-              >
-                <Stars />
+        {REVIEWS.map((review, i) => (
+          <div key={`pair-${i}`} className="flex shrink-0 gap-4 items-stretch">
+            {review.video && <VideoCard key={`video-before-${i}`} src={review.video} />}
+            <div
+              key={`review-${i}`}
+              className="shrink-0 w-[260px] min-h-[230px] bg-[#F7EEE0] rounded-xl p-4 relative flex flex-col items-center text-center"
+            >
+              <Stars rating={review.rating} />
 
-                <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-2">
-                  <span className="text-xl font-bold">&ldquo;</span>
-                  {review.text}
-                  <span className="text-xl font-bold">&rdquo;</span>
-                </p>
+              <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-2">
+                <span className="text-xl font-bold">&ldquo;</span>
+                {review.text}
+                <span className="text-xl font-bold">&rdquo;</span>
+              </p>
 
-                <div className="flex-1" />
+              <div className="flex-1" />
 
-                <div className="flex flex-col items-center gap-0.5 mt-6">
-                  <p className="font-bold text-xs text-[#543826]">{review.name}</p>
-                  <div className="flex items-center gap-1">
-                    <p className="text-[11px] text-gray-500">{review.badge}</p>
-                    <BlueTick />
-                  </div>
+              <div className="flex flex-col items-center gap-0.5 mt-6">
+                <p className="font-bold text-xs text-[#543826]">{review.name}</p>
+                <div className="flex items-center gap-1">
+                  <p className="text-[11px] text-gray-500">{review.badge}</p>
+                  <BlueTick />
                 </div>
               </div>
-              {review.videoAfter && <VideoCard key={`video-after-${i}`} src={review.videoAfter} />}
             </div>
-          ))}
+            {review.videoAfter && <VideoCard key={`video-after-${i}`} src={review.videoAfter} />}
+          </div>
+        ))}
       </div>
     </section>
   );

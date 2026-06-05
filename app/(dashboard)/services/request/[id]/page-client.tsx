@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Service, SubService } from "@/app/_common/interfaces";
 import { getService } from "@/app/_common/api";
 import Spacer from "@/app/_components/spacer";
-import BookingModal from "@/app/_components/booking-model";
 import { CTASection } from "@/app/_components/cta-section";
 
 const TABS = {
@@ -19,12 +19,11 @@ interface Props {
 }
 
 const ServiceDetailPage: React.FC<Props> = ({ id }) => {
+  const router = useRouter();
   const [service, setService] = useState<Service | null>(null);
   const [selectedOption, setSelectedOption] = useState<{ name: string; price: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [bookingData, setBookingData] = useState<{ serviceId: string; serviceName: string; price: number } | null>(null);
   const [activeTab, setActiveTab] = useState(TABS.BENEFITS);
   const [activeImage, setActiveImage] = useState<string | null>(null);
 
@@ -115,7 +114,7 @@ const ServiceDetailPage: React.FC<Props> = ({ id }) => {
                 <span className="font-medium text-black">{service.title}</span>
                 <span className="font-semibold text-black">AED {service.discountPrice || service.actualPrice}</span>
                 <div className="text-right">
-                  <button onClick={() => { setBookingData({ serviceId: service._id, serviceName: service.title, price: service.discountPrice || service.actualPrice || 0 }); setIsModalOpen(true); }} className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md">Book Now</button>
+                  <button onClick={() => router.push(`/services/${id}/book`)} className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md">Book Now</button>
                 </div>
               </div>
               {service.subServices && service.subServices.map((sub, index) => (
@@ -123,17 +122,14 @@ const ServiceDetailPage: React.FC<Props> = ({ id }) => {
                   <div><p className="font-medium text-black">{sub.name}</p>{sub.discountPercent && <p className="text-xs text-black">{sub.discountPercent}% OFF</p>}</div>
                   <span className="font-semibold text-black">AED {sub.price}</span>
                   <div className="text-right">
-                    <button onClick={() => { setBookingData({ serviceId: service._id, serviceName: sub.name, price: sub.price }); setIsModalOpen(true); }} className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md">Book Now</button>
+                    <button onClick={() => router.push(`/services/${id}/book?sub=${index}`)} className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md">Book Now</button>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         </div>
-        {bookingData && (
-          <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} serviceId={bookingData.serviceId} serviceName={bookingData.serviceName} price={bookingData.price} />
-        )}
-      </div>
+        </div>
       <CTASection
         title="Ready to get started?"
         phoneNumber="+971555828945"

@@ -142,7 +142,7 @@ export default function CategoryPageClient({ category, services }: CategoryPageC
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {services.map((svc) => (
-                <Link key={svc._id} href={`/services/${svc._id}`} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
+                <Link key={svc._id} href={`/services/${svc._id}/book`} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
                   <div className="relative h-48 overflow-hidden bg-gray-100">
                     {svc.images?.[0] ? (
                       <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
@@ -177,7 +177,7 @@ export default function CategoryPageClient({ category, services }: CategoryPageC
                       )}
                     </div>
                     <span className="w-full bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-2.5 rounded-xl transition text-sm text-center">
-                      View Details
+                      Book Now
                     </span>
                   </div>
                 </Link>

@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { getServices, getAddOnsByService, createBooking } from "@/app/_common/api";
-import { Service, AddOn, BookingRequest, Category } from "@/app/_common/interfaces";
-import { useAuth } from "@/app/_common/auth-context";
+import { getServices } from "@/app/_common/api";
+import { Service } from "@/app/_common/interfaces";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const WA_NUM = "971555828945";
@@ -148,153 +148,11 @@ function WaIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
-// ─── Booking Modal ─────────────────────────────────────────────────────────
-function BookingModal({ service, onClose }: { service: Service; onClose: () => void }) {
-  const { user, token } = useAuth();
-  const isGuest = !token;
-  const today = new Date().toISOString().split("T")[0];
-  const [form, setForm] = useState({ fullName: user?.name ?? "", email: user?.email ?? "", phone: "", date: "", time: "" });
-  const [addOns, setAddOns] = useState<AddOn[]>([]);
-  const [sel, setSel] = useState<Set<string>>(new Set());
-  const [loadingA, setLoadingA] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    getAddOnsByService(service._id)
-      .then((list) => { setAddOns(list); setSel(new Set(list.filter((a) => a.isRequired).map((a) => a._id))); })
-      .catch(() => setAddOns([]))
-      .finally(() => setLoadingA(false));
-  }, [service._id]);
-
-  const addOnsTotal = addOns.filter((a) => sel.has(a._id)).reduce((s, a) => s + a.price, 0);
-  const base = service.discountPrice ?? service.actualPrice ?? 0;
-  const total = base + addOnsTotal;
-
-  const toggle = (id: string, req: boolean) => {
-    if (req) return;
-    setSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
-  };
-
-  const submit = async () => {
-    if (!form.date || !form.time) return alert("Please select a date and time.");
-    if (isGuest && (!form.fullName || !form.email || !form.phone)) return alert("Please fill in all contact details.");
-    const payload: BookingRequest = {
-      serviceId: service._id,
-      preferredDate: form.date,
-      preferredTime: form.time,
-      addOnIds: sel.size > 0 ? Array.from(sel) : undefined,
-    };
-    if (isGuest) payload.guestInfo = { fullName: form.fullName, email: form.email, phone: form.phone };
-    try {
-      setSubmitting(true);
-      const res = await createBooking(payload, token ?? undefined);
-      setDone(true);
-      const msg = encodeURIComponent(`New IV Therapy Booking\nID: ${res._id}\nService: ${service.title}\nDate: ${form.date} at ${form.time}\nTotal: AED ${total}${isGuest ? `\nName: ${form.fullName}\nPhone: ${form.phone}` : ""}`);
-      setTimeout(() => window.open(`https://wa.me/${WA_NUM}?text=${msg}`, "_blank"), 700);
-    } catch (e) {
-      alert(e instanceof Error ? e.message : "Booking failed. Please try again.");
-    } finally { setSubmitting(false); }
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[92vh]">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
-          <div>
-            <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">Booking</p>
-            <h3 className="font-bold text-gray-900 text-base mt-0.5 leading-tight">{service.title}</h3>
-          </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
-        </div>
-
-        {done ? (
-          <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
-            <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Booking Confirmed</h3>
-            <p className="text-gray-400 text-sm mb-6">Redirecting you to WhatsApp to notify our team.</p>
-            <button onClick={onClose} className="bg-[#543826] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#3e2a1c] transition">Close</button>
-          </div>
-        ) : (
-          <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
-            {isGuest && (
-              <div className="space-y-3">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Your Details</p>
-                {([ ["Full Name", "fullName", "text", "John Doe"], ["Email Address", "email", "email", "john@example.com"], ["Phone Number", "phone", "tel", "+971 50 000 0000"] ] as [string, string, string, string][]).map(([label, key, type, ph]) => (
-                  <div key={key}>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">{label}</label>
-                    <input type={type} placeholder={ph} value={form[key as keyof typeof form]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#543826]/20 focus:border-[#543826]/40 transition" />
-                  </div>
-))}
-              </div>
-            )}
-
-            <div className="space-y-3">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Appointment</p>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Date</label>
-                  <input type="date" min={today} value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#543826]/20 focus:border-[#543826]/40 transition" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Time</label>
-                  <input type="time" value={form.time} onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#543826]/20 focus:border-[#543826]/40 transition" />
-                </div>
-              </div>
-            </div>
-
-            {!loadingA && addOns.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Optional Add-ons</p>
-                {addOns.map((a) => {
-                  const ch = sel.has(a._id);
-                  return (
-                    <label key={a._id} className={`flex items-center justify-between gap-3 border rounded-xl px-4 py-3 cursor-pointer transition ${ch ? "border-[#543826]/30 bg-[#543826]/3" : "border-gray-200"}`}>
-                      <div className="flex items-center gap-3">
-                        <input type="checkbox" checked={ch} disabled={a.isRequired} onChange={() => toggle(a._id, a.isRequired)} className="accent-[#543826] w-4 h-4" />
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{a.name}{a.isRequired && <span className="ml-2 text-[10px] bg-orange-50 text-orange-600 border border-orange-200 px-1.5 py-0.5 rounded-full font-semibold">Required</span>}</p>
-                          {a.description && <p className="text-xs text-gray-400 mt-0.5">{a.description}</p>}
-                        </div>
-                      </div>
-                      <span className="text-sm font-semibold text-[#543826] whitespace-nowrap">+ AED {a.price}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-
-            <div className="border-t border-gray-100 pt-4 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Total</span>
-                <span className="text-2xl font-bold text-gray-900">AED {total}</span>
-              </div>
-              <p className="text-xs text-gray-400">Cash on Delivery · DHA Licensed Nurses · All Dubai Areas</p>
-              <button onClick={submit} disabled={submitting} className="w-full bg-[#543826] hover:bg-[#3e2a1c] disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
-                {submitting && <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-                {submitting ? "Confirming…" : "Confirm Booking"}
-              </button>
-              <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center gap-2 border border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white font-semibold py-3 rounded-xl transition text-sm">
-                <WaIcon className="w-4 h-4" /> Book via WhatsApp instead
-              </a>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 // ─── Main Page ─────────────────────────────────────────────────────────────
 export default function IVTherapyPage() {
+  const router = useRouter();
   const [services, setServices] = useState<Service[]>([]);
   const [loadingSvc, setLoadingSvc] = useState(true);
-  const [selected, setSelected] = useState<Service | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const servicesRef = useRef<HTMLDivElement>(null);
 
@@ -513,7 +371,7 @@ export default function IVTherapyPage() {
                     </div>
 
                     <button
-                      onClick={() => setSelected(svc)}
+                      onClick={() => router.push(`/services/${svc._id}/book`)}
                       className="w-full bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-2.5 rounded-xl transition text-sm"
                     >
                       Book Now
@@ -753,8 +611,6 @@ export default function IVTherapyPage() {
         </div>
       </div>
 
-      {/* Booking Modal */}
-      {selected && <BookingModal service={selected} onClose={() => setSelected(null)} />}
-    </div>
+      </div>
   );
 }
