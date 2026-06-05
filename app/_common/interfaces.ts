@@ -382,7 +382,9 @@ export interface Banner {
   _id: string;
   title: string;
   description?: string;
+  bookNowLink?: string;
   bookNowButtonText?: string;
+  price?: number;
   image?: string;
   mobileImage?: string;
   isActive?: boolean;
