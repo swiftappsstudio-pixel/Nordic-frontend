@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView, useAnimation, useScroll, useTransform } from "framer-motion";
+import ServicesSection from "@/app/_components/services-section";
 
 // ─── Config ───────────────────────────────────────────────────────────────
 const WA_NUM = "971555828945";
@@ -15,62 +16,62 @@ const CALL_NUM = "tel:+971555828945";
 
 // ─── Static Data ──────────────────────────────────────────────────────────
 const TRUST_CARDS = [
-  { icon: "🏥", title: "DHA Licensed", desc: "Fully licensed by Dubai Health Authority" },
-  { icon: "⭐", title: "5 Years Experience", desc: "Trusted by thousands of families" },
-  { icon: "🕐", title: "24/7 Support", desc: "Round-the-clock care & assistance" },
-  { icon: "👩‍⚕️", title: "NICU Trained", desc: "Certified neonatal care specialists" },
+  { icon: "🏥", title: "DHA Licensed", desc: "Certified by Dubai Health Authority — your safety is guaranteed" },
+  { icon: "⭐", title: "Trusted Since 2020", desc: "Serving thousands of Dubai families with excellence" },
+  { icon: "🕐", title: "Always Available", desc: "Our care team is on call every hour of every day" },
+  { icon: "👩‍⚕️", title: "NICU Specialists", desc: "Trained in the most advanced neonatal care techniques" },
 ];
 
 const BENEFITS = [
-  "DHA Licensed & Regulated",
-  "Female Caregivers Available",
-  "Home Visits Across Dubai",
-  "Emergency Support 24/7",
-  "Flexible Care Plans",
-  "NICU Trained Nurses",
+  "DHA Licensed & Fully Regulated",
+  "Female-Only Caregivers",
+  "Home Visits Across All Dubai",
+  "Emergency Response 24/7",
+  "Personalised Monthly Plans",
+  "NICU & BLS Certified Nurses",
 ];
 
 const PHONE_LEFT = [
-  { icon: "📅", title: "Easy Booking", desc: "Book in under 2 minutes" },
-  { icon: "👩‍⚕️", title: "Professional Care", desc: "Certified NICU nurses" },
-  { icon: "🔔", title: "Real Time Updates", desc: "Live progress reports" },
+  { icon: "📅", title: "Simple Booking", desc: "Confirm your visit in under 2 minutes" },
+  { icon: "👩‍⚕️", title: "Expert Nurses", desc: "NICU-certified, Nordic-employed professionals" },
+  { icon: "🔔", title: "Live Updates", desc: "Real-time reports straight to your phone" },
 ];
 
 const PHONE_RIGHT = [
-  { icon: "👶", title: "Same Caregiver", desc: "Consistency for your baby" },
-  { icon: "📊", title: "Daily Tracking", desc: "Health logs & milestones" },
-  { icon: "❤️", title: "Family Support", desc: "Guidance for parents too" },
+  { icon: "👶", title: "Your Nurse, Always", desc: "The same face every single visit" },
+  { icon: "📊", title: "Health Logs", desc: "Daily tracking of your baby's milestones" },
+  { icon: "❤️", title: "Parent Guidance", desc: "Support and reassurance for the whole family" },
 ];
 
 const STEPS = [
-  { num: "01", title: "Book Consultation", desc: "Choose a time that works for you — online or via WhatsApp." },
-  { num: "02", title: "Speak To Specialist", desc: "Our NICU-trained nurse reviews your needs and answers questions." },
-  { num: "03", title: "Get Care Plan", desc: "A personalised care plan tailored to your baby and family." },
-  { num: "04", title: "Receive Home Care", desc: "Your dedicated caregiver arrives at your door, ready to help." },
+  { num: "01", title: "Tell Us Your Needs", desc: "Message us on WhatsApp — your baby's age, your schedule, what you need." },
+  { num: "02", title: "Meet Your Specialist", desc: "A senior nurse reviews your case and prepares a tailored care plan." },
+  { num: "03", title: "Approve Your Plan", desc: "Review your caregiver's profile and confirm when you are ready." },
+  { num: "04", title: "Care Begins at Home", desc: "Your dedicated caregiver arrives prepared, briefed, and ready." },
 ];
 
 const SERVICES = [
-  { icon: "🍼", title: "Newborn Care", desc: "Expert care for your newborn's first precious weeks at home." },
-  { icon: "💊", title: "Postpartum Care", desc: "Dedicated support for mothers during the postpartum recovery period." },
-  { icon: "🤱", title: "Lactation Support", desc: "Professional guidance for breastfeeding and infant nutrition." },
-  { icon: "🌙", title: "Night Nurse", desc: "Overnight care so you can rest and recover peacefully." },
-  { icon: "😴", title: "Sleep Training", desc: "Evidence-based sleep routines for healthy infant sleep habits." },
-  { icon: "📱", title: "Baby Monitoring", desc: "Tech-assisted health tracking and milestone monitoring." },
+  { icon: "🍼", title: "Newborn Home Care", desc: "Hands-on support for your newborn's feeding, sleeping and daily routines." },
+  { icon: "💊", title: "Postpartum Recovery", desc: "Medical and emotional support for mothers through every stage of recovery." },
+  { icon: "🤱", title: "Breastfeeding Support", desc: "Certified lactation nurses guiding you through feeding with confidence." },
+  { icon: "🌙", title: "Night Nurse Service", desc: "A trained nurse takes the night shift so your family can rest and heal." },
+  { icon: "😴", title: "Baby Sleep Training", desc: "Science-backed sleep routines that work — for baby and for you." },
+  { icon: "📱", title: "Health Monitoring", desc: "Daily health logs, milestone tracking and instant nurse communication." },
 ];
 
 const TESTIMONIALS = [
-  { name: "Fatima Al-Hassan", role: "Mother of twins", rating: 5, text: "The best newborn care service in Dubai. Our nurse was incredibly professional and caring. We felt completely supported." },
-  { name: "Sarah Mitchell", role: "First-time mother", rating: 5, text: "Having a NICU-trained nurse at home gave us so much confidence. I cannot recommend Nordic enough." },
-  { name: "Aisha Al-Mansoori", role: "Mother of 3", rating: 5, text: "From the first call to the last visit, everything was seamless. The caregiver became part of our family." },
-  { name: "Priya Sharma", role: "Postpartum recovery", rating: 5, text: "The postpartum care plan was exactly what I needed. Professional, warm and genuinely caring team." },
+  { name: "Fatima Al-Hassan", role: "Mother of twins · Dubai Marina", rating: 5, text: "Nordic sent us an extraordinary nurse. From the very first night, our twins slept soundly and we finally felt like a family again." },
+  { name: "Sarah Mitchell", role: "First-time mother · JBR", rating: 5, text: "Nothing prepares you for a newborn. Nordic did. Our nurse was calm, expert and always one step ahead of what we needed." },
+  { name: "Aisha Al-Mansoori", role: "Mother of 3 · Palm Jumeirah", rating: 5, text: "We have used Nordic for all three of our children. The quality and consistency is unlike anything else in Dubai." },
+  { name: "Priya Sharma", role: "Postpartum recovery · DIFC", rating: 5, text: "My recovery was so much smoother knowing a professional was with me at home. Nordic genuinely changed how I experienced motherhood." },
 ];
 
 const FAQS = [
-  { q: "What services are included in the Mother & Baby package?", a: "Our packages include newborn care, postpartum recovery support, lactation guidance, night nursing, sleep training, and daily health monitoring — all delivered at home by certified nurses." },
-  { q: "How much does it cost?", a: "Pricing depends on the level of care required. We offer flexible hourly, daily, and monthly plans. Contact us for a personalised quote." },
-  { q: "How do I book?", a: "Simply click 'Talk To Us Now' or send us a WhatsApp message. Our team will respond within minutes and guide you through the booking process." },
-  { q: "Are the caregivers certified?", a: "Yes. All our nurses are DHA-licensed, NICU-trained, and have a minimum of 3 years of neonatal care experience." },
-  { q: "Can I change or cancel my plan?", a: "Absolutely. Our plans are fully flexible — you can upgrade, downgrade, or pause your plan at any time with 24 hours notice." },
+  { q: "What does Nordic's Mother & Baby service include?", a: "Every plan includes newborn care, overnight nursing, postpartum recovery support, breastfeeding guidance, baby sleep training, and daily health monitoring — all at home in Dubai by our DHA-licensed nurses." },
+  { q: "How quickly can a nurse arrive?", a: "In most cases, a Nordic nurse can be with you within 24 hours of booking. For urgent situations, message us on WhatsApp and we will prioritise your case immediately." },
+  { q: "How do I get started with Nordic?", a: "Just send us a WhatsApp message with your baby's age and what you need. Our team responds within minutes and handles everything from there." },
+  { q: "Are Nordic nurses truly qualified for newborn care?", a: "Every nurse we place is DHA-licensed, NICU-trained, and has completed a minimum of 3 years of neonatal clinical experience. We also conduct reference checks and in-person assessments." },
+  { q: "Can I pause or change my care plan?", a: "Yes, always. Nordic plans are completely flexible. You can increase hours, reduce visits, swap your nurse, or pause your plan with just 24 hours notice — no penalties." },
 ];
 
 // ─── Reusable Components ───────────────────────────────────────────────────
@@ -143,10 +144,29 @@ function ScrollStickySection() {
   const rightS = useTransform(scrollYProgress, [0.65, 0.85, 1.0], [0.45, 1, 1]);
 
   return (
-    <div ref={containerRef} style={{ height: "600vh" }} className="relative">
+    <>
+      {/* Mobile/Tablet — simple centered video + WA button */}
+      <div className="lg:hidden bg-[#1a2e28] flex flex-col items-center justify-center py-16 px-6 gap-8">
+        <div className="relative w-[240px] aspect-[9/16] rounded-[28px] overflow-hidden border-[3px] border-white shadow-2xl">
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+            <source src="/video/mother.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div className="text-center">
+          <h3 className="text-white font-semibold text-2xl mb-3">Care that comes to you.</h3>
+          <p className="text-white/60 text-sm mb-6 max-w-xs mx-auto">Nordic-employed nurses. NICU-trained. Available 24/7 across Dubai.</p>
+          <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white text-sm font-semibold px-6 py-3 rounded-full shadow-lg">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
+            Talk to us now
+          </a>
+        </div>
+      </div>
+
+      {/* Desktop — full sticky scroll experience */}
+      <div ref={containerRef} style={{ height: "600vh" }} className="relative hidden lg:block">
       <div className="sticky top-0 h-screen overflow-hidden bg-[#1a2e28]">
 
-        {/* ── BACKGROUND VIDEO — visible immediately, fades out when cards arrive ── */}
+        {/* ── BACKGROUND VIDEO ── */}
         <motion.div
           style={{ opacity: bgVideoO }}
           className="absolute inset-0 z-0 pointer-events-none"
@@ -161,10 +181,10 @@ function ScrollStickySection() {
           <div className="absolute inset-0 bg-black/45" />
         </motion.div>
 
-        {/* ── TEXT PHASE — words appear left & right of center video, flow bottom→top ── */}
+        {/* ── TEXT PHASE — hidden on mobile, visible lg+ ── */}
         <motion.div
           style={{ opacity: textGroupO }}
-          className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
+          className="hidden lg:flex absolute inset-0 z-10 pointer-events-none items-center justify-center"
         >
           {/* The text is laid out relative to the center video width so words hug it */}
           <div className="relative w-full h-full">
@@ -179,7 +199,7 @@ function ScrollStickySection() {
                   style={{ opacity: t1o, y: t1y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
                   className="text-white select-none drop-shadow-xl whitespace-nowrap"
                 >
-                  Someone
+                  Devoted
                 </motion.p>
               </div>
               <div style={{ overflow: "visible", marginTop: "6px" }}>
@@ -187,7 +207,7 @@ function ScrollStickySection() {
                   style={{ opacity: t3o, y: t3y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
                   className="text-white/80 select-none drop-shadow-xl whitespace-nowrap"
                 >
-                  for you
+                  to you
                 </motion.p>
               </div>
             </div>
@@ -202,7 +222,7 @@ function ScrollStickySection() {
                   style={{ opacity: t2o, y: t2y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
                   className="text-white select-none drop-shadow-xl whitespace-nowrap"
                 >
-                  who cares
+                  heart and
                 </motion.p>
               </div>
               <div style={{ overflow: "visible", marginTop: "6px" }}>
@@ -210,7 +230,7 @@ function ScrollStickySection() {
                   style={{ opacity: t4o, y: t4y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
                   className="text-white/80 select-none drop-shadow-xl whitespace-nowrap"
                 >
-                  and yours
+                  your little one
                 </motion.p>
               </div>
             </div>
@@ -325,30 +345,31 @@ function ScrollStickySection() {
 
       </div>
     </div>
+    </>
   );
 }
 
 // ── Video Testimonial Section ─────────────────────────────────────────────
 const VIDEO_TESTIMONIALS = [
   {
-    quote: "Bringing a night nurse postpartum was one of the best decisions I made. Postpartum is no joke, and having overnight support gave me the space to sleep, heal, and actually enjoy my baby while also caring for my family.",
-    name: "Melissa Rahal",
-    role: "Mother of newborn · Dubai Marina",
+    quote: "After my C-section I was completely overwhelmed. Nordic sent a night nurse the very next day — she walked in, took charge, and I finally slept for the first time in three days. I cannot put into words what that meant.",
+    name: "Mariam Al-Suwaidi",
+    role: "Mother of newborn · Arabian Ranches",
   },
   {
-    quote: "Our NICU-trained nurse arrived on day one and immediately gave us confidence. She knew exactly what our premature baby needed. I cannot imagine those first weeks without Nordic's support.",
-    name: "Fatima Al-Hassan",
+    quote: "Our daughter was born six weeks early and we were terrified to bring her home. Our Nordic nurse had real NICU experience and arrived knowing exactly what to monitor. That knowledge gave our whole family peace of mind.",
+    name: "Layla Al-Rashidi",
     role: "Mother of twins · Downtown Dubai",
   },
   {
-    quote: "From the first consultation to the last visit, everything felt personal and professional. Our caregiver became part of the family — same person every single day.",
-    name: "Sarah Mitchell",
+    quote: "I was hesitant at first — I thought I should manage on my own. But our caregiver was so warm and professional that she felt like family within a week. Same face, same care, every single day.",
+    name: "Jessica Thornton",
     role: "First-time mother · Palm Jumeirah",
   },
   {
-    quote: "The sleep training program transformed our nights. Within two weeks our baby had a proper routine. I finally got to sleep and feel human again. Worth every dirham.",
-    name: "Priya Sharma",
-    role: "Postpartum recovery · DIFC",
+    quote: "The sleep routine they helped us build changed everything. Our baby went from waking five times a night to sleeping through in just twelve days. I went back to work feeling like a real person again.",
+    name: "Hessa Al-Marzouqi",
+    role: "Postpartum recovery · Business Bay",
   },
 ];
 
@@ -401,7 +422,7 @@ function VideoTestimonialSection() {
           style={{ minHeight: "300px" }}
         >
           {/* Left — video (same for all cards) */}
-          <div className="relative sm:w-[40%] shrink-0" style={{ minHeight: "300px" }}>
+          <div className="relative sm:w-[40%] shrink-0" style={{ minHeight: "220px" }}>
             <video
               autoPlay muted loop playsInline
               className="absolute inset-0 w-full h-full object-cover"
@@ -467,41 +488,41 @@ function VideoTestimonialSection() {
 
 const STACK_CARDS = [
   {
-    step: "STEP 01  •  START THE CONVERSATION",
-    h1: "Tell us what you",
-    h2: "need. That's it.",
-    body: "No forms. No long booking trails. Just message us with your baby's age, your schedule, and what kind of care you're looking for.",
-    cta: "Start now",
+    step: "STEP 01  •  SHARE YOUR NEEDS",
+    h1: "One message.",
+    h2: "We handle the rest.",
+    body: "No paperwork, no waiting. Just tell us your baby's age, your schedule, and what matters most — we take it from there.",
+    cta: "Reach out now",
     img: "/images/health2.png",
     bg: "#F7F4EE",
     accent: "#2D5B4F",
   },
   {
-    step: "STEP 02  •  WE SELECT FOR YOU",
-    h1: "A caregiver chosen,",
-    h2: "not assigned.",
-    body: "We review every detail you share and personally match you with the right caregiver for your baby's needs and your routine.",
-    cta: "See your match",
+    step: "STEP 02  •  YOUR PERFECT MATCH",
+    h1: "Handpicked,",
+    h2: "not pulled from a list.",
+    body: "We read every detail you share and personally select the caregiver who fits your baby's stage, your culture, and your home.",
+    cta: "Meet your caregiver",
     img: "/images/mother1.png",
     bg: "#EFF0EB",
     accent: "#2D5B4F",
   },
   {
-    step: "STEP 03  •  REVIEW WITH CONFIDENCE",
-    h1: "See everything.",
-    h2: "Decide at your pace.",
-    body: "See your caregiver's full profile, qualifications, and experience. Speak with her if you'd like before you book.",
-    cta: "See profiles",
+    step: "STEP 03  •  KNOW HER BEFORE SHE ARRIVES",
+    h1: "Full profile.",
+    h2: "Total confidence.",
+    body: "Review her qualifications, experience, and training. Speak with her directly if you wish — no surprises when she walks through your door.",
+    cta: "View profiles",
     img: "/images/health.png",
     bg: "#E8EAE4",
     accent: "#2D5B4F",
   },
   {
-    step: "STEP 04  •  READY FROM DAY ONE",
-    h1: "She arrives prepared,",
-    h2: "not guessing.",
-    body: "Once you confirm, we brief your caregiver on your baby's schedule, preferences, and any medical notes. Day one feels like day fifty.",
-    cta: "Book your first day",
+    step: "STEP 04  •  CARE FROM HOUR ONE",
+    h1: "Fully briefed.",
+    h2: "Ready before she knocks.",
+    body: "Before her first visit we share your baby's full picture — feeding schedule, health notes, family preferences. She arrives knowing your world.",
+    cta: "Reserve your first visit",
     img: "/images/healthcare.png",
     bg: "#E2E5DE",
     accent: "#2D5B4F",
@@ -729,7 +750,7 @@ export default function MotherAndBabyPage() {
           SECTION 2 — HERO
           Exact DarDoc Mother & Baby style
       ══════════════════════════ */}
-      <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
+      <section className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden">
         {/* Background — real photo */}
         <div className="absolute inset-0">
           <Image
@@ -763,11 +784,11 @@ export default function MotherAndBabyPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
             className="font-medium text-white leading-[1.05] tracking-tight mb-4 max-w-2xl"
-            style={{ fontSize: "clamp(38px, 5.5vw, 68px)" }}
+            style={{ fontSize: "clamp(28px, 5.5vw, 68px)" }}
           >
             Pregnancy. Newborn. Nights and beyond.
             <br />
-            <span className="text-white/70" style={{ fontWeight: 400, fontSize: "clamp(28px, 4vw, 52px)" }}>
+            <span className="text-white/70" style={{ fontWeight: 400, fontSize: "clamp(20px, 4vw, 52px)" }}>
               One trained caregiver, every step of the way.
             </span>
           </motion.h1>
@@ -799,14 +820,6 @@ export default function MotherAndBabyPage() {
               <svg className="w-4 h-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
               Talk to us now
             </motion.a>
-            <motion.button
-              onClick={scrollToCta}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 bg-white/15 border border-white/50 text-white backdrop-blur-sm font-semibold px-6 py-3 rounded-full text-sm"
-            >
-              Calculate your pricing plan
-            </motion.button>
           </motion.div>
 
           {/* Trust bar — inline at bottom like DarDoc */}
@@ -814,7 +827,7 @@ export default function MotherAndBabyPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.5 }}
-            className="flex flex-wrap gap-x-6 gap-y-1.5"
+            className="flex flex-wrap gap-x-4 gap-y-2"
           >
             {[
               { icon: "⭐", text: "4.9 rated" },
@@ -867,19 +880,19 @@ export default function MotherAndBabyPage() {
                 tag: "Daily Newborn",
                 title: "Newborn & post-natal care",
                 desc: "Feeding, sleep, and newborn routines for those first few months. The hands-on support every new parent really needs from the start.",
-                img: "/images/nurse.png",
+                img: "/images/mother2.jpg",
               },
               {
                 tag: "Night and Overnight",
                 title: "Overnight care, every night",
                 desc: "NICU-trained caregivers through the night, so you can actually sleep. The first night feels like getting your life back.",
-                img: "/images/nurse2.png",
+                img: "/images/mother3.jpg",
               },
               {
                 tag: "On-Demand",
                 title: "Occasional babysitting",
                 desc: "Trained caregivers for date nights, work calls, or plans you love. Same vetted caregivers, by the hour, never a stranger.",
-                img: "/images/nurse.png",
+                img: "/images/mother4.jpg",
               },
             ].map((card, i) => (
               <FadeIn key={card.title} delay={i * 0.07}>
@@ -961,7 +974,7 @@ export default function MotherAndBabyPage() {
       ══════════════════════════ */}
       <section className="bg-[#F7F4EE] py-20 px-6">
         <div className="max-w-[1100px] mx-auto">
-          <div className="grid lg:grid-cols-[280px_1fr] gap-16 items-start">
+          <div className="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16 items-start">
 
             {/* Left — heading */}
             <FadeIn>
@@ -994,10 +1007,22 @@ export default function MotherAndBabyPage() {
       </section>
 
       {/* ══════════════════════════
+          OUR SERVICES — from admin
+      ══════════════════════════ */}
+      <ServicesSection
+        categoryFilter="mother"
+        heading="Mother & Baby Services"
+        subheading="All services delivered at home by DHA-licensed, NICU-trained professionals."
+        label="Our Services"
+        accentColor="#2D5B4F"
+        bgColor="bg-[#F7F4EE]"
+      />
+
+      {/* ══════════════════════════
           SECTION 11 — FINAL CTA
           DarDoc style — cream bg, centered white card
       ══════════════════════════ */}
-      <section className="bg-[#F7F4EE] py-16 px-6" ref={ctaRef}>
+      <section className="bg-[#F7F4EE] py-16 pb-24 sm:pb-16 px-6" ref={ctaRef}>
         <div className="max-w-[860px] mx-auto">
           <FadeIn>
             <div className="bg-white rounded-3xl px-8 sm:px-16 py-14 text-center shadow-sm border border-black/5">

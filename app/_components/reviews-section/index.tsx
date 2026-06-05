@@ -4,28 +4,92 @@ import { useState, useRef } from "react";
 
 const REVIEWS = [
   {
-    text: "I've been using Nordic Home Healthcare for a while now, and I love their services! :) The nurses are very friendly and well trained. The products are very high-quality, I've been checking the labels. I can highly recommend this home service, it's so convenient and the prices are also much better than in other places! Thank you so much. I'm very satisfied.",
+    text: "Nordic transformed how I experience healthcare at home. The nurse was punctual, warm, and incredibly knowledgeable. I will never go back to a clinic for routine care again.",
     name: "Valeria Costa Martínez",
     badge: "Verified user",
     rating: 5,
-    video: "/images/video_4.mp4",
   },
   {
-    text: "Nordic changed my routine completely. The home visits are punctual, the staff is incredibly caring, and I feel safe knowing a professional is looking after my health at home. It saved me so much time compared to going to the clinic every week. Truly a blessing for seniors like me!",
+    text: "From the moment I messaged Nordic on WhatsApp to the moment the nurse left, everything felt effortless. Real professionals who treat you like a person, not a patient number.",
     name: "Erik Johansson",
     badge: "Verified user",
     rating: 4.8,
-    video: "/images/video_1.mp4",
   },
   {
-    text: "I was skeptical at first, but Nordic exceeded all my expectations. The nurse who visits me is so kind and knowledgeable. The products they recommended have really improved my daily comfort. And the pricing is fair — no hidden fees. I've already told all my friends about it!",
+    text: "The IV therapy at home was a revelation. No waiting, no clinic, no stress. The nurse was expert and reassuring. I felt the difference within an hour. Absolutely worth it.",
     name: "Sofia Andersen",
     badge: "Verified user",
     rating: 4.9,
-    video: "/images/video_5.mp4",
-    videoAfter: "/images/video_3.mp4",
+  },
+  {
+    text: "Nordic made booking home healthcare feel as easy as ordering a cab. The nurse arrived on time, explained everything clearly, and the whole experience was genuinely five-star.",
+    name: "Ahmed Al-Mansoori",
+    badge: "Verified user",
+    rating: 5,
+  },
+  {
+    text: "Having a NICU-trained nurse at home after my baby arrived gave our whole family confidence. She knew every answer before we even asked the question. Nordic is simply the best.",
+    name: "Priya Sharma",
+    badge: "Verified user",
+    rating: 4.9,
+  },
+  {
+    text: "My father needed post-surgery care and Nordic provided a caregiver who was clinically excellent and deeply compassionate. The family finally had peace of mind. We are truly grateful.",
+    name: "James Mitchell",
+    badge: "Verified user",
+    rating: 5,
+  },
+  {
+    text: "I used Nordic for a blood test at home and the results were ready faster than any clinic I have visited. Seamless, professional and completely stress-free. Highly recommended.",
+    name: "Fatima Al-Hassan",
+    badge: "Verified user",
+    rating: 5,
+  },
+  {
+    text: "The weight management programme Nordic set up for me has been life-changing. Doctor-led, delivered at home, with real follow-up care. I have lost 10kg and feel better than ever.",
+    name: "Sarah Mitchell",
+    badge: "Verified user",
+    rating: 4.8,
+  },
+  {
+    text: "Our night nurse was extraordinary. She handled every feed, every unsettled moment, and every question — all while we slept and recovered. Nordic gave us our lives back.",
+    name: "Aisha Al-Mansoori",
+    badge: "Verified user",
+    rating: 5,
   },
 ];
+
+// All videos in order — no repeats
+// Original 2 from images folder + video1-7 + mother
+const VIDEOS = [
+  "/images/video_4.mp4",   // original larki wali
+  "/images/video_1.mp4",   // original second
+  "/video/video1.mp4",
+  "/video/video2.mp4",
+  "/video/video3.mp4",
+  "/video/video4.mp4",
+  "/video/video5.mp4",
+  "/video/video6.mp4",
+  "/video/video7.mp4",
+  "/video/mother.mp4",
+];
+
+// Build flat items: video → review → video → review → video → review → video → video
+// Result: v1, r1, v2, r2, v3, r3, v4, v5
+type Item =
+  | { type: "video"; src: string; key: string }
+  | { type: "review"; review: typeof REVIEWS[0]; key: string };
+
+const ITEMS: Item[] = [];
+let vIdx = 0;
+for (let i = 0; i < REVIEWS.length; i++) {
+  ITEMS.push({ type: "video", src: VIDEOS[vIdx++], key: `v-${vIdx}` });
+  ITEMS.push({ type: "review", review: REVIEWS[i], key: `r-${i}` });
+}
+// remaining videos
+while (vIdx < VIDEOS.length) {
+  ITEMS.push({ type: "video", src: VIDEOS[vIdx++], key: `v-${vIdx}` });
+}
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -62,15 +126,12 @@ function VideoCard({ src }: { src: string }) {
 
   const togglePlay = () => {
     if (!videoRef.current) return;
-    if (playing) {
-      videoRef.current.pause();
-    } else {
-      videoRef.current.play();
-    }
+    if (playing) videoRef.current.pause();
+    else videoRef.current.play();
   };
 
   return (
-    <div className="shrink-0 w-[260px] min-h-[230px] bg-[#F7EEE0] rounded-xl relative overflow-hidden cursor-pointer group flex-1">
+    <div className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl relative overflow-hidden cursor-pointer group">
       <video
         ref={videoRef}
         src={src}
@@ -80,7 +141,7 @@ function VideoCard({ src }: { src: string }) {
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={() => setPlaying(false)}
-        className="w-full h-full object-cover rounded-xl"
+        className="w-full h-full object-cover"
       />
       {!playing && (
         <div
@@ -95,45 +156,72 @@ function VideoCard({ src }: { src: string }) {
         </div>
       )}
       {playing && (
-        <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={togglePlay}
-        />
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={togglePlay} />
       )}
     </div>
   );
 }
 
 export default function ReviewsSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: dir === "left" ? -300 : 300, behavior: "smooth" });
+  };
+
   return (
     <section className="py-16 bg-white">
-      <div className="max-w-7xl mx-auto pl-6">
-        <h2 className="font-brand text-2xl font-semibold text-[#543826] mb-10">
-          Loved by our community
-        </h2>
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center justify-between mb-10">
+          <h2 className="font-brand text-2xl font-semibold text-[#543826]">
+            Loved by our community
+          </h2>
+          {/* Arrows */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => scroll("left")}
+              className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#543826] hover:text-[#543826] transition"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#543826] hover:text-[#543826] transition"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
+      {/* Scrollable row */}
       <div
-        className="flex gap-4 overflow-x-auto scroll-smooth pb-4 pl-6"
-        style={{ scrollbarWidth: "none" }}
+        ref={scrollRef}
+        className="flex gap-4 overflow-x-auto scroll-smooth pb-4 pl-6 pr-6"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {REVIEWS.map((review, i) => (
-          <div key={`pair-${i}`} className="flex shrink-0 gap-4 items-stretch">
-            {review.video && <VideoCard key={`video-before-${i}`} src={review.video} />}
+        {ITEMS.map((item) => {
+          if (item.type === "video") {
+            return <VideoCard key={item.key} src={item.src} />;
+          }
+          const review = item.review;
+          return (
             <div
-              key={`review-${i}`}
-              className="shrink-0 w-[260px] min-h-[230px] bg-[#F7EEE0] rounded-xl p-4 relative flex flex-col items-center text-center"
+              key={item.key}
+              className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl p-4 flex flex-col items-center text-center"
             >
               <Stars rating={review.rating} />
-
               <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-2">
                 <span className="text-xl font-bold">&ldquo;</span>
                 {review.text}
                 <span className="text-xl font-bold">&rdquo;</span>
               </p>
-
               <div className="flex-1" />
-
               <div className="flex flex-col items-center gap-0.5 mt-6">
                 <p className="font-bold text-xs text-[#543826]">{review.name}</p>
                 <div className="flex items-center gap-1">
@@ -142,9 +230,8 @@ export default function ReviewsSection() {
                 </div>
               </div>
             </div>
-            {review.videoAfter && <VideoCard key={`video-after-${i}`} src={review.videoAfter} />}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

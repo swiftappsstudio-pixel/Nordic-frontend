@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import ServicesSection from "@/app/_components/services-section";
 
 // ─── Config ───────────────────────────────────────────────────────────────
 const WA_NUM = "971555828945";
@@ -62,16 +63,36 @@ function ScrollStickySection() {
   const rightS = useTransform(scrollYProgress, [0.65, 0.85, 1.0], [0.45, 1, 1]);
 
   return (
-    <div ref={containerRef} style={{ height: "600vh" }} className="relative">
+    <>
+      {/* Mobile/Tablet — simple centered video + WA button */}
+      <div className="lg:hidden bg-[#1a2e28] flex flex-col items-center justify-center py-16 px-6 gap-8">
+        <div className="relative w-[240px] aspect-[9/16] rounded-[28px] overflow-hidden border-[3px] border-white shadow-2xl">
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+            <source src="/images/older1.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div className="text-center">
+          <h3 className="text-white font-semibold text-2xl mb-3">Care that comes to you.</h3>
+          <p className="text-white/60 text-sm mb-6 max-w-xs mx-auto">Nordic-employed caregivers. Clinically trained. Available 24/7 across Dubai.</p>
+          <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white text-sm font-semibold px-6 py-3 rounded-full shadow-lg">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
+            Talk to us now
+          </a>
+        </div>
+      </div>
+
+      {/* Desktop — full sticky scroll */}
+      <div ref={containerRef} style={{ height: "600vh" }} className="relative hidden lg:block">
       <div className="sticky top-0 h-screen overflow-hidden bg-[#1a2e28]">
         <motion.div style={{ opacity: bgVideoO }} className="absolute inset-0 z-0 pointer-events-none">
           <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-            <source src="/video/elderly.mp4" type="video/mp4" />
+            <source src="/images/older1.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/45" />
         </motion.div>
 
-        <motion.div style={{ opacity: textGroupO }} className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
+        {/* ── TEXT PHASE — hidden on mobile, visible lg+ ── */}
+        <motion.div style={{ opacity: textGroupO }} className="hidden lg:flex absolute inset-0 z-10 pointer-events-none items-center justify-center">
           <div className="relative w-full h-full">
             <div className="absolute top-1/2 -translate-y-1/2 text-right" style={{ right: "calc(50% + clamp(110px, 14vw, 210px) + 24px)" }}>
               <div style={{ overflow: "visible" }}>
@@ -96,7 +117,7 @@ function ScrollStickySection() {
           <div className="relative" style={{ width: "clamp(200px, 26vw, 380px)", aspectRatio: "9/16" }}>
             <div className="w-full h-full border-[3px] border-white rounded-[28px] overflow-hidden shadow-2xl bg-black">
               <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-                <source src="/video/elderly.mp4" type="video/mp4" />
+                <source src="/images/older1.mp4" type="video/mp4" />
               </video>
             </div>
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-auto">
@@ -152,6 +173,7 @@ function ScrollStickySection() {
         </motion.div>
       </div>
     </div>
+    </>
   );
 }
 
@@ -206,7 +228,7 @@ function VideoTestimonialSection() {
         <motion.div key={active} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: "easeOut" }} className="bg-[#F7F4EE] rounded-2xl overflow-hidden flex flex-col sm:flex-row" style={{ minHeight: "300px" }}>
           <div className="relative sm:w-[40%] shrink-0" style={{ minHeight: "300px" }}>
             <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
-              <source src="/video/elderly.mp4" type="video/mp4" />
+              <source src="/images/older1.mp4" type="video/mp4" />
             </video>
             <div className="absolute top-3 right-3 flex gap-1.5 z-10">
               <div className="w-7 h-7 bg-black/35 rounded-full flex items-center justify-center">
@@ -244,35 +266,39 @@ function VideoTestimonialSection() {
 // ── Stacked Scroll Cards ──────────────────────────────────────────────────
 const STACK_CARDS = [
   {
-    step: "STEP 01  •  START THE CONVERSATION",
-    h1: "Tell us what you", h2: "need. That's it.",
-    body: "No forms. No long booking trails. Just message us with your loved one's age, their condition, and the kind of care you're looking for.",
-    cta: "Start now",
-    img: "/images/older.png",
+    step: "STEP 01  •  TELL US ABOUT YOUR LOVED ONE",
+    h1: "One conversation.",
+    h2: "We take care of everything.",
+    body: "No long forms or waiting lists. Simply tell us your loved one's condition, daily routine, and what support you need — we handle the rest.",
+    cta: "Start the conversation",
+    img: "/images/older2.jpg",
     bg: "#F7F4EE", accent: "#2D5B4F",
   },
   {
-    step: "STEP 02  •  WE SELECT FOR YOU",
-    h1: "A caregiver chosen,", h2: "not assigned.",
-    body: "We review every detail you share and personally match your loved one with the right caregiver for their needs and your family's routine.",
-    cta: "See your match",
-    img: "/images/older2.png",
+    step: "STEP 02  •  YOUR CAREGIVER IS CHOSEN",
+    h1: "Matched by expertise,",
+    h2: "not by availability.",
+    body: "We select a caregiver based on your loved one's medical needs, personality, and daily schedule — never just whoever is free.",
+    cta: "See how we match",
+    img: "/images/older3.jpg",
     bg: "#EFF0EB", accent: "#2D5B4F",
   },
   {
-    step: "STEP 03  •  REVIEW WITH CONFIDENCE",
-    h1: "See everything.", h2: "Decide at your pace.",
-    body: "See your caregiver's full profile, qualifications, and experience. Speak with her if you'd like before you confirm.",
-    cta: "See profiles",
-    img: "/images/older3.png",
+    step: "STEP 03  •  MEET HER BEFORE SHE ARRIVES",
+    h1: "Full transparency.",
+    h2: "Complete peace of mind.",
+    body: "View your caregiver's qualifications, clinical background, and experience. Speak with her if you wish — before she ever steps into your home.",
+    cta: "Review profiles",
+    img: "/images/older4.jpg",
     bg: "#E8EAE4", accent: "#2D5B4F",
   },
   {
-    step: "STEP 04  •  READY FROM DAY ONE",
-    h1: "She arrives prepared,", h2: "not guessing.",
-    body: "Once you confirm, we brief your caregiver on your loved one's routine, preferences, and any medical notes. Day one feels like day fifty.",
-    cta: "Book your first day",
-    img: "/images/older.png",
+    step: "STEP 04  •  CARE BEGINS AT HOME",
+    h1: "Prepared from",
+    h2: "the very first visit.",
+    body: "We brief your caregiver on every detail — medication schedule, mobility needs, food preferences, daily routine. She arrives ready, not learning on the job.",
+    cta: "Book the first visit",
+    img: "/images/older7.jpg",
     bg: "#E2E5DE", accent: "#2D5B4F",
   },
 ];
@@ -379,9 +405,9 @@ function StackedScrollSection() {
 // ── We Also Serve ─────────────────────────────────────────────────────────
 function WeAlsoServeSection() {
   const cards = [
-    { title: "Mother & Baby Care", desc: "NICU-trained night nurses, midwives and newborn caregivers — Nordic-employed and clinically trained.", img: "/images/older.png", href: "/mother-and-baby" },
-    { title: "IV Therapy at Home", desc: "IV therapy and vitamin drips at home, administered by DHA-licensed nurses across Dubai.", img: "/images/older2.png", href: "/iv-therapy" },
-    { title: "Weight Loss Rx", desc: "GLP-1 medication management with physician-led care plans, delivered at home.", img: "/images/older3.png", href: "/weight-loss" },
+    { title: "Mother & Baby Care", desc: "NICU-trained night nurses, midwives and newborn caregivers — Nordic-employed and clinically trained.", img: "/images/older2.jpg", href: "/mother-and-baby" },
+    { title: "IV Therapy at Home", desc: "IV therapy and vitamin drips at home, administered by DHA-licensed nurses across Dubai.", img: "/images/older3.jpg", href: "/iv-therapy" },
+    { title: "Weight Loss Rx", desc: "GLP-1 medication management with physician-led care plans, delivered at home.", img: "/images/older4.jpg", href: "/weight-loss" },
   ];
   return (
     <section className="bg-[#F7F4EE] py-20 px-6">
@@ -456,7 +482,6 @@ function PricingModal({ onClose }: { onClose: () => void }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────
 export default function ElderlyCarePage() {
-  const [showPricing, setShowPricing] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
   const scrollToCta = () => ctaRef.current?.scrollIntoView({ behavior: "smooth" });
 
@@ -464,19 +489,19 @@ export default function ElderlyCarePage() {
     <div className="bg-[#F7F4EE] min-h-screen font-sans">
 
       {/* HERO */}
-      <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
+      <section className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/images/older.png" alt="Elderly care at home Dubai" fill className="object-cover object-center" priority unoptimized />
+          <Image src="/images/older5.jpg" alt="Elderly care at home Dubai" fill className="object-cover object-center" priority unoptimized />
           <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.65) 75%, rgba(0,0,0,0.72) 100%)" }} />
         </div>
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pb-10 pt-32">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-white/65 text-[11px] font-medium uppercase tracking-[0.18em] mb-4">
             Companion Care · Elderly Care · Post-Hospital Support in Dubai
           </motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-medium text-white leading-[1.05] tracking-tight mb-4 max-w-2xl" style={{ fontSize: "clamp(38px, 5.5vw, 68px)" }}>
+          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-medium text-white leading-[1.05] tracking-tight mb-4 max-w-2xl" style={{ fontSize: "clamp(28px, 5.5vw, 68px)" }}>
             Daytime. Overnight. Post-hospital and beyond.
             <br />
-            <span className="text-white/70" style={{ fontWeight: 400, fontSize: "clamp(28px, 4vw, 52px)" }}>
+            <span className="text-white/70" style={{ fontWeight: 400, fontSize: "clamp(20px, 4vw, 52px)" }}>
               One trained caregiver, every step of the way.
             </span>
           </motion.h1>
@@ -488,15 +513,12 @@ export default function ElderlyCarePage() {
               <svg className="w-4 h-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
               Talk to us now
             </motion.a>
-            <motion.button onClick={() => setShowPricing(true)} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-flex items-center gap-2 bg-white/15 border border-white/50 text-white backdrop-blur-sm font-semibold px-6 py-3 rounded-full text-sm">
-              Calculate your pricing plan
-            </motion.button>
           </motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.5 }} className="flex flex-wrap gap-x-6 gap-y-1.5">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.5 }} className="flex flex-wrap gap-x-4 gap-y-2">
             {[{ icon: "⭐", text: "4.9 rated" }, { icon: "👨‍👩‍👧‍👦", text: "3,000+ families" }, { icon: "🏥", text: "DHA License #2985077" }, { icon: "🩺", text: "Clinically trained" }, { icon: "👩‍⚕️", text: "Nordic-employed" }, { icon: "💰", text: "From AED 33/hr" }].map(item => (
               <div key={item.text} className="flex items-center gap-1.5">
                 <span className="text-sm">{item.icon}</span>
-                <span className="text-white/75 text-xs font-medium whitespace-nowrap">{item.text}</span>
+                <span className="text-white/75 text-xs font-medium">{item.text}</span>
               </div>
             ))}
           </motion.div>
@@ -512,11 +534,11 @@ export default function ElderlyCarePage() {
           </FadeIn>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
-              { tag: "Companion Care", title: "Companion & daily support", desc: "Friendly company, help with errands, meals, and the daily routines that keep life comfortable and independent at home.", img: "/images/older.png" },
-              { tag: "Post-Hospital", title: "Post-hospital recovery", desc: "Clinically-trained caregivers for those critical weeks after discharge — medication, mobility, and follow-up care at home.", img: "/images/older2.png" },
-              { tag: "Daily Care", title: "Daily personal care", desc: "Hands-on personal care through the day — bathing, dressing, feeding, and the routines that preserve dignity and comfort.", img: "/images/older3.png" },
-              { tag: "Night and Overnight", title: "Overnight care, every night", desc: "Clinically-trained caregivers through the night for monitoring, mobility, and peace of mind for the whole family.", img: "/images/older.png" },
-              { tag: "Dementia Support", title: "Dementia & specialist care", desc: "Specialist caregivers trained in dementia and Alzheimer's care — safe, compassionate, and consistent at home.", img: "/images/older2.png" },
+              { tag: "Companion Care", title: "Companion & daily support", desc: "Friendly company, help with errands, meals, and the daily routines that keep life comfortable and independent at home.", img: "/images/older2.jpg" },
+              { tag: "Post-Hospital", title: "Post-hospital recovery", desc: "Clinically-trained caregivers for those critical weeks after discharge — medication, mobility, and follow-up care at home.", img: "/images/older3.jpg" },
+              { tag: "Daily Care", title: "Daily personal care", desc: "Hands-on personal care through the day — bathing, dressing, feeding, and the routines that preserve dignity and comfort.", img: "/images/older4.jpg" },
+              { tag: "Night and Overnight", title: "Overnight care, every night", desc: "Clinically-trained caregivers through the night for monitoring, mobility, and peace of mind for the whole family.", img: "/images/older5.jpg" },
+              { tag: "Dementia Support", title: "Dementia & specialist care", desc: "Specialist caregivers trained in dementia and Alzheimer's care — safe, compassionate, and consistent at home.", img: "/images/older7.jpg" },
             ].map((card, i) => (
               <FadeIn key={card.title} delay={i * 0.07}>
                 <motion.div whileHover={{ scale: 1.02 }} className="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer" style={{ minHeight: "380px" }}>
@@ -561,7 +583,7 @@ export default function ElderlyCarePage() {
       {/* FAQ */}
       <section className="bg-[#F7F4EE] py-20 px-6">
         <div className="max-w-[1100px] mx-auto">
-          <div className="grid lg:grid-cols-[280px_1fr] gap-16 items-start">
+          <div className="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16 items-start">
             <FadeIn>
               <h2 className="font-semibold text-[#1a2e28] leading-[1.1] sticky top-24" style={{ fontSize: "clamp(28px, 3vw, 42px)" }}>
                 Questions?<br />Answers.
@@ -584,6 +606,16 @@ export default function ElderlyCarePage() {
           </div>
         </div>
       </section>
+
+      {/* OUR SERVICES — from admin */}
+      <ServicesSection
+        categoryFilter="elderly"
+        heading="Elderly Care Services"
+        subheading="All services delivered at home by DHA-licensed, clinically trained caregivers."
+        label="Our Services"
+        accentColor="#1F3C34"
+        bgColor="bg-[#F6F2EB]"
+      />
 
       {/* WE ALSO SERVE */}
       <WeAlsoServeSection />
@@ -619,7 +651,6 @@ export default function ElderlyCarePage() {
         </div>
       </section>
 
-      <AnimatePresence>{showPricing && <PricingModal onClose={() => setShowPricing(false)} />}</AnimatePresence>
     </div>
   );
 }

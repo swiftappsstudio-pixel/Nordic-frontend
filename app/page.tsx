@@ -186,6 +186,107 @@ import FaqSection from "@/app/_components/faq-section";
 import AppDownloadSection from "@/app/_components/app-download-section";
 import FooterInfoSection from "@/app/_components/footer-info-section";
 
+// ── Why Nordic Section ────────────────────────────────────────────────────
+function WhyNordicSection() {
+  const features = [
+    {
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>,
+      title: "DHA Licensed",
+      desc: "Every nurse & caregiver fully licensed by Dubai Health Authority.",
+    },
+    {
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      title: "30–60 Min Arrival",
+      desc: "From booking to your door — across all of Dubai in under an hour.",
+    },
+    {
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>,
+      title: "Same Caregiver",
+      desc: "Consistency matters. Your assigned nurse stays with you every visit.",
+    },
+    {
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>,
+      title: "At Your Home",
+      desc: "No waiting rooms. No travel. Premium care delivered to your door.",
+    },
+  ];
+
+  return (
+    <section className="relative overflow-hidden bg-[#0d0a08] py-20 sm:py-28">
+      <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-20">
+        <source src="/video/mother.mp4" type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 bg-gradient-to-br from-[#543826]/60 via-transparent to-[#0d0a08]/80" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0a08] via-transparent to-transparent" />
+      <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-[#543826]/15 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-20 -left-20 w-[350px] h-[350px] rounded-full bg-[#543826]/10 blur-3xl pointer-events-none" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-px w-10 bg-[#C9C3B3]" />
+          <span className="text-[#C9C3B3] text-xs font-semibold uppercase tracking-[0.2em]">Why Nordic</span>
+        </div>
+
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-16">
+          <h2 className="font-bold text-white leading-[1.08] max-w-xl" style={{ fontSize: "clamp(28px, 4vw, 56px)" }}>
+            Healthcare that comes<br /><span className="text-[#C9C3B3]">to you.</span>
+          </h2>
+          <a
+            href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
+            target="_blank" rel="noopener noreferrer"
+            className="shrink-0 inline-flex items-center gap-2 border border-white/20 text-white/80 hover:text-white hover:border-white/50 text-sm font-semibold px-6 py-3 rounded-full transition-all"
+          >
+            Book now
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          {features.map((f, i) => (
+            <div key={i} className="group rounded-2xl border border-white/8 bg-white/5 backdrop-blur-sm p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-[#543826]/50 border border-[#543826] flex items-center justify-center text-[#C9C3B3] mb-5 group-hover:bg-[#543826] transition-colors">
+                {f.icon}
+              </div>
+              <h3 className="text-white font-semibold text-base mb-2">{f.title}</h3>
+              <p className="text-white/50 text-sm leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="relative rounded-2xl overflow-hidden" style={{ minHeight: "260px" }}>
+            <Image src="/images/nurse2.png" alt="Nordic nurse at home" fill className="object-cover object-center" unoptimized />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-white/60 text-xs uppercase tracking-widest mb-1">Available now · All Dubai</p>
+              <p className="text-white font-semibold text-xl leading-snug">IV Therapy · Blood Tests<br />Mother & Baby · Elderly Care</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <div className="flex-1 rounded-2xl bg-[#543826] p-8 flex flex-col justify-between min-h-[120px]">
+              <p className="text-white/60 text-xs uppercase tracking-widest">Families served</p>
+              <div className="mt-3">
+                <p className="text-white font-bold leading-none" style={{ fontSize: "clamp(42px, 5vw, 64px)" }}>3,000<span className="text-[#C9C3B3]">+</span></p>
+                <p className="text-white/50 text-sm mt-1">Across Dubai · Since 2020</p>
+              </div>
+            </div>
+            <div className="flex-1 rounded-2xl border border-white/10 bg-white/5 p-8 flex flex-col justify-between min-h-[120px]">
+              <p className="text-white/60 text-xs uppercase tracking-widest">Average rating</p>
+              <div className="flex items-end gap-3 mt-3">
+                <p className="text-white font-bold leading-none" style={{ fontSize: "clamp(42px, 5vw, 64px)" }}>4.9<span className="text-[#C9C3B3]">★</span></p>
+                <p className="text-white/50 text-sm mb-1">from 500+ reviews</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 const SLIDE_DURATION = 4000;
 
 export default function Home() {
@@ -247,144 +348,69 @@ export default function Home() {
 
   return (
     <>
-      <section className="relative h-screen w-full overflow-hidden">
-        {featuredServicesLoading ? (
-          <div className="flex items-center justify-center h-full bg-[#543826]">
-            <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-          </div>
-        ) : heroSlides.length > 0 ? (
-          <>
-            {heroSlides.map((slide, index) => (
-              <div
-                key={slide._id}
-                className={`absolute inset-0 transition-all duration-700 ease-in-out ${
-                  index === currentSlide
-                    ? "opacity-100 scale-100"
-                    : "opacity-0 scale-105"
-                }`}
-              >
-                {(banners.length > 0 ? (slide as Banner).image : (slide as Service).images?.[0]) ? (
-                  <Image
-                    src={banners.length > 0 ? (slide as Banner).image! : (slide as Service).images![0]}
-                    alt={(slide as Banner).title || (slide as Service).title}
-                    fill
-                    className="object-cover"
-                    priority={index === 0}
-                    unoptimized
-                  />
-                ) : (
-                  <div className="w-full h-full bg-[#543826]" />
-                )}
+      {/* ── STATIC HERO BANNER ── */}
+      <section className="relative min-h-[100dvh] h-[100dvh] w-full overflow-hidden">
 
-                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+        {/* Desktop image */}
+        <Image
+          src="/images/Immune-Boost-Hydration-B.webp"
+          alt="Nordic Home Healthcare"
+          fill
+          className="object-cover object-center hidden sm:block"
+          priority
+          unoptimized
+        />
 
-                <div className="absolute inset-0 flex items-center">
-                  <div className="max-w-6xl mx-auto px-6 w-full">
-                    <div className="max-w-lg">
-                      {banners.length > 0 ? (
-                        <>
-                          <h1 className="text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
-                            {(slide as Banner).title}
-                          </h1>
-                          {(slide as Banner).description && (
-                            <p className="text-white/70 text-base md:text-lg mb-8 line-clamp-3 leading-relaxed">
-                              {(slide as Banner).description}
-                            </p>
-                          )}
-                          {(slide as Banner).price && (
-                            <p className="text-[#C9C3B3] font-brand text-2xl font-semibold mb-6">
-                              AED {(slide as Banner).price}
-                            </p>
-                          )}
-                          <Link
-                            href={(slide as Banner).bookNowLink || "/services"}
-                            className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full transition-all duration-300 hover:gap-4"
-                          >
-                            {(slide as Banner).bookNowButtonText || "Book Now"}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </Link>
-                        </>
-                      ) : (
-                        <>
-                          <p className="font-brand text-sm text-[#C9C3B3] tracking-widest uppercase mb-3">
-                            {(slide as Service).category}
-                          </p>
-                          <h1 className="text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
-                            {(slide as Service).title}
-                          </h1>
-                          {(slide as Service).description && (
-                            <p className="text-white/70 text-base md:text-lg mb-8 line-clamp-3 leading-relaxed">
-                              {(slide as Service).description}
-                            </p>
-                          )}
-                          {(slide as Service).actualPrice && (
-                            <p className="text-[#C9C3B3] font-brand text-2xl font-semibold mb-6">
-                              AED {(slide as Service).actualPrice}
-                            </p>
-                          )}
-                          <Link
-                            href={`/services/${(slide as Service)._id}`}
-                            className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full transition-all duration-300 hover:gap-4"
-                          >
-                            Book Now
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </Link>
-                        </>
-                      )}
+        {/* Mobile image */}
+        <Image
+          src="/images/mother.png"
+          alt="Nordic Home Healthcare"
+          fill
+          className="object-cover object-center block sm:hidden"
+          priority
+          unoptimized
+        />
 
-                      <div className="flex gap-3 mt-6 max-w-[280px]">
-                        {heroSlides.map((_, i) => (
-                          <button
-                            key={i}
-                            className={`flex-1 rounded-full overflow-hidden cursor-pointer transition-all duration-300 ${
-                              i === currentSlide ? "h-[6px]" : "h-[3px]"
-                            }`}
-                            style={{ background: i === currentSlide ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)" }}
-                            onClick={() => goToSlide(i)}
-                          >
-                            <div
-                              className="h-full bg-[#C9C3B3] rounded-full"
-                              style={{
-                                width: i === currentSlide ? `${progress}%` : i < currentSlide ? "100%" : "0%",
-                                transition: i === currentSlide ? "none" : "all 0.3s",
-                              }}
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
 
-            <div className="absolute bottom-10 right-6 z-20 font-brand text-white/50 text-sm">
-              {currentSlide + 1} / {heroSlides.length}
-            </div>
-          </>
-        ) : (
-          <div className="w-full h-full bg-[#543826] flex items-center justify-center">
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                Nordic Home Healthcare
-              </h1>
-              <p className="text-white/80 text-lg">
-                Quality healthcare at your doorstep
+        {/* Content */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="max-w-6xl mx-auto px-6 w-full">
+            <div className="max-w-lg">
+              <p className="font-brand text-sm text-[#C9C3B3] tracking-widest uppercase mb-3">
+                Home Healthcare · Dubai
               </p>
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
+                Premium Healthcare,<br />Delivered Home.
+              </h1>
+              <p className="text-white/70 text-base md:text-lg mb-8 leading-relaxed max-w-md">
+                DHA-licensed nurses and caregivers at your door — from IV therapy and newborn care to elderly support and weight loss programmes.
+              </p>
+              <a
+                href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-all duration-300 hover:gap-4"
+              >
+                Book Now
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
             </div>
           </div>
-        )}
+        </div>
       </section>
 
       <StatsSection />
 
       <ExploreOurServices />
 
-      <PressMarquee />
+      {/* ── WHY NORDIC SECTION ── */}
+      <WhyNordicSection />
+
+      {/* <PressMarquee /> */}
 
       <ReviewsSection />
 
