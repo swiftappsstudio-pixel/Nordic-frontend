@@ -186,7 +186,7 @@ export default function IVTherapyPage() {
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section className="relative min-h-[92vh] flex items-center bg-[#0f0a07] overflow-hidden pt-16">
+      <section className="relative min-h-[100dvh] flex items-center bg-[#0f0a07] overflow-hidden pt-16">
         {/* Background */}
         <div className="absolute inset-0">
           <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy at Home Dubai" fill className="object-cover opacity-30" unoptimized priority />
@@ -201,7 +201,7 @@ export default function IVTherapyPage() {
               Limited Time — Up to 40% Off Selected IV Therapies
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.08] tracking-tight mb-5">
+            <h1 className="font-bold text-white leading-[1.08] tracking-tight mb-5" style={{ fontSize: "clamp(30px, 6vw, 72px)" }}>
               IV Therapy<br />
               <span className="text-[#C9C3B3]">at Home</span><br />
               <span className="text-3xl sm:text-4xl font-normal text-white/60">in Dubai</span>
@@ -331,7 +331,7 @@ export default function IVTherapyPage() {
                 {filteredServices.map((svc) => (
                 <div key={svc._id} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
                   {/* Image */}
-                  <div className="relative h-48 overflow-hidden bg-gray-100">
+                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-100">
                     {svc.images?.[0] ? (
                       <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
                     ) : (
@@ -422,12 +422,12 @@ export default function IVTherapyPage() {
           </div>
 
           <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2">
               <div className="bg-[#543826] text-white text-sm font-semibold text-center py-4 px-6">Nordic Home Healthcare</div>
               <div className="bg-gray-50 text-gray-500 text-sm font-semibold text-center py-4 px-6 border-l border-gray-100">Typical Clinic</div>
             </div>
             {COMPARISON.map((row, i) => (
-              <div key={row.nordic} className={`grid grid-cols-2 ${i % 2 === 0 ? "bg-white" : "bg-gray-50/40"}`}>
+              <div key={row.nordic} className={`grid grid-cols-1 sm:grid-cols-2 ${i % 2 === 0 ? "bg-white" : "bg-gray-50/40"}`}>
                 <div className="py-4 px-6 flex items-center gap-3 border-r border-gray-100">
                   <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                   <span className="text-sm font-medium text-gray-800">{row.nordic}</span>
@@ -565,14 +565,14 @@ export default function IVTherapyPage() {
       {/* ══════════════════════════════════════
           FINAL CTA
       ══════════════════════════════════════ */}
-      <section className="py-24 bg-[#0f0a07] relative overflow-hidden">
+      <section className="py-24 bg-[#0f0a07] relative overflow-hidden pb-20 sm:pb-24">
         <div className="absolute inset-0">
           <Image src="/images/CTA!.jpg" alt="Book IV Therapy" fill className="object-cover opacity-15" unoptimized />
           <div className="absolute inset-0 bg-[#0f0a07]/60" />
         </div>
         <div className="relative z-10 max-w-2xl mx-auto px-6 text-center">
           <p className="text-white/40 text-xs uppercase tracking-widest mb-5 font-medium">Book Today</p>
-          <h2 className="text-5xl sm:text-6xl font-bold text-white mb-5 leading-tight tracking-tight">
+          <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-5 leading-tight tracking-tight">
             Feel better,<br /><span className="text-[#C9C3B3]">faster.</span>
           </h2>
           <p className="text-white/50 text-base mb-10 leading-relaxed">
