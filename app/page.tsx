@@ -257,7 +257,7 @@ function WhyNordicSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <div className="relative rounded-2xl overflow-hidden" style={{ minHeight: "260px" }}>
-            <Image src="/images/nurse2.png" alt="Nordic nurse at home" fill className="object-cover object-center" unoptimized />
+            <Image src="/images/mother.png" alt="Nordic nurse at home" fill className="object-cover object-center" unoptimized />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6">
               <p className="text-white/60 text-xs uppercase tracking-widest mb-1">Available now · All Dubai</p>
@@ -348,59 +348,159 @@ export default function Home() {
 
   return (
     <>
-      {/* ── STATIC HERO BANNER ── */}
+      {/* ── HERO BANNER SLIDER ── */}
       <section className="relative min-h-[100dvh] h-[100dvh] w-full overflow-hidden">
-
-        {/* Desktop image */}
-        <Image
-          src="/images/Immune-Boost-Hydration-B.webp"
-          alt="Nordic Home Healthcare"
-          fill
-          className="object-cover object-center hidden sm:block"
-          priority
-          unoptimized
-        />
-
-        {/* Mobile image */}
-        <Image
-          src="/images/mother.png"
-          alt="Nordic Home Healthcare"
-          fill
-          className="object-cover object-center block sm:hidden"
-          priority
-          unoptimized
-        />
-
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
-
-        {/* Content */}
-        <div className="absolute inset-0 flex items-center">
-          <div className="max-w-6xl mx-auto px-6 w-full">
-            <div className="max-w-lg">
-              <p className="font-brand text-sm text-[#C9C3B3] tracking-widest uppercase mb-3">
-                Home Healthcare · Dubai
-              </p>
-              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
-                Premium Healthcare,<br />Delivered Home.
-              </h1>
-              <p className="text-white/70 text-base md:text-lg mb-8 leading-relaxed max-w-md">
-                DHA-licensed nurses and caregivers at your door — from IV therapy and newborn care to elderly support and weight loss programmes.
-              </p>
-              <a
-                href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-all duration-300 hover:gap-4"
+        {heroSlides.length > 0 ? (
+          <>
+            {heroSlides.map((slide, index) => (
+              <div
+                key={slide._id}
+                className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+                style={{ opacity: currentSlide === index ? 1 : 0 }}
               >
-                Book Now
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
+                {(slide as Banner).image ? (
+                  <>
+                    <Image
+                      src={(slide as Banner).image!}
+                      alt={slide.title}
+                      fill
+                      className="object-cover object-center hidden sm:block"
+                      priority={index === 0}
+                      unoptimized
+                    />
+                    <Image
+                      src={(slide as Banner).mobileImage || (slide as Banner).image!}
+                      alt={slide.title}
+                      fill
+                      className="object-cover object-center block sm:hidden"
+                      priority={index === 0}
+                      unoptimized
+                    />
+                  </>
+                ) : (slide as Service).images?.[0] ? (
+                  <Image
+                    src={(slide as Service).images![0]}
+                    alt={slide.title}
+                    fill
+                    className="object-cover object-center"
+                    priority={index === 0}
+                    unoptimized
+                  />
+                ) : (
+                  <div className="w-full h-full bg-[#543826]" />
+                )}
+
+                <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
+
+                <div className="absolute inset-0 flex items-center">
+                  <div className="max-w-6xl mx-auto px-6 w-full">
+                    <div className="max-w-lg">
+                      <p className="font-brand text-sm text-[#C9C3B3] tracking-widest uppercase mb-3">
+                        Home Healthcare · Dubai
+                      </p>
+                      <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
+                        {slide.title}
+                      </h1>
+                      {slide.description && (
+                        <p className="text-white/70 text-base md:text-lg mb-8 leading-relaxed max-w-md">
+                          {slide.description}
+                        </p>
+                      )}
+                      {(slide as Banner).bookNowLink ? (
+                        <Link
+                          href={(slide as Banner).bookNowLink!}
+                          className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-all duration-300 hover:gap-4"
+                        >
+                          {(slide as Banner).bookNowButtonText || "Book Now"}
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </Link>
+                      ) : (
+                        <a
+                          href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-all duration-300 hover:gap-4"
+                        >
+                          Book Now
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </a>
+                      )}
+                      {heroSlides.length > 1 && (
+                        <div className="flex items-center gap-3 mt-6">
+                          {heroSlides.map((_, index) => (
+                            <button
+                              key={index}
+                              onClick={() => goToSlide(index)}
+                              className="group relative"
+                            >
+                              <div className={`w-8 h-1 rounded-full transition-all duration-300 ${currentSlide === index ? "bg-white" : "bg-white/30 group-hover:bg-white/60"}`} />
+                              {currentSlide === index && (
+                                <div
+                                  className="absolute inset-0 rounded-full bg-white/80 origin-left"
+                                  style={{ width: `${progress}%` }}
+                                />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
+        ) : (
+          <>
+            <Image
+              src="/images/Immune-Boost-Hydration-B.webp"
+              alt="Nordic Home Healthcare"
+              fill
+              className="object-cover object-center hidden sm:block"
+              priority
+              unoptimized
+            />
+            <Image
+              src="/images/mother.png"
+              alt="Nordic Home Healthcare"
+              fill
+              className="object-cover object-center block sm:hidden"
+              priority
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
+            <div className="absolute inset-0 flex items-center">
+              <div className="max-w-6xl mx-auto px-6 w-full">
+                <div className="max-w-lg">
+                  <p className="font-brand text-sm text-[#C9C3B3] tracking-widest uppercase mb-3">
+                    Home Healthcare · Dubai
+                  </p>
+                  <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
+                    Premium Healthcare,<br />Delivered Home.
+                  </h1>
+                  <p className="text-white/70 text-base md:text-lg mb-8 leading-relaxed max-w-md">
+                    DHA-licensed nurses and caregivers at your door — from IV therapy and newborn care to elderly support and weight loss programmes.
+                  </p>
+                  <a
+                    href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-all duration-300 hover:gap-4"
+                  >
+                    Book Now
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </section>
 
       <StatsSection />

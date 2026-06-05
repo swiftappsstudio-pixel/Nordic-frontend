@@ -33,30 +33,8 @@ const REVIEWS = [
     badge: "Verified user",
     rating: 4.9,
   },
-  {
-    text: "My father needed post-surgery care and Nordic provided a caregiver who was clinically excellent and deeply compassionate. The family finally had peace of mind. We are truly grateful.",
-    name: "James Mitchell",
-    badge: "Verified user",
-    rating: 5,
-  },
-  {
-    text: "I used Nordic for a blood test at home and the results were ready faster than any clinic I have visited. Seamless, professional and completely stress-free. Highly recommended.",
-    name: "Fatima Al-Hassan",
-    badge: "Verified user",
-    rating: 5,
-  },
-  {
-    text: "The weight management programme Nordic set up for me has been life-changing. Doctor-led, delivered at home, with real follow-up care. I have lost 10kg and feel better than ever.",
-    name: "Sarah Mitchell",
-    badge: "Verified user",
-    rating: 4.8,
-  },
-  {
-    text: "Our night nurse was extraordinary. She handled every feed, every unsettled moment, and every question — all while we slept and recovered. Nordic gave us our lives back.",
-    name: "Aisha Al-Mansoori",
-    badge: "Verified user",
-    rating: 5,
-  },
+
+
 ];
 
 // All videos in order — no repeats
@@ -64,14 +42,10 @@ const REVIEWS = [
 const VIDEOS = [
   "/images/video_4.mp4",   // original larki wali
   "/images/video_1.mp4",   // original second
-  "/video/video1.mp4",
-  "/video/video2.mp4",
+  "/video/new_one_2.mp4",
   "/video/video3.mp4",
-  "/video/video4.mp4",
+  "/video/new_one_1.mp4",
   "/video/video5.mp4",
-  "/video/video6.mp4",
-  "/video/video7.mp4",
-  "/video/mother.mp4",
 ];
 
 // Build flat items: video → review → video → review → video → review → video → video
