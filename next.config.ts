@@ -9,7 +9,7 @@ const nextConfig = {
       // Local development
 {
         protocol: "https",
-        hostname: "res.cloudinary.com",
+        hostname: "**.s3.**.amazonaws.com",
       },
       {
         protocol: "http",
