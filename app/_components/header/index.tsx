@@ -110,6 +110,11 @@ export default function Navbar() {
                   HOT
                 </span>
               )}
+              {item.label === "Peptides" && (
+                <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                  New
+                </span>
+              )}
             </Link>
           ))}
         </div>
@@ -200,6 +205,9 @@ export default function Navbar() {
                     )}
                     {item.label === "IV Therapy" && (
                       <span className="bg-[#543826] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">HOT</span>
+                    )}
+                    {item.label === "Peptides" && (
+                      <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">New</span>
                     )}
                   </div>
                 </Link>
