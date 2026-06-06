@@ -51,9 +51,9 @@ export default function Footer() {
             <div>
               <h4 className="font-brand font-semibold text-sm mb-3 text-white/80">Company</h4>
               <ul className="space-y-2 text-sm text-white/50">
-                <li><Link href="/about" className="hover:text-white transition">About Us</Link></li>
-                <li><Link href="/blog" className="hover:text-white transition">Blogs</Link></li>
-                <li><Link href="/offers" className="hover:text-white transition">Offers</Link></li>
+                <li><Link href="/" className="hover:text-white transition">Home</Link></li>
+                <li><Link href="/terms-and-conditions" className="hover:text-white transition">Terms &amp; Conditions</Link></li>
+                <li><Link href="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>
@@ -88,12 +88,8 @@ export default function Footer() {
         <div className="border-t border-white/10" />
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-2 pt-6 text-xs text-white/40">
-          <p>&copy; 2025 Nordic Home Health Care Center &ndash; All Rights Reserved</p>
+          <p>&copy; {new Date().getFullYear()} Nordic Home Health Care Center &ndash; All Rights Reserved</p>
           <p>DHA License No.: 3171506</p>
-          <div className="flex gap-4">
-            <Link href="#" className="hover:text-white transition">Terms &amp; Conditions</Link>
-            <Link href="#" className="hover:text-white transition">Privacy Policy</Link>
-          </div>
         </div>
       </div>
     </footer>
