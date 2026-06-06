@@ -370,12 +370,55 @@ export interface ServiceWithVariants extends Service {
 // ADMIN DASHBOARD INTERFACES
 // ============================================================================
 
+export interface RevenueChartDataPoint {
+  month: string;
+  revenue: number;
+  bookings: number;
+}
+
+export interface BookingStatusDataPoint {
+  status: string;
+  count: number;
+}
+
+export interface BookingCategoryDataPoint {
+  category: string;
+  bookings: number;
+  revenue: number;
+}
+
+export interface UserGrowthDataPoint {
+  month: string;
+  newUsers: number;
+  totalUsers: number;
+}
+
+export interface TopServiceDataPoint {
+  name: string;
+  bookings: number;
+  revenue: number;
+}
+
 export interface DashboardStats {
   totalUsers: number;
   totalBookings: number;
   pendingPayments: number;
   totalRevenue: number;
   recentBookings: BookingResponse[];
+  confirmedBookings: number;
+  completedBookings: number;
+  cancelledBookings: number;
+  activeServices: number;
+  revenueChartData: RevenueChartDataPoint[];
+  bookingsByStatus: BookingStatusDataPoint[];
+  bookingsByCategory: BookingCategoryDataPoint[];
+  userGrowthChartData: UserGrowthDataPoint[];
+  topServices: TopServiceDataPoint[];
+  todayBookings: number;
+  todayRevenue: number;
+  thisMonthBookings: number;
+  thisMonthRevenue: number;
+  avgBookingValue: number;
 }
 
 export interface Banner {

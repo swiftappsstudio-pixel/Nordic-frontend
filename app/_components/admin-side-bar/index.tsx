@@ -8,11 +8,17 @@ import { BiCategoryAlt } from "react-icons/bi";
 import {BiShoppingBag} from "react-icons/bi";
 import { BiCalendar } from "react-icons/bi";
 import { MdOutlineViewCarousel } from "react-icons/md";
+import { MdDashboard } from "react-icons/md";
 
 export const AdminSideBar = () => {
   const pathname = usePathname();
 
   const links = [
+    {
+      href: "/admin",
+      label: "Dashboard",
+      icon: <MdDashboard className="h-7 w-7 mr-2" />,
+    },
     {
       href: "/admin/orders",
       label: "Orders",
@@ -61,9 +67,11 @@ export const AdminSideBar = () => {
             key={link.href}
             href={link.href}
             className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-              pathname === link.href || pathname.startsWith(link.href + "/")
-                ? "bg-orange-500 text-white"
-                : "text-gray-300 hover:bg-gray-700"
+              link.href === "/admin"
+                ? pathname === "/admin"
+                : pathname === link.href || pathname.startsWith(link.href + "/")
+              ? "bg-orange-500 text-white"
+              : "text-gray-300 hover:bg-gray-700"
             }`}
           >
             {link.icon}
