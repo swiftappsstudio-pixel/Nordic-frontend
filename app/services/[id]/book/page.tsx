@@ -16,6 +16,7 @@ import {
   AddOn,
 } from "@/app/_common/interfaces";
 import { useAuth } from "@/app/_common/auth-context";
+import ReviewsSection from "@/app/_components/reviews-section";
 
 type Step = "addons" | "datetime" | "cart" | "info" | "payments";
 
@@ -84,6 +85,9 @@ function BookingContent() {
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Sub-service from URL (e.g., ?sub=0 for first sub-service)
+  const [selectedSubService, setSelectedSubService] = useState<string>("");
+
   // Load service detail (incl. variants) and resolve which variant is selected
   useEffect(() => {
     if (!id) return;
@@ -98,6 +102,14 @@ function BookingContent() {
             data.variants?.[0] ||
             null
         );
+        // Handle sub-service param (e.g., ?sub=0 for first sub-service)
+        const subIdx = searchParams.get("sub");
+        if (subIdx !== null && data.subServices) {
+          const idx = parseInt(subIdx);
+          if (!isNaN(idx) && data.subServices[idx]) {
+            setSelectedSubService(data.subServices[idx].name);
+          }
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -129,16 +141,28 @@ function BookingContent() {
     };
   }, [id]);
 
-  // Pre-fill user info
-  useEffect(() => {
-    if (user) {
-      setGuestInfo({
-        fullName: user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
-      });
-    }
-  }, [user]);
+// Pre-fill user info
+   useEffect(() => {
+     if (user) {
+       setGuestInfo({
+         fullName: user.name || "",
+         email: user.email || "",
+         phone: user.phone || "",
+       });
+     }
+   }, [user]);
+
+   // Auto-skip addons step if no variants/addons available
+   useEffect(() => {
+     if (!loading && !loadingAddOns) {
+       const hasVariants = service?.variants?.length && service.variants.length > 0;
+       const hasBasePrice = (service?.discountPrice ?? service?.actualPrice) != null;
+       const hasAddOns = addOns.length > 0;
+       if (!hasVariants && !hasBasePrice && !hasAddOns) {
+         setStep("datetime");
+       }
+     }
+   }, [loading, loadingAddOns, service, addOns]);
 
   // Calendar helpers
   const getDaysInMonth = (month: number, year: number) =>
@@ -248,6 +272,7 @@ function BookingContent() {
         preferredDate: selectedDate,
         preferredTime: selectedTime,
         ...(selectedVariant ? { variantId: selectedVariant._id } : {}),
+        ...(selectedSubService ? { subServiceName: selectedSubService } : {}),
         ...(selectedAddOnIds.size > 0
           ? { addOnIds: Array.from(selectedAddOnIds) }
           : {}),
@@ -375,7 +400,8 @@ function BookingContent() {
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-orange-50 via-white to-blue-50 pt-24 pb-16">
+    <>
+      <div className="min-h-screen bg-linear-to-br from-orange-50 via-white to-blue-50 pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4">
         {/* Two-column layout: Main content + Sticky sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
@@ -467,117 +493,109 @@ function BookingContent() {
                 </button>
               </div>
 
-              {/* ========== STEP CONTENT (expandable) ========== */}
-              <div className="min-h-[500px]">
+{/* ========== STEP CONTENT (expandable) ========== */}
+               <div>
+                {/* ========== STEP: ADD-ONS ========== */}
+                {step === "addons" && (
+                  <div>
+                    {/* Variant / base price selection */}
+                    {((service.variants && service.variants.length > 0) ||
+                      (service.discountPrice ?? service.actualPrice) != null) && (
+                      <div className="mb-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Select Package
+                        </label>
+                        <select
+                          value={selectedVariant?._id || "__base__"}
+                          onChange={(e) => {
+                            if (e.target.value === "__base__") {
+                              setSelectedVariant(null);
+                            } else {
+                              const v = service.variants?.find(
+                                (v:any) => v._id === e.target.value
+                              );
+                              if (v) setSelectedVariant(v);
+                            }
+                          }}
+                          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        >
+                          {(service.discountPrice ?? service.actualPrice) !=
+                            null && (
+                            <option value="__base__">
+                              1 Session — AED{" "}
+                              {(
+                                service.discountPrice ??
+                                service.actualPrice ??
+                                0
+                              ).toFixed(2)}
+                            </option>
+                          )}
+{service.variants?.map((v:any) => (
+                              <option key={v._id} value={v._id}>
+                                {v.name} — AED {v.price} ({v.sessions} sessions)
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    )}
 
-              {/* ========== STEP: ADD-ONS ========== */}
-              {step === "addons" && (
-                <div>
-                  {/* Variant / base price selection */}
-                  {((service.variants && service.variants.length > 0) ||
-                    (service.discountPrice ?? service.actualPrice) != null) && (
-                    <div className="mb-5">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Select Package
-                      </label>
-                      <select
-                        value={selectedVariant?._id || "__base__"}
-                        onChange={(e) => {
-                          if (e.target.value === "__base__") {
-                            setSelectedVariant(null);
-                          } else {
-                            const v = service.variants?.find(
-                              (v:any) => v._id === e.target.value
-                            );
-                            if (v) setSelectedVariant(v);
-                          }
-                        }}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      >
-                        {(service.discountPrice ?? service.actualPrice) !=
-                          null && (
-                          <option value="__base__">
-                            1 Session — AED{" "}
-                            {(
-                              service.discountPrice ??
-                              service.actualPrice ??
-                              0
-                            ).toFixed(2)}
-                          </option>
-                        )}
-                        {service.variants?.map((v:any) => (
-                          <option key={v._id} value={v._id}>
-                            {v.name} — AED {v.price} ({v.sessions} sessions)
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-
-                  {/* Per-service add-ons */}
-                  <p className="text-sm font-medium text-gray-700 mb-3">
-                    Add-ons for this service
-                  </p>
-
-                  {loadingAddOns && (
-                    <p className="text-xs text-gray-400">Loading add-ons…</p>
-                  )}
-
-                  {!loadingAddOns && addOns.length === 0 && (
-                    <p className="text-center text-gray-400 text-sm py-6">
-                      No add-ons available for this service.
-                    </p>
-                  )}
-
-                  {!loadingAddOns && addOns.length > 0 && (
-                    <div className="space-y-2">
-                      {addOns.map((a) => {
-                        const checked = selectedAddOnIds.has(a._id);
-                        return (
-                          <label
-                            key={a._id}
-                            className={`flex items-start justify-between gap-3 border rounded-xl p-3 cursor-pointer transition ${
-                              checked
-                                ? "border-[#543826] bg-orange-50"
-                                : "border-gray-100 hover:border-gray-200"
-                            } ${a.isRequired ? "opacity-95" : ""}`}
-                          >
-                            <div className="flex items-start gap-3 flex-1">
-                              <input
-                                type="checkbox"
-                                checked={checked}
-                                disabled={a.isRequired}
-                                onChange={() =>
-                                  toggleAddOn(a._id, a.isRequired)
-                                }
-                                className="mt-1"
-                              />
-                              <div>
-                                <p className="text-sm font-medium text-gray-800">
-                                  {a.name}
-                                  {a.isRequired && (
-                                    <span className="ml-2 text-xs font-semibold text-red-600">
-                                      Required
-                                    </span>
-                                  )}
-                                </p>
-                                {a.description && (
-                                  <p className="text-xs text-gray-500 mt-0.5">
-                                    {a.description}
+                    {/* Per-service add-ons */}
+                    {!loadingAddOns && addOns.length > 0 && (
+                      <div className="space-y-2 mt-2">
+                        {addOns.map((a) => {
+                          const checked = selectedAddOnIds.has(a._id);
+                          return (
+                            <label
+                              key={a._id}
+                              className={`flex items-start justify-between gap-3 border rounded-xl p-3 cursor-pointer transition ${
+                                checked
+                                  ? "border-[#543826] bg-orange-50"
+                                  : "border-gray-100 hover:border-gray-200"
+                              } ${a.isRequired ? "opacity-95" : ""}`}
+                            >
+                              <div className="flex items-start gap-3 flex-1">
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  disabled={a.isRequired}
+                                  onChange={() =>
+                                    toggleAddOn(a._id, a.isRequired)
+                                  }
+                                  className="mt-1"
+                                />
+                                <div>
+                                  <p className="text-sm font-medium text-gray-800">
+                                    {a.name}
+                                    {a.isRequired && (
+                                      <span className="ml-2 text-xs font-semibold text-red-600">
+                                        Required
+                                      </span>
+                                    )}
                                   </p>
-                                )}
+                                  {a.description && (
+                                    <p className="text-xs text-gray-500 mt-0.5">
+                                      {a.description}
+                                    </p>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                            <span className="text-sm font-bold text-orange-600 whitespace-nowrap">
-                              + AED {a.price.toFixed(2)}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
+                              <span className="text-sm font-bold text-orange-600 whitespace-nowrap">
+                                + AED {a.price.toFixed(2)}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                   {/* Empty state when no variants and no add-ons */}
+                   {!loadingAddOns && addOns.length === 0 && !service.variants?.length && (service.discountPrice ?? service.actualPrice) == null && (
+                     <div className="text-center py-10">
+                       <p className="text-gray-500">No options available for this service.</p>
+                     </div>
+                   )}
+                 </div>
+               )}
 
               {/* ========== STEP: DATE & TIME ========== */}
               {step === "datetime" && (
@@ -1141,6 +1159,7 @@ function BookingContent() {
       </div>
       {/* END MAX-WIDTH CONTAINER */}
     </div>
-    
+    <ReviewsSection />
+    </>
   );
 }
