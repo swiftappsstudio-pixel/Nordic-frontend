@@ -313,6 +313,15 @@ export const getMyBookings = async (
   return data.data;
 };
 
+export const lookupGuestBookings = async (phone: string): Promise<BookingResponse[]> => {
+  const res = await fetch(`${API_BASE_URL}/bookings/guest?phone=${encodeURIComponent(phone)}`);
+
+  if (!res.ok) throw new Error("Failed to lookup bookings");
+
+  const data = await res.json();
+  return data.data;
+};
+
 // =========================================== Admin Booking API CALLS ===========================================//
 
 export const getAdminBookings = async (
@@ -421,6 +430,22 @@ export const adminUpdateBookingStatus = async (
   }
 
   return result.data;
+};
+
+export const adminDeleteBooking = async (token: string, bookingId: string): Promise<void> => {
+  const res = await fetch(`${API_BASE_URL}/admin/bookings/${bookingId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to delete booking");
+  }
 };
 
 // =========================================== Add-on API CALLS ===========================================//

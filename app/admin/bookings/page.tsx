@@ -7,6 +7,7 @@ import {
   adminCreateBooking,
   adminRescheduleBooking,
   adminUpdateBookingStatus,
+  adminDeleteBooking,
   getServices,
 } from "@/app/_common/api";
 import { BookingResponse, Service, GuestInfo } from "@/app/_common/interfaces";
@@ -262,6 +263,19 @@ export default function BookingsCalendarPage() {
       fetchBookings();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to update status");
+    }
+  };
+
+  const handleDeleteBooking = async (bookingId: string) => {
+    if (!token) return;
+    if (!confirm("Are you sure you want to permanently delete this booking?")) return;
+    try {
+      await adminDeleteBooking(token, bookingId);
+      toast.success("Booking deleted");
+      setShowDetailModal(null);
+      fetchBookings();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete booking");
     }
   };
 
@@ -682,40 +696,46 @@ export default function BookingsCalendarPage() {
                 </div>
               )}
             </div>
-            <div className="flex items-center justify-between p-4 border-t">
-              <div className="flex gap-2">
-                {showDetailModal.status === "confirmed" && (
-                  <>
-                    <button
-                      onClick={() => openRescheduleModal(showDetailModal)}
-                      className="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
-                    >
-                      Reschedule
-                    </button>
-                    <button
-                      onClick={() => handleCancelBooking(showDetailModal._id)}
-                      className="px-3 py-1.5 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </>
-                )}
-                {showDetailModal.status === "confirmed" && (
-                  <button
-                    onClick={() => handleCompleteBooking(showDetailModal._id)}
-                    className="px-3 py-1.5 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
-                  >
-                    Complete
-                  </button>
-                )}
-              </div>
-              <button
-                onClick={() => setShowDetailModal(null)}
-                className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
-              >
-                Close
-              </button>
-            </div>
+<div className="flex items-center justify-between p-4 border-t">
+               <div className="flex gap-2">
+                 {showDetailModal.status === "confirmed" && (
+                   <>
+                     <button
+                       onClick={() => openRescheduleModal(showDetailModal)}
+                       className="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                     >
+                       Reschedule
+                     </button>
+                     <button
+                       onClick={() => handleCancelBooking(showDetailModal._id)}
+                       className="px-3 py-1.5 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                     >
+                       Cancel
+                     </button>
+                     <button
+                       onClick={() => handleDeleteBooking(showDetailModal._id)}
+                       className="px-3 py-1.5 text-sm bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
+                     >
+                       Delete
+                     </button>
+                   </>
+                 )}
+                 {showDetailModal.status === "confirmed" && (
+                   <button
+                     onClick={() => handleCompleteBooking(showDetailModal._id)}
+                     className="px-3 py-1.5 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
+                   >
+                     Complete
+                   </button>
+                 )}
+               </div>
+               <button
+                 onClick={() => setShowDetailModal(null)}
+                 className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
+               >
+                 Close
+               </button>
+             </div>
           </div>
         </div>
       )}
