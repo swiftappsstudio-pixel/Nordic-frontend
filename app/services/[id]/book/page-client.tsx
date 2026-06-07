@@ -186,28 +186,45 @@ function BookingContent({ id }: Props) {
   return (
     <div className="h-screen overflow-hidden bg-gray-50 pt-28">
       <div className="max-w-5xl mx-auto px-5 h-full pb-8">
-        <div className="flex gap-6 h-full">
-          <div className={`bg-white rounded-2xl shadow-md p-5 shrink-0 flex flex-col justify-between transition-all ${sidebarCollapsed ? "w-16" : "w-64"}`}>
+        <div className="flex flex-col gap-6 h-full">
+        <div className="rounded-3xl bg-[#f9f7f3] p-6 shadow-sm border border-transparent hover:border-gray-200 transition-all duration-300">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              {!sidebarCollapsed && (
-                <nav className="space-y-1">
-                  {STEPS.map((s, i) => { const isCompleted = i < currentStepIndex; const isActive = s.key === step; return (
-                    <button key={s.key} onClick={() => { if (i <= currentStepIndex) setStep(s.key); }} className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition ${isActive ? "bg-gray-50" : "hover:bg-gray-50"}`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 transition ${isCompleted ? "bg-green-500 border-green-500 text-white" : isActive ? "border-blue-500 bg-white text-blue-500" : "border-gray-200 bg-white text-gray-400"}`}>
-                        {isCompleted ? <span className="text-sm">&#10003;</span> : <span className="text-xs">{s.icon}</span>}
-                      </div>
-                      <span className={`text-sm font-medium ${isActive ? "text-gray-900" : isCompleted ? "text-gray-700" : "text-gray-400"}`}>{s.label}</span>
-                    </button>
-                  ); })}
-                </nav>
-              )}
+              <p className="text-sm text-gray-500">Streamlined booking in five clear steps</p>
+              <h1 className="text-2xl md:text-3xl font-semibold text-[#1f2937]">Book your service with confidence</h1>
             </div>
-            <div className="mt-8 border-t pt-4">
-              {!sidebarCollapsed && <div className="text-center mb-4"><p className="text-xs text-gray-400 font-medium">Get in Touch</p><p className="text-sm text-gray-700 font-medium mt-1">+971555828945</p><p className="text-sm text-gray-500">operation@nordichc.ae</p></div>}
-              <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 w-full justify-center">{sidebarCollapsed ? "Expand" : "Collapse menu"}<span className={`transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`}>&#10132;</span></button>
+            <div className="text-right">
+              <p className="text-xs uppercase tracking-[0.25em] text-gray-400">Step {currentStepIndex + 1} of {STEPS.length}</p>
+              <p className="text-base font-semibold text-[#543826]">{STEPS[currentStepIndex].label}</p>
             </div>
           </div>
-          <div className="flex-1 bg-white rounded-2xl shadow-md p-6 flex flex-col overflow-hidden">
+          <div className="mt-6">
+            <div className="relative h-2 rounded-full bg-gray-200 overflow-hidden">
+              <div className="absolute inset-y-0 left-0 bg-linear-to-r from-green-500 to-[#543826] transition-all duration-500 ease-out" style={{ width: `${(currentStepIndex / (STEPS.length - 1)) * 100}%` }} />
+            </div>
+            <div className="relative mt-4 flex items-center justify-between gap-3">
+              {STEPS.map((s, i) => {
+                const isCompleted = i < currentStepIndex;
+                const isActive = i === currentStepIndex;
+                return (
+                  <button
+                    key={s.key}
+                    type="button"
+                    disabled={i > currentStepIndex}
+                    onClick={() => { if (i <= currentStepIndex) setStep(s.key); }}
+                    className="group flex min-w-[70px] flex-col items-center text-center focus:outline-none"
+                  >
+                    <span className={`flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 ${isCompleted ? "bg-green-500 border-green-500 text-white shadow-lg" : isActive ? "bg-white border-[#543826] text-[#543826] shadow-sm scale-105" : "bg-white border-gray-200 text-gray-400"}`}>
+                      {isCompleted ? "✓" : s.icon}
+                    </span>
+                    <span className={`mt-2 text-[11px] leading-4 font-semibold ${isCompleted ? "text-green-700" : isActive ? "text-[#543826]" : "text-gray-400"}`}>{s.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 bg-white rounded-3xl shadow-xl p-6 flex flex-col overflow-hidden">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 {currentStepIndex > 0 && <button onClick={goBack} className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 text-gray-500">&#8249;</button>}

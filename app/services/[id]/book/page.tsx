@@ -84,9 +84,6 @@ function BookingContent() {
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Sidebar collapse
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
   // Load service detail (incl. variants) and resolve which variant is selected
   useEffect(() => {
     if (!id) return;
@@ -378,121 +375,100 @@ function BookingContent() {
   );
 
   return (
-    <div className="h-screen overflow-hidden bg-gray-50 pt-28">
-      <div className="max-w-5xl mx-auto px-5 h-full pb-8">
-        <div className="flex gap-6 h-full">
-          {/* ====== LEFT SIDEBAR ====== */}
-          <div
-            className={`bg-white rounded-2xl shadow-md p-5 shrink-0 flex flex-col justify-between transition-all ${
-              sidebarCollapsed ? "w-16" : "w-64"
-            }`}
-          >
-            <div>
-              {!sidebarCollapsed && (
-                <nav className="space-y-1">
+    <div className="min-h-screen bg-linear-to-br from-orange-50 via-white to-blue-50 pt-24 pb-16">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Two-column layout: Main content + Sticky sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+          {/* LEFT: Main Content */}
+          <div className="flex flex-col gap-6">
+            {/* Header/Stepper Section */}
+            <div className="rounded-3xl bg-white/95 border border-gray-200 shadow-sm p-6">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-sm text-gray-500">Streamlined booking in five clear steps</p>
+                  <h1 className="text-2xl md:text-3xl font-semibold text-[#1f2937]">
+                    Book your service with confidence
+                  </h1>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs uppercase tracking-[0.25em] text-gray-400">
+                    Step {currentStepIndex + 1} of {STEPS.length}
+                  </p>
+                  <p className="text-base font-semibold text-[#543826]">
+                    {STEPS[currentStepIndex]?.label}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <div className="relative h-2 rounded-full bg-gray-200 overflow-hidden">
+                  <div
+                    className="absolute inset-y-0 left-0 bg-linear-to-r from-green-500 to-[#543826] transition-all duration-500 ease-out"
+                    style={{ width: `${(currentStepIndex / (STEPS.length - 1)) * 100}%` }}
+                  />
+                </div>
+                <div className="mt-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
                   {STEPS.map((s, i) => {
                     const isCompleted = i < currentStepIndex;
-                    const isActive = s.key === step;
+                    const isActive = i === currentStepIndex;
                     return (
                       <button
                         key={s.key}
+                        type="button"
+                        disabled={i > currentStepIndex}
                         onClick={() => {
                           if (i <= currentStepIndex) setStep(s.key);
                         }}
-                        className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition ${
-                          isActive ? "bg-gray-50" : "hover:bg-gray-50"
-                        }`}
+                        className="group flex flex-col items-center justify-center rounded-2xl border bg-white px-3 py-4 text-center transition duration-300 hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-70"
                       >
-                        <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 transition ${
-                            isCompleted
-                              ? "bg-green-500 border-green-500 text-white"
-                              : isActive
-                                ? "border-blue-500 bg-white text-blue-500"
-                                : "border-gray-200 bg-white text-gray-400"
-                          }`}
-                        >
-                          {isCompleted ? (
-                            <span className="text-sm">&#10003;</span>
-                          ) : (
-                            <span className="text-xs">{s.icon}</span>
-                          )}
-                        </div>
                         <span
-                          className={`text-sm font-medium ${
-                            isActive
-                              ? "text-gray-900"
-                              : isCompleted
-                                ? "text-gray-700"
-                                : "text-gray-400"
+                          className={`flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                            isCompleted
+                              ? "bg-green-500 border-green-500 text-white shadow-lg"
+                              : isActive
+                                ? "bg-white border-[#543826] text-[#543826] shadow-sm scale-105"
+                                : "bg-white border-gray-200 text-gray-400"
                           }`}
                         >
+                          {isCompleted ? "✓" : s.icon}
+                        </span>
+                        <span className={`mt-3 text-[11px] font-semibold ${isCompleted ? "text-green-700" : isActive ? "text-[#543826]" : "text-gray-400"}`}>
                           {s.label}
                         </span>
                       </button>
                     );
                   })}
-                </nav>
-              )}
-            </div>
-
-            <div className="mt-8 border-t pt-4">
-              {!sidebarCollapsed && (
-                <div className="text-center mb-4">
-                  <p className="text-xs text-gray-400 font-medium">
-                    Get in Touch
-                  </p>
-                  <p className="text-sm text-gray-700 font-medium mt-1">
-                    +971555828945
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    operation@nordichc.ae
-                  </p>
                 </div>
-              )}
-              <button
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 w-full justify-center"
-              >
-                {sidebarCollapsed ? "Expand" : "Collapse menu"}
-                <span
-                  className={`transition-transform ${
-                    sidebarCollapsed ? "rotate-180" : ""
-                  }`}
-                >
-                  &#10132;
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* ====== RIGHT CONTENT ====== */}
-          <div className="flex-1 bg-white rounded-2xl shadow-md p-6 flex flex-col overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                {currentStepIndex > 0 && (
-                  <button
-                    onClick={goBack}
-                    className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 text-gray-500"
-                  >
-                    &#8249;
-                  </button>
-                )}
-                <h2 className="text-xl font-semibold text-gray-400">
-                  {STEPS[currentStepIndex]?.label}
-                </h2>
               </div>
-              <button
-                onClick={() => router.push(`/services/${id}`)}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl"
-              >
-                &times;
-              </button>
             </div>
 
-            {/* ========== STEP CONTENT (scrollable) ========== */}
-            <div className="flex-1 overflow-y-auto">
+            {/* Main Content Card */}
+            <div className="bg-white rounded-3xl shadow-md p-8 flex flex-col">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  {currentStepIndex > 0 && (
+                    <button
+                      onClick={goBack}
+                      className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 text-gray-500"
+                    >
+                      &#8249;
+                    </button>
+                  )}
+                  <h2 className="text-xl font-semibold text-gray-400">
+                    {STEPS[currentStepIndex]?.label}
+                  </h2>
+                </div>
+                <button
+                  onClick={() => router.push(`/services/${id}`)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl"
+                >
+                  &times;
+                </button>
+              </div>
+
+              {/* ========== STEP CONTENT (expandable) ========== */}
+              <div className="min-h-[500px]">
 
               {/* ========== STEP: ADD-ONS ========== */}
               {step === "addons" && (
@@ -511,7 +487,7 @@ function BookingContent() {
                             setSelectedVariant(null);
                           } else {
                             const v = service.variants?.find(
-                              (v) => v._id === e.target.value
+                              (v:any) => v._id === e.target.value
                             );
                             if (v) setSelectedVariant(v);
                           }
@@ -529,7 +505,7 @@ function BookingContent() {
                             ).toFixed(2)}
                           </option>
                         )}
-                        {service.variants?.map((v) => (
+                        {service.variants?.map((v:any) => (
                           <option key={v._id} value={v._id}>
                             {v.name} — AED {v.price} ({v.sessions} sessions)
                           </option>
@@ -605,137 +581,151 @@ function BookingContent() {
 
               {/* ========== STEP: DATE & TIME ========== */}
               {step === "datetime" && (
-                <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <select
-                      value={calendarMonth}
-                      onChange={(e) =>
-                        setCalendarMonth(parseInt(e.target.value))
-                      }
-                      className="bg-[#8a7060] text-white px-4 py-2.5 rounded-lg text-sm font-medium appearance-none cursor-pointer pr-8"
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 20 20'%3E%3Cpath d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E")`,
-                        backgroundRepeat: "no-repeat",
-                        backgroundPosition: "right 8px center",
-                        backgroundSize: "16px",
-                      }}
-                    >
-                      {MONTHS.map((m, i) => (
-                        <option key={m} value={i}>
-                          {m}
-                        </option>
-                      ))}
-                    </select>
+                <div className="space-y-6">
+                  <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#543826]">
+                          Step 2
+                        </p>
+                        <h3 className="mt-3 text-2xl font-semibold text-gray-900">
+                          Pick your date and time
+                        </h3>
+                        <p className="mt-2 text-sm text-gray-500">
+                          Select a convenient slot for your appointment.
+                        </p>
+                      </div>
+                      <div className="rounded-3xl bg-[#f8f5f0] px-4 py-3 text-sm font-semibold text-[#543826]">
+                        Booking window open daily
+                      </div>
+                    </div>
 
-                    <select
-                      value={calendarYear}
-                      onChange={(e) =>
-                        setCalendarYear(parseInt(e.target.value))
-                      }
-                      className="bg-[#8a7060] text-white px-4 py-2.5 rounded-lg text-sm font-medium appearance-none cursor-pointer pr-8"
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 20 20'%3E%3Cpath d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E")`,
-                        backgroundRepeat: "no-repeat",
-                        backgroundPosition: "right 8px center",
-                        backgroundSize: "16px",
-                      }}
-                    >
-                      {[2025, 2026, 2027].map((y) => (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
-                      ))}
-                    </select>
-
-                    <div className="ml-auto flex gap-1">
-                      <button
-                        onClick={prevMonth}
-                        className="w-9 h-9 border border-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-50 text-gray-600"
-                      >
-                        &#8249;
-                      </button>
-                      <button
-                        onClick={nextMonth}
-                        className="w-9 h-9 border border-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-50 text-gray-600"
-                      >
-                        &#8250;
-                      </button>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-[1fr_auto]">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <select
+                          value={calendarMonth}
+                          onChange={(e) => setCalendarMonth(parseInt(e.target.value))}
+                          className="bg-[#543826] text-white rounded-3xl px-4 py-3 text-sm font-medium appearance-none pr-10"
+                          style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 20 20'%3E%3Cpath d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E")`,
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "right 14px center",
+                            backgroundSize: "16px",
+                          }}
+                        >
+                          {MONTHS.map((m, i) => (
+                            <option key={m} value={i}>
+                              {m}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={calendarYear}
+                          onChange={(e) => setCalendarYear(parseInt(e.target.value))}
+                          className="bg-[#543826] text-white rounded-3xl px-4 py-3 text-sm font-medium appearance-none pr-10"
+                          style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 20 20'%3E%3Cpath d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E")`,
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "right 14px center",
+                            backgroundSize: "16px",
+                          }}
+                        >
+                          {[2025, 2026, 2027].map((y) => (
+                            <option key={y} value={y}>
+                              {y}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex items-center gap-2 justify-end">
+                        <button
+                          onClick={prevMonth}
+                          className="w-11 h-11 rounded-3xl border border-gray-200 bg-white text-gray-600 transition hover:border-gray-300"
+                        >
+                          &#8249;
+                        </button>
+                        <button
+                          onClick={nextMonth}
+                          className="w-11 h-11 rounded-3xl border border-gray-200 bg-white text-gray-600 transition hover:border-gray-300"
+                        >
+                          &#8250;
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-7 gap-1 text-center">
-                    {DAYS.map((d) => (
-                      <div
-                        key={d}
-                        className="py-2 text-sm font-medium text-gray-500"
-                      >
-                        {d}
-                      </div>
-                    ))}
-
-                    {Array.from({ length: firstDay }).map((_, i) => (
-                      <div
-                        key={`prev-${i}`}
-                        className="py-3 text-sm text-gray-300"
-                      >
-                        {prevMonthDays - firstDay + 1 + i}
-                      </div>
-                    ))}
-
-                    {Array.from({ length: daysInMonth }).map((_, i) => {
-                      const day = i + 1;
-                      const dateStr = formatDateStr(day);
-                      const disabled = isDateDisabled(day);
-                      const isSelected = selectedDate === dateStr;
-                      const isToday =
-                        dateStr === new Date().toISOString().split("T")[0];
-
-                      return (
-                        <button
-                          key={day}
-                          disabled={disabled}
-                          onClick={() => setSelectedDate(dateStr)}
-                          className={`py-3 text-sm rounded-lg transition relative ${
-                            isSelected
-                              ? "bg-[#543826] text-white font-bold"
-                              : disabled
-                                ? "text-gray-300 bg-red-50 cursor-not-allowed"
-                                : "text-gray-700 hover:bg-gray-100"
-                          }`}
-                        >
-                          {day}
-                          {isToday && !isSelected && (
-                            <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-gray-400 rounded-full" />
-                          )}
-                        </button>
-                      );
-                    })}
-
-                    {Array.from({
-                      length: (7 - ((firstDay + daysInMonth) % 7)) % 7,
-                    }).map((_, i) => (
-                      <div
-                        key={`next-${i}`}
-                        className="py-3 text-sm text-gray-300"
-                      >
-                        {i + 1}
-                      </div>
-                    ))}
+                  <div className="rounded-3xl border border-gray-200 bg-[#f8f5f0] p-4 shadow-sm">
+                    <div className="grid grid-cols-7 gap-2 text-center text-sm font-semibold text-gray-500">
+                      {DAYS.map((d) => (
+                        <div key={d} className="py-2">
+                          {d}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-7 gap-2 text-center mt-2">
+                      {Array.from({ length: firstDay }).map((_, i) => (
+                        <div key={`prev-${i}`} className="py-3 text-sm text-gray-300">
+                          {prevMonthDays - firstDay + 1 + i}
+                        </div>
+                      ))}
+                      {Array.from({ length: daysInMonth }).map((_, i) => {
+                        const day = i + 1;
+                        const dateStr = formatDateStr(day);
+                        const disabled = isDateDisabled(day);
+                        const isSelected = selectedDate === dateStr;
+                        const isToday =
+                          dateStr === new Date().toISOString().split("T")[0];
+                        return (
+                          <button
+                            key={day}
+                            disabled={disabled}
+                            onClick={() => setSelectedDate(dateStr)}
+                            className={`rounded-3xl py-3 transition relative ${
+                              isSelected
+                                ? "bg-[#543826] text-white font-semibold"
+                                : disabled
+                                  ? "text-gray-300 bg-white/40 cursor-not-allowed"
+                                  : "text-gray-700 bg-white hover:bg-gray-100"
+                            }`}
+                          >
+                            {day}
+                            {isToday && !isSelected && (
+                              <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#543826]" />
+                            )}
+                          </button>
+                        );
+                      })}
+                      {Array.from({
+                        length: (7 - ((firstDay + daysInMonth) % 7)) % 7,
+                      }).map((_, i) => (
+                        <div key={`next-${i}`} className="py-3 text-sm text-gray-300">
+                          {i + 1}
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   {selectedDate && (
-                    <div className="mt-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        Select Time
-                      </label>
-                      <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                        {[
-                          "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
-                          "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
-                          "14:00", "14:30", "15:00", "15:30", "16:00", "16:30",
-                          "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
-                          "20:00",
-                        ].map((t) => {
+                    <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <h4 className="text-xl font-semibold text-gray-900">
+                            Choose a time slot
+                          </h4>
+                          <p className="mt-2 text-sm text-gray-500">
+                            Select the best time for your appointment on the chosen date.
+                          </p>
+                        </div>
+                        <div className="rounded-full bg-[#f8f5f0] px-4 py-2 text-sm font-semibold text-[#543826]">
+                          {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        {["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00"].map((t) => {
                           const [h, m] = t.split(":");
                           const hour = parseInt(h);
                           const ampm = hour >= 12 ? "PM" : "AM";
@@ -745,10 +735,10 @@ function BookingContent() {
                             <button
                               key={t}
                               onClick={() => setSelectedTime(t)}
-                              className={`py-2.5 px-2 rounded-lg border text-xs font-medium transition ${
+                              className={`rounded-3xl border px-3 py-3 text-sm font-medium transition ${
                                 selectedTime === t
                                   ? "border-[#543826] bg-[#543826] text-white"
-                                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+                                  : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                               }`}
                             >
                               {label}
@@ -763,31 +753,40 @@ function BookingContent() {
 
               {/* ========== STEP: CART ========== */}
               {step === "cart" && (
-                <div>
-                  <p className="text-gray-500 text-sm mb-6">
-                    Review your selection before proceeding.
-                  </p>
-
-                  <div className="space-y-4">
-                    {/* Main service / variant */}
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                <div className="space-y-6">
+                  <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <p className="font-semibold text-gray-800">
-                          {service.title}
+                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#543826]">
+                          Step 3
                         </p>
+                        <h3 className="mt-3 text-2xl font-semibold text-gray-900">
+                          Review your booking
+                        </h3>
+                        <p className="mt-2 text-sm text-gray-500">
+                          Confirm your selection and check the summary before moving on.
+                        </p>
+                      </div>
+                      <div className="rounded-full bg-[#f8f5f0] px-4 py-2 text-sm font-semibold text-[#543826]">
+                        {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? "" : "s"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
+                    <div className="grid gap-4 lg:grid-cols-[1fr_auto] items-center rounded-3xl border border-gray-100 bg-[#faf9f6] p-5">
+                      <div>
+                        <p className="font-semibold text-gray-900">{service.title}</p>
                         {selectedVariant ? (
-                          <p className="text-sm text-gray-500">
-                            {selectedVariant.name} —{" "}
-                            {selectedVariant.sessions} sessions
+                          <p className="text-sm text-gray-500 mt-1">
+                            {selectedVariant.name} — {selectedVariant.sessions} sessions
                           </p>
                         ) : (
-                          <p className="text-sm text-gray-500">1 Session</p>
+                          <p className="text-sm text-gray-500 mt-1">1 Session</p>
                         )}
                         {selectedDate && (
-                          <p className="text-xs text-gray-400 mt-1">
-                            {new Date(
-                              selectedDate + "T00:00:00"
-                            ).toLocaleDateString("en-US", {
+                          <p className="text-sm text-gray-500 mt-1">
+                            {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
                               weekday: "long",
                               month: "long",
                               day: "numeric",
@@ -795,53 +794,59 @@ function BookingContent() {
                           </p>
                         )}
                       </div>
-                      <span className="text-orange-600 font-bold text-lg">
+                      <span className="text-orange-600 font-bold text-2xl">
                         AED {basePrice.toFixed(2)}
                       </span>
                     </div>
 
-                    {/* Selected add-ons */}
-                    {selectedAddOns.map((addon) => (
-                      <div
-                        key={addon._id}
-                        className="flex justify-between items-center p-4 bg-gray-50 rounded-xl"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded">
-                            Add-on
-                          </span>
-                          <p className="font-medium text-gray-800">
-                            {addon.name}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-orange-600 font-bold">
-                            AED {addon.price.toFixed(2)}
-                          </span>
-                          <button
-                            onClick={() =>
-                              toggleAddOn(addon._id, addon.isRequired)
-                            }
-                            disabled={addon.isRequired}
-                            className="text-red-400 hover:text-red-600 text-lg disabled:opacity-30 disabled:cursor-not-allowed"
-                            title={
-                              addon.isRequired
-                                ? "Required — can't remove"
-                                : "Remove"
-                            }
+                    {selectedAddOns.length > 0 && (
+                      <div className="space-y-3">
+                        {selectedAddOns.map((addon) => (
+                          <div
+                            key={addon._id}
+                            className="flex flex-col gap-3 rounded-3xl border border-gray-100 bg-[#fbfaf7] p-4 sm:flex-row sm:items-center sm:justify-between"
                           >
-                            &times;
-                          </button>
-                        </div>
+                            <div>
+                              <p className="font-semibold text-gray-900">
+                                {addon.name}
+                              </p>
+                              {addon.description && (
+                                <p className="text-sm text-gray-500 mt-1">
+                                  {addon.description}
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-orange-600 font-bold">
+                                AED {addon.price.toFixed(2)}
+                              </span>
+                              <button
+                                onClick={() => toggleAddOn(addon._id, addon.isRequired)}
+                                disabled={addon.isRequired}
+                                className="text-red-400 hover:text-red-600 text-lg disabled:opacity-30 disabled:cursor-not-allowed"
+                                title={
+                                  addon.isRequired
+                                    ? "Required — can't remove"
+                                    : "Remove"
+                                }
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
 
-                    <div className="flex justify-between items-center p-4 bg-orange-50 rounded-xl mt-4">
-                      <span className="font-bold text-[#543826] text-lg">
-                        Total
-                      </span>
-                      <span className="font-bold text-orange-600 text-lg">
-                        AED {totalPrice.toFixed(2)}
+                    <div className="flex flex-col gap-3 rounded-3xl bg-orange-50 p-5 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-sm text-[#543826]">Total payable</p>
+                        <p className="mt-1 text-2xl font-bold text-[#543826]">
+                          AED {totalPrice.toFixed(2)}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900">
+                        Ready to confirm
                       </span>
                     </div>
                   </div>
@@ -850,14 +855,22 @@ function BookingContent() {
 
               {/* ========== STEP: YOUR INFORMATION ========== */}
               {step === "info" && (
-                <div>
-                  <p className="text-gray-500 text-sm mb-6">
-                    Please provide your details to complete the booking.
-                  </p>
+                <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#543826]">
+                      Step 4
+                    </p>
+                    <h3 className="mt-3 text-2xl font-semibold text-gray-900">
+                      Your information
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Provide the details we need to confirm your booking quickly.
+                    </p>
+                  </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
                         Full Name *
                       </label>
                       <input
@@ -869,13 +882,13 @@ function BookingContent() {
                             fullName: e.target.value,
                           })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full border border-gray-300 rounded-3xl px-4 py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="Enter your full name"
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
                         Email *
                       </label>
                       <input
@@ -884,13 +897,13 @@ function BookingContent() {
                         onChange={(e) =>
                           setGuestInfo({ ...guestInfo, email: e.target.value })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full border border-gray-300 rounded-3xl px-4 py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="Enter your email"
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
                         Phone *
                       </label>
                       <input
@@ -899,98 +912,104 @@ function BookingContent() {
                         onChange={(e) =>
                           setGuestInfo({ ...guestInfo, phone: e.target.value })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full border border-gray-300 rounded-3xl px-4 py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="+971 XX XXX XXXX"
                       />
                     </div>
-
-                    
                   </div>
                 </div>
               )}
 
               {/* ========== STEP: PAYMENTS ========== */}
               {step === "payments" && (
-                <div>
-                  <p className="text-gray-500 text-sm mb-6">
-                    Review your booking and confirm payment.
-                  </p>
-
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-gray-500 text-sm">Service</span>
-                      <span className="font-medium text-gray-800 text-sm">
-                        {service.title}
-                      </span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-gray-500 text-sm">Package</span>
-                      <span className="font-medium text-gray-800 text-sm">
-                        {selectedVariant ? selectedVariant.name : "1 Session"}
-                      </span>
-                    </div>
-                    {selectedDate && (
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="text-gray-500 text-sm">Date</span>
-                        <span className="font-medium text-gray-800 text-sm">
-                          {new Date(
-                            selectedDate + "T00:00:00"
-                          ).toLocaleDateString("en-US", {
-                            weekday: "long",
-                            month: "long",
-                            day: "numeric",
-                          })}
-                        </span>
+                <div className="space-y-6">
+                  <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#543826]">
+                          Step 5
+                        </p>
+                        <h3 className="mt-3 text-2xl font-semibold text-gray-900">
+                          Confirm payment
+                        </h3>
+                        <p className="mt-2 text-sm text-gray-500">
+                          Review the summary and complete your booking with confidence.
+                        </p>
                       </div>
-                    )}
-                    {selectedAddOns.length > 0 && (
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="text-gray-500 text-sm">Add-ons</span>
-                        <span className="font-medium text-gray-800 text-sm">
-                          {selectedAddOns.length} item(s) — AED{" "}
-                          {addOnsTotal.toFixed(2)}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-gray-500 text-sm">Patient</span>
-                      <span className="font-medium text-gray-800 text-sm">
-                        {user ? user.name : guestInfo.fullName}
-                      </span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-gray-500 text-sm">
-                        Payment Method
-                      </span>
-                      <span className="font-medium text-gray-800 text-sm">
+                      <span className="rounded-full bg-[#f8f5f0] px-4 py-2 text-sm font-semibold text-[#543826]">
                         Cash on Delivery
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center py-3 bg-orange-50 rounded-xl px-4">
-                      <span className="font-bold text-[#543826]">Total</span>
-                      <span className="font-bold text-orange-600 text-lg">
-                        AED {totalPrice.toFixed(2)}
                       </span>
                     </div>
                   </div>
 
+                  <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
+                        <p className="text-sm text-gray-500">Service</p>
+                        <p className="mt-2 font-semibold text-gray-900">{service.title}</p>
+                      </div>
+                      <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
+                        <p className="text-sm text-gray-500">Package</p>
+                        <p className="mt-2 font-semibold text-gray-900">{selectedVariant ? selectedVariant.name : "1 Session"}</p>
+                      </div>
+                      {selectedDate && (
+                        <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
+                          <p className="text-sm text-gray-500">Date</p>
+                          <p className="mt-2 font-semibold text-gray-900">
+                            {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
+                              weekday: "long",
+                              month: "long",
+                              day: "numeric",
+                            })}
+                          </p>
+                        </div>
+                      )}
+                      <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
+                        <p className="text-sm text-gray-500">Patient</p>
+                        <p className="mt-2 font-semibold text-gray-900">{user ? user.name : guestInfo.fullName}</p>
+                      </div>
+                    </div>
+
+                    {selectedAddOns.length > 0 && (
+                      <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
+                        <p className="text-sm text-gray-500">Add-ons</p>
+                        <p className="mt-2 font-semibold text-gray-900">
+                          {selectedAddOns.length} item(s) — AED {addOnsTotal.toFixed(2)}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-3 rounded-3xl bg-orange-50 p-5 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500">Total amount due</p>
+                        <p className="mt-1 text-2xl font-bold text-[#543826]">
+                          AED {totalPrice.toFixed(2)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-500">Payment method</p>
+                        <p className="font-semibold text-gray-900">Cash on Delivery</p>
+                      </div>
+                    </div>
+                  </div>
+
                   {bookingError && (
-                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg p-3 mb-4">
+                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg p-3">
                       {bookingError}
                     </div>
                   )}
                 </div>
               )}
 
-            </div>{/* end scrollable step content */}
+            </div>{/* end step content */}
 
             {/* ====== BOTTOM: Continue / Confirm ====== */}
-            <div className="flex justify-end pt-4 border-t border-gray-100 mt-2">
+            <div className="flex justify-end pt-8 border-t border-gray-200 mt-8">
               {step === "payments" ? (
                 <button
                   disabled={submitting}
                   onClick={handleConfirmBooking}
-                  className="bg-[#543826] hover:bg-[#3e2a1c] disabled:opacity-50 text-white font-semibold px-8 py-3 rounded-xl transition"
+                  className="bg-[#543826] hover:bg-[#3e2a1c] disabled:opacity-50 text-white font-semibold px-10 py-4 rounded-3xl transition text-lg"
                 >
                   {submitting ? "Booking..." : "Confirm Booking"}
                 </button>
@@ -998,15 +1017,130 @@ function BookingContent() {
                 <button
                   disabled={!canProceed()}
                   onClick={goNext}
-                  className="border border-gray-300 text-gray-700 font-medium px-8 py-3 rounded-xl hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="border border-gray-300 text-gray-700 font-semibold px-10 py-4 rounded-3xl hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition text-lg"
                 >
                   Continue
                 </button>
               )}
             </div>
+            </div>
           </div>
+          {/* END LEFT COLUMN */}
+
+          {/* RIGHT COLUMN: Sticky Service Card */}
+          {service && (
+            <div className="hidden lg:block">
+              <div className="sticky top-28 rounded-3xl border border-gray-200 bg-white shadow-md p-6 transition-all duration-300 ease-out transform hover:shadow-lg">
+                <div className="space-y-4">
+                  {/* Service Image */}
+                  {service.image && (
+                    <div className="w-full h-40 bg-orange-100 rounded-2xl overflow-hidden">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  {/* Service Details */}
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#543826]">
+                      Selected Service
+                    </p>
+                    <h3 className="mt-2 text-lg font-bold text-gray-900 line-clamp-2">
+                      {service.title}
+                    </h3>
+                  </div>
+
+                  {/* Package Info */}
+                  {selectedVariant ? (
+                    <div className="rounded-2xl bg-orange-50 p-3">
+                      <p className="text-xs text-gray-600">Package</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        {selectedVariant.name}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {selectedVariant.sessions} sessions
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl bg-orange-50 p-3">
+                      <p className="text-xs text-gray-600">Package</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        Single Session
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Selected Add-ons Counter */}
+                  {selectedAddOns.length > 0 && (
+                    <div className="rounded-2xl bg-blue-50 p-3">
+                      <p className="text-xs text-gray-600">Add-ons</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        {selectedAddOns.length} selected
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Date & Time Display */}
+                  {selectedDate && (
+                    <div className="rounded-2xl bg-green-50 p-3">
+                      <p className="text-xs text-gray-600">Date & Time</p>
+                      <p className="mt-1 font-semibold text-gray-900 text-sm">
+                        {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                        {selectedTime && ` • ${selectedTime}`}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Price Summary */}
+                  <div className="rounded-2xl bg-linear-to-br from-orange-100 to-orange-50 p-4 border border-orange-200">
+                    <p className="text-xs text-gray-600 uppercase tracking-wider">Total Price</p>
+                    <p className="mt-2 text-3xl font-bold text-orange-600">
+                      AED {totalPrice.toFixed(2)}
+                    </p>
+                    <p className="mt-1 text-xs text-gray-600">
+                      Base: AED {basePrice.toFixed(2)}
+                      {addOnsTotal > 0 && ` + Add-ons: AED ${addOnsTotal.toFixed(2)}`}
+                    </p>
+                  </div>
+
+                  {/* Step Indicator */}
+                  <div className="rounded-2xl bg-gray-50 p-3 border border-gray-200">
+                    <p className="text-xs text-gray-600 uppercase tracking-wider">Progress</p>
+                    <div className="mt-2 flex gap-1">
+                      {STEPS.map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-2 flex-1 rounded-full transition-all duration-300 ${
+                            i < currentStepIndex
+                              ? "bg-green-500"
+                              : i === currentStepIndex
+                                ? "bg-[#543826]"
+                                : "bg-gray-200"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <p className="mt-2 text-xs font-semibold text-[#543826]">
+                      Step {currentStepIndex + 1} of {STEPS.length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {/* END RIGHT COLUMN */}
         </div>
+        {/* END GRID */}
       </div>
+      {/* END MAX-WIDTH CONTAINER */}
     </div>
+    
   );
 }
