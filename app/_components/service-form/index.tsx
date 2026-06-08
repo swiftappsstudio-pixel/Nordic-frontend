@@ -539,74 +539,103 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
       </h2>
 
       {/* TITLE */}
-      <input
-        name="title"
-        value={form.title}
-        onChange={handleChange}
-        placeholder="Service Title"
-        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-        required
-      />
+      <div className="space-y-1">
+        <label htmlFor="title" className="block text-sm font-medium text-gray-700">Service Title</label>
+        <input
+          id="title"
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          placeholder="Service Title"
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          required
+        />
+      </div>
 
       {/* DESCRIPTION */}
-      <textarea
-        name="description"
-        value={form.description}
-        onChange={handleChange}
-        placeholder="Description"
-        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-      />
+      <div className="space-y-1">
+        <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+        <textarea
+          id="description"
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          placeholder="Description"
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
 
       {/* BASE PRICE */}
-      <input
-        type="number"
-        name="actualPrice"
-        value={form.actualPrice}
-        onChange={handleChange}
-        placeholder="Base Price"
-        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-      />
+      <div className="space-y-1">
+        <label htmlFor="actualPrice" className="block text-sm font-medium text-gray-700">Base Price</label>
+        <input
+          id="actualPrice"
+          type="number"
+          name="actualPrice"
+          value={form.actualPrice}
+          onChange={handleChange}
+          placeholder="Base Price"
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
 
       {/* CATEGORY */}
-      <select
-        name="category"
-        value={form.category}
-        onChange={handleChange}
-        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-      >
-        <option value="">Select Category</option>
-        {categories.map((c) => (
-          <option key={c._id} value={c.name}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+      <div className="space-y-1">
+        <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+        <select
+          id="category"
+          name="category"
+          value={form.category}
+          onChange={handleChange}
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+        >
+          <option value="">Select Category</option>
+          {categories.map((c) => (
+            <option key={c._id} value={c.name}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {/* KEY BENEFITS & INGREDIENTS */}
-      <input
-        name="keyBenefits"
-        value={form.keyBenefits}
-        onChange={handleChange}
-        placeholder="Key Benefits (comma separated)"
-        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-      />
+      {/* KEY BENEFITS */}
+      <div className="space-y-1">
+        <label htmlFor="keyBenefits" className="block text-sm font-medium text-gray-700">Key Benefits (comma separated)</label>
+        <input
+          id="keyBenefits"
+          name="keyBenefits"
+          value={form.keyBenefits}
+          onChange={handleChange}
+          placeholder="Key Benefits (comma separated)"
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
 
-      <input
-        name="keyIngredients"
-        value={form.keyIngredients}
-        onChange={handleChange}
-        placeholder="Key Ingredients (comma separated)"
-        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-      />
+      {/* KEY INGREDIENTS */}
+      <div className="space-y-1">
+        <label htmlFor="keyIngredients" className="block text-sm font-medium text-gray-700">Key Ingredients (comma separated)</label>
+        <input
+          id="keyIngredients"
+          name="keyIngredients"
+          value={form.keyIngredients}
+          onChange={handleChange}
+          placeholder="Key Ingredients (comma separated)"
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
 
       {/* DISCLAIMER */}
-      <textarea
-        name="disclaimer"
-        value={form.disclaimer}
-        onChange={handleChange}
-        placeholder="Disclaimer"
-        className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-      />
+      <div className="space-y-1">
+        <label htmlFor="disclaimer" className="block text-sm font-medium text-gray-700">Disclaimer</label>
+        <textarea
+          id="disclaimer"
+          name="disclaimer"
+          value={form.disclaimer}
+          onChange={handleChange}
+          placeholder="Disclaimer"
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
 
       {/* ================= SUB SERVICES ================= */}
       <div className="space-y-4">
@@ -628,24 +657,30 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
             key={index}
             className="grid grid-cols-5 gap-3 items-center"
           >
-            <input
-              value={ss.name}
-              onChange={(e) =>
-                updateSubService(index, "name", e.target.value)
-              }
-              placeholder="Bundle name (Buy 3 Get 1)"
-              className="col-span-3 border border-gray-300 px-3 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
-            />
+            <div className="col-span-3 space-y-1">
+              <label className="block text-xs font-medium text-gray-600">Bundle Name</label>
+              <input
+                value={ss.name}
+                onChange={(e) =>
+                  updateSubService(index, "name", e.target.value)
+                }
+                placeholder="Bundle name (Buy 3 Get 1)"
+                className="w-full border border-gray-300 px-3 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
 
-            <input
-              type="number"
-              value={ss.price}
-              onChange={(e) =>
-                updateSubService(index, "price", e.target.value)
-              }
-              placeholder="Price"
-              className="border border-gray-300 px-3 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
-            />
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-600">Price</label>
+              <input
+                type="number"
+                value={ss.price}
+                onChange={(e) =>
+                  updateSubService(index, "price", e.target.value)
+                }
+                placeholder="Price"
+                className="w-full border border-gray-300 px-3 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
 
             <button
               type="button"
