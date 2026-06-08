@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok } from "react-icons/fa";
 
 const SOCIAL_LINKS = [
   {
@@ -13,6 +13,11 @@ const SOCIAL_LINKS = [
     href: "https://www.instagram.com/nordichomehealthcare?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
     icon: FaInstagram,
     label: "Instagram",
+  },
+  {
+    href: "https://www.tiktok.com/@nordichomehealthcare",
+    icon: FaTiktok,
+    label: "TikTok",
   },
   {
     href: "https://www.facebook.com/nordichomehealthcare",

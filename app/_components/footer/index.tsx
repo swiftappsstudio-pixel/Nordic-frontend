@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaWhatsapp } from "react-icons/fa";
 
 const FOOTER_SERVICES = [
   { label: "Mother & Baby", href: "/mother-and-baby" },
@@ -62,14 +62,17 @@ export default function Footer() {
             </div>
 
             <div className="flex gap-3 mt-5">
-              <a href="#" className="w-9 h-9 bg-white/10 hover:bg-white rounded-full flex items-center justify-center transition">
+              <a href="https://www.facebook.com/nordichomehealthcare" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
                 <FaFacebookF className="text-sm text-white" />
               </a>
-              <a href="#" className="w-9 h-9 bg-white/10 hover:bg-white rounded-full flex items-center justify-center transition">
+              <a href="https://www.instagram.com/nordichomehealthcare?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
                 <FaLinkedinIn className="text-sm text-white" />
               </a>
-              <a href="#" className="w-9 h-9 bg-white/10 hover:bg-white rounded-full flex items-center justify-center transition">
+              <a href="https://www.instagram.com/nordichomehealthcare?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
                 <FaInstagram className="text-sm text-white" />
+              </a>
+              <a href="https://www.tiktok.com/@nordichomehealthcare" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
+                <FaTiktok className="text-sm text-white" />
               </a>
             </div>
           </div>
@@ -79,7 +82,7 @@ export default function Footer() {
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-2 pt-6 text-xs text-white/40">
           <p>&copy; {new Date().getFullYear()} Nordic Home Health Care Center &ndash; All Rights Reserved</p>
-          <p><Link href="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link></p>
+          <p><Link href="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link> &middot; DHA Licence No. : 3171506</p>
         </div>
       </div>
     </footer>

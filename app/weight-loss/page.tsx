@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { getServicesByCategory, getCategories } from "@/app/_common/api";
+import { Service } from "@/app/_common/interfaces";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const WA_NUM = "971555828945";
@@ -10,41 +13,6 @@ const WA_MSG = encodeURIComponent("Hi Nordic! I'd like to start my weight loss p
 const CALL_NUM = "tel:+971555828945";
 
 // ─── Static Data ───────────────────────────────────────────────────────────
-const MEDICATIONS = [
-  {
-    name: "Wegovy",
-    brand: "Novo Nordisk",
-    badge: "FDA Approved",
-    desc: "FDA-approved semaglutide injection designed specifically for chronic weight management.",
-    price: "AED 743",
-    available: true,
-  },
-  {
-    name: "Wegovy Pill",
-    brand: "Novo Nordisk",
-    badge: "FDA Approved",
-    desc: "An oral semaglutide tablet for those who prefer a non-injectable option for weight management.",
-    price: null,
-    available: false,
-    comingSoon: true,
-  },
-  {
-    name: "Mounjaro",
-    brand: "Eli Lilly",
-    badge: "FDA Approved",
-    desc: "A dual-action injectable medication that helps control blood sugar and promote significant weight loss.",
-    price: "AED 1,734",
-    available: true,
-  },
-  {
-    name: "Foundayo",
-    brand: "Eli Lilly",
-    badge: "FDA Approved",
-    desc: "A dual-action injectable medication that helps control blood sugar and promote weight loss.",
-    price: "AED 773",
-    available: true,
-  },
-];
 
 const HOW_STEPS = [
   {
@@ -207,6 +175,28 @@ function WeightCalculator() {
 export default function WeightLossPage() {
   const medicationsRef = useRef<HTMLDivElement>(null);
   const scrollToMeds = () => medicationsRef.current?.scrollIntoView({ behavior: "smooth" });
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const categories = await getCategories();
+        const wlCategory = categories.find((c) =>
+          c.name.toLowerCase().includes("weight") || c.link?.replace(/^\/+/, "") === "weight-loss"
+        );
+        if (wlCategory) {
+          const data = await getServicesByCategory(wlCategory._id);
+          setServices(data);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
 
   return (
     <div className="bg-[#f5f0e8] min-h-screen">
@@ -215,6 +205,10 @@ export default function WeightLossPage() {
           1. HERO
       ══════════════════════════════════════ */}
       <section className="relative min-h-screen bg-[#0d1f1c] flex items-center overflow-hidden pt-20">
+        <div className="absolute inset-0 z-0">
+          <Image src="/images/weight-loss.jpeg" alt="" fill className="object-cover opacity-30" priority />
+        </div>
+        <div className="absolute inset-0 bg-[#0d1f1c]/70 z-[1]" />
         {/* Spotlight effect */}
         <div className="absolute top-0 right-1/3 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#1a3a35]/50 rounded-full blur-3xl pointer-events-none" />
@@ -223,8 +217,7 @@ export default function WeightLossPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left */}
             <div>
-              <p className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-6">DHA Licensed Online Clinic</p>
-              <h1 className="text-5xl sm:text-6xl font-bold text-white leading-[1.05] tracking-tight mb-8">
+              <h1 className="text-4xl sm:text-5xl font-bold text-white leading-[1.05] tracking-tight mb-8">
                 Lose weight in<br />4 weeks with our<br />
                 <span className="text-[#7ecdc4]">online weight loss<br />clinic</span>
               </h1>
@@ -237,31 +230,26 @@ export default function WeightLossPage() {
                   { icon: "📱", text: "24×7 access to care and doctors, 100% online, and over 1000+ satisfied users" },
                 ].map((item) => (
                   <div key={item.text} className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-white/8 rounded-xl flex items-center justify-center text-lg shrink-0">
+                    <div className="w-8 h-8 bg-white/8 rounded-lg flex items-center justify-center text-sm shrink-0">
                       {item.icon}
                     </div>
-                    <p className="text-white/70 text-sm leading-relaxed pt-2">{item.text}</p>
+                    <p className="text-white/70 text-xs leading-relaxed pt-1">{item.text}</p>
                   </div>
                 ))}
               </div>
 
               {/* CTA */}
-              <div className="flex flex-col sm:flex-row gap-3 items-start">
-                <button
-                  onClick={scrollToMeds}
-                  className="bg-white text-[#0d1f1c] font-bold px-8 py-4 rounded-full text-base hover:bg-[#f5f0e8] transition-all hover:shadow-lg"
-                >
-                  Join now for free
-                </button>
+              <div className="flex">
                 <a
                   href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-white/60 hover:text-white text-sm pt-3 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 bg-white text-[#0d1f1c] font-bold px-8 py-4 rounded-full text-base hover:bg-[#f5f0e8] transition-all hover:shadow-lg"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/>
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511" />
                   </svg>
-                  Or WhatsApp us
+                  <span>WhatsApp us</span>
                 </a>
               </div>
 
@@ -280,14 +268,8 @@ export default function WeightLossPage() {
             {/* Right — medication image */}
             <div className="hidden lg:flex items-center justify-center relative">
               <div className="absolute inset-0 bg-gradient-to-t from-[#0d1f1c] via-transparent to-transparent z-10 pointer-events-none" />
-              <div className="w-72 h-72 bg-[#1a3a35] rounded-full flex items-center justify-center shadow-2xl">
-                <svg className="w-40 h-40 text-white/20" fill="none" stroke="currentColor" strokeWidth={0.8} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                </svg>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center z-20">
-                <p className="text-white/20 text-sm font-medium">Wegovy® Injection Pen</p>
-              </div>
+             
+              
             </div>
           </div>
         </div>
@@ -296,55 +278,58 @@ export default function WeightLossPage() {
       {/* ══════════════════════════════════════
           2. MEDICATIONS
       ══════════════════════════════════════ */}
-      <section className="py-24 bg-[#f5f0e8]" ref={medicationsRef}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-12 max-w-2xl leading-snug">
-            Get access to original medications from the manufacturers
-          </h2>
+      {!loading && services.length > 0 && (
+        <section className="py-24 bg-[#f5f0e8]" ref={medicationsRef}>
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-12 max-w-2xl leading-snug">
+              Get access to original medications from the manufacturers
+            </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {MEDICATIONS.map((med) => (
-              <div key={med.name} className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 flex flex-col">
-                {/* Image placeholder */}
-                <div className="h-44 bg-gray-50 flex items-center justify-center relative">
-                  <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center">
-                    <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                    </svg>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {services.map((s) => (
+                <Link href={`/services/${s._id}`} key={s._id} className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 flex flex-col">
+                  <div className="h-44 bg-gray-50 flex items-center justify-center relative">
+                    {s.images?.[0] ? (
+                      <Image src={s.images[0]} alt={s.title} fill className="object-cover" unoptimized sizes="(max-width: 768px) 100vw, 25vw" />
+                    ) : (
+                      <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center">
+                        <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
-                  <div className="absolute top-3 left-3 bg-[#1a3a35] text-white text-[9px] font-bold px-2 py-1 rounded-lg uppercase tracking-wide">
-                    {med.badge}
-                  </div>
-                </div>
 
-                {/* Content */}
-                <div className="p-5 flex flex-col flex-1">
-                  <p className="text-xs text-gray-400 font-medium mb-1">{med.brand}</p>
-                  <h3 className="font-bold text-gray-900 text-xl mb-3">{med.name}®</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed flex-1 mb-4">{med.desc}</p>
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="font-bold text-gray-900 text-xl mb-3">{s.title}</h3>
+                    {s.description && (
+                      <p className="text-gray-500 text-xs leading-relaxed flex-1 mb-4 line-clamp-3">{s.description}</p>
+                    )}
 
-                  {med.comingSoon ? (
-                    <p className="text-gray-300 text-sm font-medium">Coming soon</p>
-                  ) : (
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs text-gray-400">From</p>
-                        <p className="font-bold text-gray-900">{med.price}</p>
+                        <p className="font-bold text-gray-900">
+                          {s.discountPrice && s.actualPrice && s.discountPrice < s.actualPrice
+                            ? `AED ${s.discountPrice}`
+                            : s.actualPrice
+                              ? `AED ${s.actualPrice}`
+                              : "Contact us"}
+                        </p>
                       </div>
-                      <button
-                        onClick={scrollToMeds}
+                      <span
                         className="bg-[#1a3a35] text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-[#0d1f1c] transition"
                       >
                         Learn more
-                      </button>
+                      </span>
                     </div>
-                  )}
-                </div>
-              </div>
-            ))}
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ══════════════════════════════════════
           3. CLINICAL RESULTS + CALCULATOR
@@ -387,15 +372,15 @@ export default function WeightLossPage() {
       <section className="py-24 bg-[#1a3a35]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-14">
-            <p className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-3">The Programme</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">
+            <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-3">The Programme</motion.p>
+            <motion.h2 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }} className="text-3xl sm:text-4xl font-bold text-white">
               Your personalised weight loss<br />journey with Nordic
-            </h2>
+            </motion.h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Card 1 — Free Online Visit */}
-            <div className="bg-[#0d1f1c] rounded-3xl p-8 min-h-[280px] flex flex-col justify-between">
+            <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }} className="bg-[#0d1f1c] rounded-3xl p-8 min-h-[280px] flex flex-col justify-between">
               <div>
                 <h3 className="text-white font-bold text-xl mb-2">Free online visit</h3>
                 <p className="text-white/50 text-sm">Complete health history analysis</p>
@@ -405,19 +390,19 @@ export default function WeightLossPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 2 — Medications Delivered */}
-            <div className="bg-[#0d1f1c] rounded-3xl p-8 min-h-[280px] flex flex-col justify-between relative overflow-hidden">
+            <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.25 }} className="bg-[#0d1f1c] rounded-3xl p-8 min-h-[280px] flex flex-col justify-between relative overflow-hidden">
               <div className="relative z-10">
                 <h3 className="text-white font-bold text-xl mb-2">Science backed medications, delivered</h3>
                 <p className="text-white/50 text-sm mb-5">To your home in partnership with the largest pharmacy chain in the UAE</p>
-                <button
+                {/* <button
                   onClick={scrollToMeds}
                   className="bg-white text-[#0d1f1c] font-semibold text-sm px-6 py-2.5 rounded-full hover:bg-[#f5f0e8] transition"
                 >
                   Start your free online visit
-                </button>
+                </button> */}
               </div>
               {/* Decorative injection pen outline */}
               <div className="absolute right-4 bottom-4 opacity-10">
@@ -425,10 +410,10 @@ export default function WeightLossPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                 </svg>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 3 — Chat doctor */}
-            <div className="bg-[#0d1f1c] rounded-3xl p-8 min-h-[280px] flex flex-col justify-between">
+            <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.35 }} className="bg-[#0d1f1c] rounded-3xl p-8 min-h-[280px] flex flex-col justify-between">
               <div>
                 <h3 className="text-white font-bold text-xl mb-2">Chat with your doctor anytime!</h3>
                 <p className="text-white/50 text-sm">Specialised doctors who know how weight management works</p>
@@ -438,10 +423,10 @@ export default function WeightLossPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 4 — 100% Online */}
-            <div className="bg-[#0d1f1c] rounded-3xl p-8 min-h-[280px] flex flex-col justify-between relative overflow-hidden">
+            <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.45 }} className="bg-[#0d1f1c] rounded-3xl p-8 min-h-[280px] flex flex-col justify-between relative overflow-hidden">
               <div>
                 <h3 className="text-white font-bold text-xl mb-2">100% online<br />and at-home care</h3>
                 <p className="text-white/50 text-sm">Unlimited doctor visits and support all from your home</p>
@@ -454,7 +439,7 @@ export default function WeightLossPage() {
                 </svg>
                 <p className="absolute bottom-0 right-0 text-white/30 text-xs font-semibold">100% results</p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -484,12 +469,7 @@ export default function WeightLossPage() {
           </div>
 
           <div className="text-center">
-            <button
-              onClick={scrollToMeds}
-              className="bg-[#1a3a35] text-white font-bold px-10 py-4 rounded-full text-base hover:bg-[#0d1f1c] transition hover:shadow-lg"
-            >
-              Join now for free
-            </button>
+
             <p className="text-gray-400 text-xs mt-3">From AED 149 / month onwards</p>
           </div>
         </div>
@@ -572,9 +552,9 @@ export default function WeightLossPage() {
             {/* Review */}
             <div className="space-y-4">
               <div className="flex gap-0.5">
-                {[1,2,3,4,5].map(i=>(
+                {[1, 2, 3, 4, 5].map(i => (
                   <svg key={i} className="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 ))}
               </div>
@@ -586,9 +566,17 @@ export default function WeightLossPage() {
                 <p className="text-xs text-gray-400">Lost 8 kgs in 2 months</p>
                 <p className="font-semibold text-gray-900 mt-2">Mehreen Zubair</p>
               </div>
-              <button onClick={scrollToMeds} className="mt-4 bg-[#1a3a35] text-white font-semibold px-8 py-3 rounded-full hover:bg-[#0d1f1c] transition text-sm">
+              <a
+                href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 bg-[#1a3a35] text-white font-semibold px-8 py-3 rounded-full hover:bg-[#0d1f1c] transition text-sm inline-flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511" />
+                </svg>
                 Start your journey
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -679,9 +667,9 @@ export default function WeightLossPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-14">
             <div className="flex items-center justify-center gap-1 mb-2">
-              {[1,2,3,4,5].map(i=>(
+              {[1, 2, 3, 4, 5].map(i => (
                 <svg key={i} className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
               ))}
               <span className="text-gray-400 text-xs ml-2">1000+ happy members</span>
@@ -705,7 +693,7 @@ export default function WeightLossPage() {
                       <ul className="space-y-2">
                         {card.text.split(" · ").map((t) => (
                           <li key={t} className="flex items-start gap-2 text-white/60 text-xs">
-                            <svg className="w-3.5 h-3.5 text-white/40 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <svg className="w-3.5 h-3.5 text-white/40 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                             {t}
                           </li>
                         ))}
@@ -744,7 +732,7 @@ export default function WeightLossPage() {
             {/* Doctor quote 1 */}
             <div className="bg-gray-900 rounded-3xl p-6 min-h-[200px] flex flex-col justify-between">
               <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               </div>
               <div>
                 <p className="text-white/70 text-sm italic">&ldquo;I&apos;ve been so impressed by Nordic.&rdquo;</p>
@@ -760,7 +748,7 @@ export default function WeightLossPage() {
             {/* Doctor quote 2 */}
             <div className="bg-[#1a3a35] rounded-3xl p-6 min-h-[200px] flex flex-col justify-between">
               <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-white/50" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <svg className="w-6 h-6 text-white/50" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               </div>
               <div>
                 <p className="text-white/70 text-sm italic">&ldquo;I didn&apos;t want to fix healthcare. I wanted to reimagine where it happens.&rdquo;</p>
@@ -770,7 +758,7 @@ export default function WeightLossPage() {
 
             {/* Entrepreneur */}
             <div className="bg-[#f5f0e8] rounded-3xl p-6 min-h-[200px] flex items-center justify-center">
-              <p className="font-serif font-bold text-xl text-gray-900">Entrepreneur<br/><span className="text-sm font-normal text-gray-400">Middle East</span></p>
+              <p className="font-serif font-bold text-xl text-gray-900">Entrepreneur<br /><span className="text-sm font-normal text-gray-400">Middle East</span></p>
             </div>
 
             {/* Doctor quote 3 */}
@@ -783,7 +771,7 @@ export default function WeightLossPage() {
 
             {/* Forbes */}
             <div className="bg-[#f5f0e8] rounded-3xl p-6 min-h-[160px] flex items-center justify-center">
-              <p className="font-serif font-bold text-2xl text-gray-900">Forbes<br/><span className="text-sm font-normal text-gray-400">Middle East</span></p>
+              <p className="font-serif font-bold text-2xl text-gray-900">Forbes<br /><span className="text-sm font-normal text-gray-400">Middle East</span></p>
             </div>
 
             {/* Personal quote */}
