@@ -236,7 +236,7 @@ function WhyNordicSection() {
             target="_blank" rel="noopener noreferrer"
             className="shrink-0 inline-flex items-center gap-2 border border-white/20 text-white/80 hover:text-white hover:border-white/50 text-sm font-semibold px-6 py-3 rounded-full transition-all"
           >
-            Book now
+            Book now 
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
@@ -406,29 +406,17 @@ export default function Home() {
                           {slide.description}
                         </p>
                       )}
-                      {(slide as Banner).bookNowLink ? (
-                        <Link
-                          href={(slide as Banner).bookNowLink!}
+                      <a
+                          href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-all duration-300 hover:gap-4"
                         >
                           {(slide as Banner).bookNowButtonText || "Book Now"}
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
-                        </Link>
-                      ) : (
-                        <a
-                          href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-all duration-300 hover:gap-4"
-                        >
-                          Book Now
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
                         </a>
-                      )}
                       {heroSlides.length > 1 && (
                         <div className="flex items-center gap-3 mt-6">
                           {heroSlides.map((_, index) => (
@@ -473,32 +461,7 @@ export default function Home() {
               unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
-            <div className="absolute inset-0 flex items-center">
-              <div className="max-w-6xl mx-auto px-6 w-full">
-                <div className="max-w-lg">
-                  <p className="font-brand text-sm text-[#C9C3B3] tracking-widest uppercase mb-3">
-                    Home Healthcare · Dubai
-                  </p>
-                  <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
-                    Premium Healthcare,<br />Delivered Home.
-                  </h1>
-                  <p className="text-white/70 text-base md:text-lg mb-8 leading-relaxed max-w-md">
-                    DHA-licensed nurses and caregivers at your door — from IV therapy and newborn care to elderly support and weight loss programmes.
-                  </p>
-                  <a
-                    href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-all duration-300 hover:gap-4"
-                  >
-                    Book Now
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
+          
           </>
         )}
       </section>

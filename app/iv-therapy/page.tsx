@@ -198,7 +198,7 @@ export default function IVTherapyPage() {
             {/* Pill badge */}
             <div className="inline-flex items-center gap-2 border border-white/20 text-white/70 text-xs font-medium px-4 py-2 rounded-full mb-6">
               <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
-              Limited Time — Up to 40% Off Selected IV Therapies
+              Limited Time —  Selected IV Therapies
             </div>
 
             <h1 className="font-bold text-white leading-[1.08] tracking-tight mb-5" style={{ fontSize: "clamp(30px, 6vw, 72px)" }}>
@@ -252,7 +252,7 @@ export default function IVTherapyPage() {
       <section className="bg-[#543826]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
           <div className="flex flex-wrap items-center justify-center md:justify-between gap-x-8 gap-y-2">
-            {["DHA License No. 3171506", "500+ Happy Clients", "All Dubai Areas Covered", "Pharmaceutical-Grade Ingredients", "24 / 7 Availability", "Up to 40% Off Today"].map((t) => (
+            {["DHA License No. 3171506", "500+ Happy Clients", "All Dubai Areas Covered", "Pharmaceutical-Grade Ingredients", "24 / 7 Availability", "Special Offer Today"].map((t) => (
               <span key={t} className="text-white/70 text-xs font-medium whitespace-nowrap">{t}</span>
             ))}
           </div>
