@@ -371,7 +371,7 @@ export default function IVTherapyPage() {
                     </div>
 
                     <button
-                      onClick={() => router.push(`/services/${svc._id}/book`)}
+                      onClick={() => router.push(`/services/${svc._id}`)}
                       className="w-full bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-2.5 rounded-xl transition text-sm"
                     >
                       Book Now

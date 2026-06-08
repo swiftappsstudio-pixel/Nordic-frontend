@@ -139,7 +139,7 @@ export default function BloodTestPage() {
                                   {svc.discountPrice ? `AED ${svc.discountPrice}` : svc.actualPrice ? `AED ${svc.actualPrice}` : ""}
                                 </span>
                                 <button
-                                  onClick={() => router.push(`/services/${svc._id}/book`)}
+                                  onClick={() => router.push(`/services/${svc._id}`)}
                                   className="text-xs font-semibold text-[#1a2e28] bg-white px-4 py-1.5 rounded-full hover:bg-[#F7F4EE] transition"
                                 >
                                   Book now
@@ -167,7 +167,7 @@ export default function BloodTestPage() {
                             <h4 className="text-white font-semibold text-base mb-1">{svc.title}</h4>
                             <div className="flex items-center justify-between">
                               <span className="text-white font-bold text-sm">{svc.discountPrice ? `AED ${svc.discountPrice}` : svc.actualPrice ? `AED ${svc.actualPrice}` : ""}</span>
-                              <button onClick={() => router.push(`/services/${svc._id}/book`)} className="text-xs font-semibold text-[#1a2e28] bg-white px-4 py-1.5 rounded-full hover:bg-[#F7F4EE] transition">Book now</button>
+                              <button onClick={() => router.push(`/services/${svc._id}`)} className="text-xs font-semibold text-[#1a2e28] bg-white px-4 py-1.5 rounded-full hover:bg-[#F7F4EE] transition">Book now</button>
                             </div>
                           </div>
                         </div>

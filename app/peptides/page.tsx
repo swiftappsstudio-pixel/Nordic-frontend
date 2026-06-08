@@ -60,7 +60,7 @@ function PeptideCard({ svc, delay = 0 }: { svc: Service; delay?: number }) {
                 : null}
             </span>
             <button
-              onClick={() => router.push(`/services/${svc._id}/book`)}
+              onClick={() => router.push(`/services/${svc._id}`)}
               className="text-[11px] font-semibold text-white bg-[#1a2e28] px-3 py-1.5 rounded-full hover:bg-[#2D5B4F] transition"
             >
               Learn more

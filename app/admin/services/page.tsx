@@ -135,7 +135,7 @@ export default function ServicesPage() {
                   <td className="px-5 py-4">
                     <div className="flex justify-center gap-3">
                       {/* Featured */}
-                      <button
+                      {/* <button
                         title={s.isFeatured ? "Remove from featured" : "Mark as featured"}
                         onClick={() => toggleFeatured(s._id)}
                         className={`p-2 rounded-lg transition ${
@@ -145,7 +145,7 @@ export default function ServicesPage() {
                         }`}
                       >
                         <Star size={16} fill={s.isFeatured ? "currentColor" : "none"} />
-                      </button>
+                      </button> */}
 
                       {/* View */}
                       <button

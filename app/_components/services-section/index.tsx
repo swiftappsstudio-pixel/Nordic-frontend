@@ -163,7 +163,7 @@ export default function ServicesSection({
                     </div>
 
                     <button
-                      onClick={() => router.push(`/services/${svc._id}/book`)}
+                      onClick={() => router.push(`/services/${svc._id}`)}
                       className="w-full text-white font-semibold py-2.5 rounded-xl transition text-sm hover:opacity-90"
                       style={{ backgroundColor: accentColor }}
                     >

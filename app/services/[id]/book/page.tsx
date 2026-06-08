@@ -86,7 +86,7 @@ function BookingContent() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   // Sub-service from URL (e.g., ?sub=0 for first sub-service)
-  const [selectedSubService, setSelectedSubService] = useState<string>("");
+  const [selectedSubService, setSelectedSubService] = useState<{ name: string; price: number } | null>(null);
 
   // Load service detail (incl. variants) and resolve which variant is selected
   useEffect(() => {
@@ -107,7 +107,7 @@ function BookingContent() {
         if (subIdx !== null && data.subServices) {
           const idx = parseInt(subIdx);
           if (!isNaN(idx) && data.subServices[idx]) {
-            setSelectedSubService(data.subServices[idx].name);
+            setSelectedSubService({ name: data.subServices[idx].name, price: data.subServices[idx].price });
           }
         }
       })
@@ -221,9 +221,10 @@ function BookingContent() {
     service?.discountPrice ??
     service?.actualPrice ??
     0;
+  const subServicePrice = selectedSubService?.price ?? 0;
   const selectedAddOns = addOns.filter((a) => selectedAddOnIds.has(a._id));
   const addOnsTotal = selectedAddOns.reduce((sum, a) => sum + a.price, 0);
-  const totalPrice = basePrice + addOnsTotal;
+  const totalPrice = basePrice + subServicePrice + addOnsTotal;
 
   // Step navigation
   const currentStepIndex = STEPS.findIndex((s) => s.key === step);
@@ -272,7 +273,7 @@ function BookingContent() {
         preferredDate: selectedDate,
         preferredTime: selectedTime,
         ...(selectedVariant ? { variantId: selectedVariant._id } : {}),
-        ...(selectedSubService ? { subServiceName: selectedSubService } : {}),
+        ...(selectedSubService ? { subServiceName: selectedSubService.name } : {}),
         ...(selectedAddOnIds.size > 0
           ? { addOnIds: Array.from(selectedAddOnIds) }
           : {}),
@@ -343,6 +344,14 @@ function BookingContent() {
                   <span className="text-gray-500">Package</span>
                   <span className="text-[#543826]">
                     {booking.variantSnapshot.name}
+                  </span>
+                </div>
+              )}
+              {booking.subServiceSnapshot && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Sub-service</span>
+                  <span className="text-[#543826]">
+                    {booking.subServiceSnapshot.name} — AED {booking.subServiceSnapshot.price}
                   </span>
                 </div>
               )}
@@ -817,6 +826,16 @@ function BookingContent() {
                       </span>
                     </div>
 
+                    {selectedSubService && (
+                      <div className="flex flex-col gap-3 rounded-3xl border border-gray-100 bg-[#fbfaf7] p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <span className="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded mb-2">Sub-service</span>
+                          <p className="font-semibold text-gray-900">{selectedSubService.name}</p>
+                        </div>
+                        <span className="text-orange-600 font-bold">AED {selectedSubService.price.toFixed(2)}</span>
+                      </div>
+                    )}
+
                     {selectedAddOns.length > 0 && (
                       <div className="space-y-3">
                         {selectedAddOns.map((addon) => (
@@ -970,6 +989,13 @@ function BookingContent() {
                         <p className="text-sm text-gray-500">Package</p>
                         <p className="mt-2 font-semibold text-gray-900">{selectedVariant ? selectedVariant.name : "1 Session"}</p>
                       </div>
+                      {selectedSubService && (
+                        <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
+                          <p className="text-sm text-gray-500">Sub-service</p>
+                          <p className="mt-2 font-semibold text-gray-900">{selectedSubService.name}</p>
+                          <p className="text-xs text-orange-600 font-semibold mt-1">AED {selectedSubService.price.toFixed(2)}</p>
+                        </div>
+                      )}
                       {selectedDate && (
                         <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
                           <p className="text-sm text-gray-500">Date</p>
@@ -1091,6 +1117,18 @@ function BookingContent() {
                     </div>
                   )}
 
+                  {selectedSubService && (
+                    <div className="rounded-2xl bg-orange-50 p-3">
+                      <p className="text-xs text-gray-600">Sub-service</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        {selectedSubService.name}
+                      </p>
+                      <p className="text-xs text-orange-600 font-semibold mt-1">
+                        AED {selectedSubService.price.toFixed(2)}
+                      </p>
+                    </div>
+                  )}
+
                   {/* Selected Add-ons Counter */}
                   {selectedAddOns.length > 0 && (
                     <div className="rounded-2xl bg-blue-50 p-3">
@@ -1124,6 +1162,7 @@ function BookingContent() {
                     </p>
                     <p className="mt-1 text-xs text-gray-600">
                       Base: AED {basePrice.toFixed(2)}
+                      {subServicePrice > 0 && ` + Sub-service: AED ${subServicePrice.toFixed(2)}`}
                       {addOnsTotal > 0 && ` + Add-ons: AED ${addOnsTotal.toFixed(2)}`}
                     </p>
                   </div>
