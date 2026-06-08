@@ -1,21 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
-import { getServices } from "@/app/_common/api";
-import { Service } from "@/app/_common/interfaces";
+
+const FOOTER_SERVICES = [
+  { label: "Mother & Baby", href: "/mother-and-baby" },
+  { label: "Elderly Care", href: "/elderly-care" },
+  { label: "Blood Test", href: "/blood-test" },
+  { label: "Peptides", href: "/peptides" },
+  { label: "IV Therapy", href: "/iv-therapy" },
+  { label: "Weight Loss", href: "/weight-loss" },
+];
 
 export default function Footer() {
-  const [services, setServices] = useState<Service[]>([]);
-
-  useEffect(() => {
-    getServices()
-      .then((data) => setServices(data.slice(0, 6)))
-      .catch(() => setServices([]));
-  }, []);
-
   return (
     <footer className="bg-[#543826] text-white pt-12 pb-6">
       <div className="max-w-7xl mx-auto px-6">
@@ -38,22 +36,14 @@ export default function Footer() {
             <div>
               <h4 className="font-brand font-semibold text-sm mb-3 text-white/80">Services</h4>
               <ul className="space-y-2 text-sm text-white/50">
-                {services.map((s) => (
-                  <li key={s._id}>
-                    <Link href={`/services/${s._id}`} className="hover:text-white transition">
-                      {s.title}
+                {FOOTER_SERVICES.map((s) => (
+                  <li key={s.label}>
+                    <Link href={s.href} className="hover:text-white transition flex items-center gap-1.5">
+                      {s.label}
+                      
                     </Link>
                   </li>
                 ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-brand font-semibold text-sm mb-3 text-white/80">Company</h4>
-              <ul className="space-y-2 text-sm text-white/50">
-                <li><Link href="/" className="hover:text-white transition">Home</Link></li>
-                <li><Link href="/terms-and-conditions" className="hover:text-white transition">Terms &amp; Conditions</Link></li>
-                <li><Link href="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>
@@ -89,7 +79,7 @@ export default function Footer() {
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-2 pt-6 text-xs text-white/40">
           <p>&copy; {new Date().getFullYear()} Nordic Home Health Care Center &ndash; All Rights Reserved</p>
-          <p>DHA License No.: 3171506</p>
+          <p><Link href="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link></p>
         </div>
       </div>
     </footer>
