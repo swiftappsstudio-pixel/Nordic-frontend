@@ -200,7 +200,7 @@ function BookingContent() {
   const subServicePrice = selectedSubService?.price ?? 0;
   const selectedAddOns = addOns.filter((a) => selectedAddOnNames.has(a.name));
   const addOnsTotal = selectedAddOns.reduce((sum, a) => sum + a.price, 0);
-  const totalPrice = basePrice + subServicePrice + addOnsTotal;
+  const totalPrice = selectedSubService ? subServicePrice + addOnsTotal : basePrice + addOnsTotal;
 
   // Step navigation
   const currentStepIndex = STEPS.findIndex((s) => s.key === step);
@@ -532,8 +532,16 @@ function BookingContent() {
                       </div>
                     )}
 
+                    {selectedSubService && (
+                      <div className="mb-4 rounded-2xl bg-orange-50 p-4 border border-orange-200">
+                        <span className="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded mb-2">Sub-service</span>
+                        <p className="font-semibold text-gray-900">{selectedSubService.name}</p>
+                        <p className="text-orange-600 font-bold mt-1">AED {selectedSubService.price.toFixed(2)}</p>
+                      </div>
+                    )}
+
                     {/* Select Package dropdown */}
-                    {((service.variants && service.variants.length > 0) ||
+                    {!selectedSubService && ((service.variants && service.variants.length > 0) ||
                       (service.discountPrice ?? service.actualPrice) != null) && (
                       <div className="mb-4">
                         <label className="block text-sm font-semibold text-[#543826] uppercase tracking-wider mb-2">
@@ -782,36 +790,48 @@ function BookingContent() {
                   </div>
 
                   <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
-                    <div className="grid gap-4 lg:grid-cols-[1fr_auto] items-center rounded-3xl border border-gray-100 bg-[#faf9f6] p-5">
-                      <div>
-                        <p className="font-semibold text-gray-900">{service.title}</p>
-                        {selectedVariant ? (
-                          <p className="text-sm text-gray-500 mt-1">
-                            {selectedVariant.name} — {selectedVariant.sessions} sessions
-                          </p>
-                        ) : (
-                          <p className="text-sm text-gray-500 mt-1">1 Session</p>
-                        )}
-                        {selectedDate && (
-                          <p className="text-sm text-gray-500 mt-1">
-                            {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
-                              weekday: "long",
-                              month: "long",
-                              day: "numeric",
-                            })}
-                          </p>
-                        )}
+                    {!selectedSubService && (
+                      <div className="grid gap-4 lg:grid-cols-[1fr_auto] items-center rounded-3xl border border-gray-100 bg-[#faf9f6] p-5">
+                        <div>
+                          <p className="font-semibold text-gray-900">{service.title}</p>
+                          {selectedVariant ? (
+                            <p className="text-sm text-gray-500 mt-1">
+                              {selectedVariant.name} — {selectedVariant.sessions} sessions
+                            </p>
+                          ) : (
+                            <p className="text-sm text-gray-500 mt-1">1 Session</p>
+                          )}
+                          {selectedDate && (
+                            <p className="text-sm text-gray-500 mt-1">
+                              {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
+                                weekday: "long",
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </p>
+                          )}
+                        </div>
+                        <span className="text-orange-600 font-bold text-2xl">
+                          AED {basePrice.toFixed(2)}
+                        </span>
                       </div>
-                      <span className="text-orange-600 font-bold text-2xl">
-                        AED {basePrice.toFixed(2)}
-                      </span>
-                    </div>
+                    )}
 
                     {selectedSubService && (
                       <div className="flex flex-col gap-3 rounded-3xl border border-gray-100 bg-[#fbfaf7] p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                           <span className="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded mb-2">Sub-service</span>
                           <p className="font-semibold text-gray-900">{selectedSubService.name}</p>
+                          <p className="text-sm text-gray-500 mt-1">{service.title}</p>
+                          {selectedDate && (
+                            <p className="text-sm text-gray-500 mt-1">
+                              {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
+                                weekday: "long",
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </p>
+                          )}
                         </div>
                         <span className="text-orange-600 font-bold">AED {selectedSubService.price.toFixed(2)}</span>
                       </div>
@@ -962,19 +982,22 @@ function BookingContent() {
 
                   <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
-                        <p className="text-sm text-gray-500">Service</p>
-                        <p className="mt-2 font-semibold text-gray-900">{service.title}</p>
-                      </div>
-                      <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
-                        <p className="text-sm text-gray-500">Package</p>
-                        <p className="mt-2 font-semibold text-gray-900">{selectedVariant ? selectedVariant.name : "1 Session"}</p>
-                      </div>
-                      {selectedSubService && (
+                      {!selectedSubService ? (
+                        <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
+                          <p className="text-sm text-gray-500">Service</p>
+                          <p className="mt-2 font-semibold text-gray-900">{service.title}</p>
+                        </div>
+                      ) : (
                         <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
                           <p className="text-sm text-gray-500">Sub-service</p>
                           <p className="mt-2 font-semibold text-gray-900">{selectedSubService.name}</p>
                           <p className="text-xs text-orange-600 font-semibold mt-1">AED {selectedSubService.price.toFixed(2)}</p>
+                        </div>
+                      )}
+                      {!selectedSubService && (
+                        <div className="rounded-3xl border border-gray-100 bg-[#faf9f6] p-4">
+                          <p className="text-sm text-gray-500">Package</p>
+                          <p className="mt-2 font-semibold text-gray-900">{selectedVariant ? selectedVariant.name : "1 Session"}</p>
                         </div>
                       )}
                       {selectedDate && (
@@ -1079,7 +1102,17 @@ function BookingContent() {
                   </div>
 
                   {/* Package Info */}
-                  {selectedVariant ? (
+                  {selectedSubService ? (
+                    <div className="rounded-2xl bg-orange-50 p-3">
+                      <p className="text-xs text-gray-600">Sub-service</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        {selectedSubService.name}
+                      </p>
+                      <p className="text-xs text-orange-600 font-semibold mt-1">
+                        AED {selectedSubService.price.toFixed(2)}
+                      </p>
+                    </div>
+                  ) : selectedVariant ? (
                     <div className="rounded-2xl bg-orange-50 p-3">
                       <p className="text-xs text-gray-600">Package</p>
                       <p className="mt-1 font-semibold text-gray-900">
@@ -1094,18 +1127,6 @@ function BookingContent() {
                       <p className="text-xs text-gray-600">Package</p>
                       <p className="mt-1 font-semibold text-gray-900">
                         Single Session
-                      </p>
-                    </div>
-                  )}
-
-                  {selectedSubService && (
-                    <div className="rounded-2xl bg-orange-50 p-3">
-                      <p className="text-xs text-gray-600">Sub-service</p>
-                      <p className="mt-1 font-semibold text-gray-900">
-                        {selectedSubService.name}
-                      </p>
-                      <p className="text-xs text-orange-600 font-semibold mt-1">
-                        AED {selectedSubService.price.toFixed(2)}
                       </p>
                     </div>
                   )}
@@ -1141,11 +1162,10 @@ function BookingContent() {
                     <p className="mt-2 text-3xl font-bold text-orange-600">
                       AED {totalPrice.toFixed(2)}
                     </p>
-                    <p className="mt-1 text-xs text-gray-600">
-                      Base: AED {basePrice.toFixed(2)}
-                      {subServicePrice > 0 && ` + Sub-service: AED ${subServicePrice.toFixed(2)}`}
-                      {addOnsTotal > 0 && ` + Add-ons: AED ${addOnsTotal.toFixed(2)}`}
-                    </p>
+<p className="mt-1 text-xs text-gray-600">
+                        {selectedSubService ? `Sub-service: AED ${subServicePrice.toFixed(2)}` : `Base: AED ${basePrice.toFixed(2)}`}
+                        {addOnsTotal > 0 && ` + Add-ons: AED ${addOnsTotal.toFixed(2)}`}
+                      </p>
                   </div>
 
                   {/* Step Indicator */}
