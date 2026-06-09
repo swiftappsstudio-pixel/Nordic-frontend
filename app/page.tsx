@@ -442,6 +442,8 @@ export default function Home() {
               </div>
             ))}
           </>
+        ) : featuredServicesLoading ? (
+          <div className="w-full h-full bg-[#543826]" />
         ) : (
           <>
             <Image
