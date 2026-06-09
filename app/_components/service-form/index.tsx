@@ -319,6 +319,20 @@ interface SubService {
   price: string;
 }
 
+interface ServiceAddOnResponse {
+  name: string;
+  description?: string;
+  price: number;
+  isRequired?: boolean;
+}
+
+interface ServiceAddOnForm {
+  name: string;
+  description: string;
+  price: string;
+  isRequired: boolean;
+}
+
 interface ServiceFormProps {
   mode: "add" | "edit";
   serviceId?: string;
@@ -338,6 +352,7 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
   const [previews, setPreviews] = useState<string[]>([]);
 
   const [subServices, setSubServices] = useState<SubService[]>([]);
+  const [addOns, setAddOns] = useState<ServiceAddOnForm[]>([]);
 
   const [form, setForm] = useState({
     title: "",
@@ -386,6 +401,17 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
           (s.subServices as SubServiceResponse[]).map((ss) => ({
             name: ss.name,
             price: ss.price.toString(),
+          }))
+        );
+      }
+
+      if (s.addOns?.length) {
+        setAddOns(
+          (s.addOns as ServiceAddOnResponse[]).map((a) => ({
+            name: a.name,
+            description: a.description || "",
+            price: a.price.toString(),
+            isRequired: a.isRequired || false,
           }))
         );
       }
@@ -453,6 +479,26 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
     setSubServices(subServices.filter((_, i) => i !== index));
   };
 
+  /* ================= ADD ONS ================= */
+
+  const addAddOn = () => {
+    setAddOns([...addOns, { name: "", description: "", price: "", isRequired: false }]);
+  };
+
+  const updateAddOn = (
+    index: number,
+    field: keyof ServiceAddOnForm,
+    value: string | boolean
+  ) => {
+    const updated = [...addOns];
+    (updated[index] as any)[field] = value;
+    setAddOns(updated);
+  };
+
+  const removeAddOn = (index: number) => {
+    setAddOns(addOns.filter((_, i) => i !== index));
+  };
+
   /* ================= UPLOAD HELPER ================= */
 
   const uploadSingleFile = async (file: File): Promise<string> => {
@@ -512,6 +558,12 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
           keyIngredients: form.keyIngredients,
           disclaimer: form.disclaimer,
           subServices: subServices.filter((s) => s.name && s.price),
+          addOns: addOns.filter((a) => a.name && a.price).map((a) => ({
+            name: a.name,
+            description: a.description || undefined,
+            price: Number(a.price),
+            isRequired: a.isRequired,
+          })),
           images: allImageUrls,
         }),
       });
@@ -689,6 +741,73 @@ export function ServiceForm({ mode, serviceId }: ServiceFormProps) {
             >
               <Trash2 size={18} />
             </button>
+          </div>
+        ))}
+      </div>
+
+      {/* ================= ADD ONS ================= */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Add-ons
+          </h3>
+          <button
+            type="button"
+            onClick={addAddOn}
+            className="flex items-center gap-1 text-sm bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition"
+          >
+            <Plus size={16} /> Add
+          </button>
+        </div>
+
+        {addOns.map((ao, index) => (
+          <div
+            key={index}
+            className="border border-gray-200 rounded-lg p-4 space-y-3"
+          >
+            <div className="flex justify-between items-start gap-2">
+              <div className="flex-1 space-y-1">
+                <label className="block text-xs font-medium text-gray-600">Add-on Name</label>
+                <input
+                  value={ao.name}
+                  onChange={(e) => updateAddOn(index, "name", e.target.value)}
+                  placeholder="Add-on name (e.g. Vitamin C Boost)"
+                  className="w-full border border-gray-300 px-3 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => removeAddOn(index)}
+                className="text-red-600 hover:text-red-800 p-2"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-600">Description</label>
+              <textarea
+                value={ao.description}
+                onChange={(e) => updateAddOn(index, "description", e.target.value)}
+                placeholder="Short description (optional)"
+                rows={2}
+                className="w-full border border-gray-300 px-3 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 items-center">
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-gray-600">Price (AED)</label>
+                <input
+                  type="number"
+                  value={ao.price}
+                  onChange={(e) => updateAddOn(index, "price", e.target.value)}
+                  placeholder="Price"
+                  className="w-full border border-gray-300 px-3 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              
+            </div>
           </div>
         ))}
       </div>

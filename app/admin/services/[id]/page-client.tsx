@@ -13,6 +13,13 @@ interface SubService {
   discountPercent?: number;
 }
 
+interface ServiceAddOn {
+  name: string;
+  description?: string;
+  price: number;
+  isRequired?: boolean;
+}
+
 interface Service {
   _id: string;
   title: string;
@@ -25,6 +32,7 @@ interface Service {
   disclaimer?: string;
   images?: string[];
   subServices?: SubService[];
+  addOns?: ServiceAddOn[];
   isFeatured?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -79,6 +87,7 @@ export default function ServiceDetailPage({ id }: Props) {
 
   const images = service.images || [];
   const subServices = service.subServices || [];
+  const addOns = service.addOns || [];
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -124,6 +133,21 @@ export default function ServiceDetailPage({ id }: Props) {
                 <div key={i} className="border border-gray-200 rounded-xl p-4 hover:border-[#543826]/30 transition">
                   <p className="font-medium text-gray-800">{sub.name}</p>
                   <div className="flex items-baseline gap-2 mt-1"><span className="text-[#543826] font-bold">AED {sub.price}</span>{sub.discountPercent && <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">{sub.discountPercent}% off</span>}</div>
+                </div>
+              ))}</div>
+            </div>
+          )}
+          {addOns.length > 0 && (
+            <div className="border-t px-6 py-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Add-ons</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">{addOns.map((a, i) => (
+                <div key={i} className="border border-gray-200 rounded-xl p-4 hover:border-[#543826]/30 transition">
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="font-medium text-gray-800">{a.name}</p>
+                    {a.isRequired && <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Required</span>}
+                  </div>
+                  {a.description && <p className="text-sm text-gray-500 mt-1">{a.description}</p>}
+                  <p className="text-[#543826] font-bold mt-2">AED {a.price}</p>
                 </div>
               ))}</div>
             </div>

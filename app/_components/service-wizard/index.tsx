@@ -381,25 +381,24 @@ export function ServiceWizard() {
     if (!serviceId) throw new Error("Service has not been created yet");
     const { addons } = getValues();
 
-    for (const a of addons) {
-      const res = await fetch(`${API_BASE_URL}/addons`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          serviceId,
-          name: a.name,
-          description: a.description || undefined,
-          price: Number(a.price),
-          isRequired: a.isRequired,
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `Failed to save add-on "${a.name}"`);
-      }
+    const addOnsPayload = addons.map((a) => ({
+      name: a.name,
+      description: a.description || undefined,
+      price: Number(a.price),
+      isRequired: a.isRequired,
+    }));
+
+    const res = await fetch(`${API_BASE_URL}/services/${serviceId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ addOns: addOnsPayload }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Failed to save add-ons");
     }
     addonArray.replace([]);
   };
@@ -989,13 +988,7 @@ export function ServiceWizard() {
                       />
                       <Err message={e?.price?.message} />
                     </div>
-                    <label className="flex items-center gap-2 text-sm text-gray-700">
-                      <input
-                        type="checkbox"
-                        {...register(`addons.${i}.isRequired`)}
-                      />
-                      Required (forced on every booking)
-                    </label>
+
                   </div>
                 </div>
               );
