@@ -19,7 +19,7 @@ export default function ExploreOurServices() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getCategories()
+    getCategories(true)
       .then((data) => setCategories(data))
       .catch(() => setCategories([]))
       .finally(() => setLoading(false));

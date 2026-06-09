@@ -13,6 +13,7 @@ interface Category {
   name: string;
   description: string;
   link?: string;
+  viewHome?: boolean;
   image?: string;
   createdAt?: string;
 }
@@ -46,11 +47,12 @@ export default function CategoryPage() {
   }, []);
 
   // Add or Update category
-  const saveCategory = async (data: { name: string; description: string; link: string; imageFile?: File }) => {
+  const saveCategory = async (data: { name: string; description: string; link: string; viewHome: boolean; imageFile?: File }) => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("link", data.link);
+    formData.append("viewHome", String(data.viewHome));
     if (data.imageFile) formData.append("image", data.imageFile);
 
     if (editCategory) {
@@ -136,6 +138,9 @@ export default function CategoryPage() {
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Link
                 </th>
+                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
+                  View Home
+                </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Description
                 </th>
@@ -179,6 +184,12 @@ export default function CategoryPage() {
                     {cat.link || "-"}
                   </td>
 
+                  <td className="px-4 py-3 text-center">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${cat.viewHome ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                      {cat.viewHome ? "Yes" : "No"}
+                    </span>
+                  </td>
+
                   <td className="px-4 py-3 text-sm text-gray-600">
                     {cat.description || "-"}
                   </td>
@@ -220,7 +231,7 @@ export default function CategoryPage() {
         <AddCategoryModal
           onSubmit={saveCategory}
           onCancel={() => { setShowModal(false); setEditCategory(null); }}
-          editData={editCategory ? { name: editCategory.name, description: editCategory.description, link: editCategory.link, image: editCategory.image } : null}
+          editData={editCategory ? { name: editCategory.name, description: editCategory.description, link: editCategory.link, viewHome: editCategory.viewHome, image: editCategory.image } : null}
         />
       )}
     </div>

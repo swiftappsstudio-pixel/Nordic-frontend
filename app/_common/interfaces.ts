@@ -252,6 +252,7 @@ export interface Category {
   image?: string;
   isActive: boolean;
   sortOrder: number;
+  viewHome?: boolean;
 }
 
 // ============================================================================
