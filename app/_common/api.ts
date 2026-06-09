@@ -217,8 +217,11 @@ export async function getService(id: string): Promise<Service> {
 
 // =========================================== Catalog API CALLS ===========================================//
 
-export const getCategories = async (): Promise<Category[]> => {
-  const res = await fetch(`${API_BASE_URL}/catalog/categories`, {
+export const getCategories = async (viewHomeOnly?: boolean): Promise<Category[]> => {
+  const url = viewHomeOnly
+    ? `${API_BASE_URL}/catalog/categories?viewHome=true`
+    : `${API_BASE_URL}/catalog/categories`;
+  const res = await fetch(url, {
     cache: "no-store",
   });
 

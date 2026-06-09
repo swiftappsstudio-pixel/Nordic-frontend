@@ -4,15 +4,16 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 
 interface AddCategoryModalProps {
-  onSubmit: (data: { name: string; description: string; link: string; imageFile?: File }) => Promise<void>;
+  onSubmit: (data: { name: string; description: string; link: string; viewHome: boolean; imageFile?: File }) => Promise<void>;
   onCancel: () => void;
-  editData?: { name: string; description: string; link?: string; image?: string } | null;
+  editData?: { name: string; description: string; link?: string; viewHome?: boolean; image?: string } | null;
 }
 
 export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCategoryModalProps) {
   const [name, setName] = useState(editData?.name ?? "");
   const [description, setDescription] = useState(editData?.description ?? "");
   const [link, setLink] = useState(editData?.link ?? "");
+  const [viewHome, setViewHome] = useState(editData?.viewHome ?? false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(editData?.image ?? null);
   const [loading, setLoading] = useState(false);
@@ -42,6 +43,7 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
         name: name.trim(),
         description: description.trim(),
         link: link.trim(),
+        viewHome,
         ...(imageFile && { imageFile }),
       });
       onCancel();
@@ -95,7 +97,35 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black mb-1">Description</label>
+            <label className="block text-sm font-medium text-black mb-2">Show on Home Page</label>
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="viewHome"
+                  checked={viewHome === true}
+                  onChange={() => setViewHome(true)}
+                  disabled={loading}
+                  className="w-4 h-4 text-green-600 accent-green-600"
+                />
+                <span className="text-sm text-gray-700">Yes</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="viewHome"
+                  checked={viewHome === false}
+                  onChange={() => setViewHome(false)}
+                  disabled={loading}
+                  className="w-4 h-4 text-red-600 accent-red-600"
+                />
+                <span className="text-sm text-gray-700">No</span>
+              </label>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">Only categories set to "Yes" will appear on the Home page.</p>
+          </div>
+
+          <div>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
