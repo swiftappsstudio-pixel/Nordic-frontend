@@ -6,14 +6,13 @@ import Link from "next/link";
 import {
   getServiceDetail,
   createBooking,
-  getAddOnsByService,
 } from "@/app/_common/api";
 import {
   ServiceWithVariants,
   Variant,
   GuestInfo,
   BookingResponse,
-  AddOn,
+  ServiceAddOn,
 } from "@/app/_common/interfaces";
 import { useAuth } from "@/app/_common/auth-context";
 import ReviewsSection from "@/app/_components/reviews-section";
@@ -59,12 +58,7 @@ function BookingContent() {
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Per-service add-ons — fetched once from /api/addons/service/:id
-  const [addOns, setAddOns] = useState<AddOn[]>([]);
-  const [selectedAddOnIds, setSelectedAddOnIds] = useState<Set<string>>(
-    new Set()
-  );
-  const [loadingAddOns, setLoadingAddOns] = useState(false);
+  const [selectedAddOnNames, setSelectedAddOnNames] = useState<Set<string>>(new Set());
 
   // Date & Time
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
@@ -110,36 +104,16 @@ function BookingContent() {
             setSelectedSubService({ name: data.subServices[idx].name, price: data.subServices[idx].price });
           }
         }
+        // Pre-select required add-ons (from embedded service.addOns)
+        if (data.addOns) {
+          setSelectedAddOnNames(
+            new Set(data.addOns.filter((a) => a.isRequired).map((a) => a.name))
+          );
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [id, searchParams]);
-
-  // Load THIS service's add-ons (not other services)
-  useEffect(() => {
-    if (!id) return;
-    let cancelled = false;
-    setLoadingAddOns(true);
-    getAddOnsByService(id)
-      .then((list) => {
-        if (cancelled) return;
-        setAddOns(list);
-        // Required add-ons are pre-selected and locked
-        setSelectedAddOnIds(
-          new Set(list.filter((a) => a.isRequired).map((a) => a._id))
-        );
-      })
-      .catch((err) => {
-        console.error("Failed to load add-ons", err);
-        if (!cancelled) setAddOns([]);
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingAddOns(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
 
 // Pre-fill user info
    useEffect(() => {
@@ -152,17 +126,18 @@ function BookingContent() {
      }
    }, [user]);
 
-   // Auto-skip addons step if no variants/addons available
-   useEffect(() => {
-     if (!loading && !loadingAddOns) {
-       const hasVariants = service?.variants?.length && service.variants.length > 0;
-       const hasBasePrice = (service?.discountPrice ?? service?.actualPrice) != null;
-       const hasAddOns = addOns.length > 0;
-       if (!hasVariants && !hasBasePrice && !hasAddOns) {
-         setStep("datetime");
-       }
-     }
-   }, [loading, loadingAddOns, service, addOns]);
+// Auto-skip addons step if no variants/addons/sub-services available
+    useEffect(() => {
+      if (!loading && service) {
+        const hasVariants = service.variants?.length && service.variants.length > 0;
+        const hasBasePrice = (service.discountPrice ?? service.actualPrice) != null;
+        const hasAddOns = service.addOns?.length && service.addOns.length > 0;
+        const hasSubServices = service.subServices?.length && service.subServices.length > 0;
+        if (!hasVariants && !hasBasePrice && !hasAddOns && !hasSubServices) {
+          setStep("datetime");
+        }
+      }
+    }, [loading, service]);
 
   // Calendar helpers
   const getDaysInMonth = (month: number, year: number) =>
@@ -205,24 +180,25 @@ function BookingContent() {
   };
 
   // Toggle add-on selection (required ones can't be un-selected)
-  const toggleAddOn = (addonId: string, isRequired: boolean) => {
+  const toggleAddOn = (addOnName: string, isRequired: boolean) => {
     if (isRequired) return;
-    setSelectedAddOnIds((prev) => {
+    setSelectedAddOnNames((prev) => {
       const next = new Set(prev);
-      if (next.has(addonId)) next.delete(addonId);
-      else next.add(addonId);
+      if (next.has(addOnName)) next.delete(addOnName);
+      else next.add(addOnName);
       return next;
     });
   };
 
   // Price calculation
+  const addOns = service?.addOns || [];
   const basePrice =
     selectedVariant?.price ??
     service?.discountPrice ??
     service?.actualPrice ??
     0;
   const subServicePrice = selectedSubService?.price ?? 0;
-  const selectedAddOns = addOns.filter((a) => selectedAddOnIds.has(a._id));
+  const selectedAddOns = addOns.filter((a) => selectedAddOnNames.has(a.name));
   const addOnsTotal = selectedAddOns.reduce((sum, a) => sum + a.price, 0);
   const totalPrice = basePrice + subServicePrice + addOnsTotal;
 
@@ -274,8 +250,8 @@ function BookingContent() {
         preferredTime: selectedTime,
         ...(selectedVariant ? { variantId: selectedVariant._id } : {}),
         ...(selectedSubService ? { subServiceName: selectedSubService.name } : {}),
-        ...(selectedAddOnIds.size > 0
-          ? { addOnIds: Array.from(selectedAddOnIds) }
+        ...(selectedAddOnNames.size > 0
+          ? { addOnNames: Array.from(selectedAddOnNames) }
           : {}),
         ...(user ? {} : { guestInfo }),
       };
@@ -507,98 +483,103 @@ function BookingContent() {
                 {/* ========== STEP: ADD-ONS ========== */}
                 {step === "addons" && (
                   <div>
-                    {/* Variant / base price selection */}
+                    {/* Add-ons dropdown */}
+                    {addOns.length > 0 && (
+                      <div className="mb-4">
+                        <label className="block text-sm font-semibold text-[#543826] uppercase tracking-wider mb-2">
+                          Add-ons
+                        </label>
+                        <div className="relative">
+                          <select
+                            value="__placeholder__"
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val === "__placeholder__") return;
+                              const a = addOns.find((ao) => ao.name === val);
+                              if (a && !selectedAddOnNames.has(a.name)) {
+                                setSelectedAddOnNames((prev) => new Set([...prev, a.name]));
+                              }
+                              e.target.value = "__placeholder__";
+                            }}
+                            className="w-full appearance-none border-2 border-[#543826]/20 rounded-3xl px-5 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
+                          >
+                            <option value="__placeholder__" disabled>Select an add-on to include…</option>
+                            {addOns.map((a, i) => (
+                              <option key={i} value={a.name} disabled={selectedAddOnNames.has(a.name)}>
+                                {a.name} — AED {a.price.toFixed(2)}{selectedAddOnNames.has(a.name) ? " (selected)" : ""}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                            <svg className="w-5 h-5 text-[#543826]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                          </div>
+                        </div>
+                        {selectedAddOnNames.size > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {addOns.filter((a) => selectedAddOnNames.has(a.name)).map((a, i) => (
+                              <button
+                                key={i}
+                                onClick={() => toggleAddOn(a.name, a.isRequired || false)}
+                                className="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#543826]/10 border border-[#543826]/30 text-sm text-[#543826] font-medium hover:bg-orange-100 hover:border-[#543826] transition"
+                              >
+                                {a.name}
+                                <span className="text-orange-600 font-bold">AED {a.price.toFixed(2)}</span>
+                                <span className="ml-1 text-gray-400 group-hover:text-red-500 transition">&times;</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Select Package dropdown */}
                     {((service.variants && service.variants.length > 0) ||
                       (service.discountPrice ?? service.actualPrice) != null) && (
-                      <div className="mb-3">
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      <div className="mb-4">
+                        <label className="block text-sm font-semibold text-[#543826] uppercase tracking-wider mb-2">
                           Select Package
                         </label>
-                        <select
-                          value={selectedVariant?._id || "__base__"}
-                          onChange={(e) => {
-                            if (e.target.value === "__base__") {
-                              setSelectedVariant(null);
-                            } else {
-                              const v = service.variants?.find(
-                                (v:any) => v._id === e.target.value
-                              );
-                              if (v) setSelectedVariant(v);
-                            }
-                          }}
-                          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                        >
-                          {(service.discountPrice ?? service.actualPrice) !=
-                            null && (
-                            <option value="__base__">
-                              1 Session — AED{" "}
-                              {(
-                                service.discountPrice ??
-                                service.actualPrice ??
-                                0
-                              ).toFixed(2)}
-                            </option>
-                          )}
-{service.variants?.map((v:any) => (
+                        <div className="relative">
+                          <select
+                            value={selectedVariant?._id || "__base__"}
+                            onChange={(e) => {
+                              if (e.target.value === "__base__") {
+                                setSelectedVariant(null);
+                              } else {
+                                const v = service.variants?.find(
+                                  (v:any) => v._id === e.target.value
+                                );
+                                if (v) setSelectedVariant(v);
+                              }
+                            }}
+                            className="w-full appearance-none border-2 border-[#543826]/20 rounded-3xl px-5 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
+                          >
+                            {(service.discountPrice ?? service.actualPrice) !=
+                              null && (
+                              <option value="__base__">
+                                1 Session — AED{" "}
+                                {(
+                                  service.discountPrice ??
+                                  service.actualPrice ??
+                                  0
+                                ).toFixed(2)}
+                              </option>
+                            )}
+                            {service.variants?.map((v:any) => (
                               <option key={v._id} value={v._id}>
                                 {v.name} — AED {v.price} ({v.sessions} sessions)
                               </option>
                             ))}
-                        </select>
-                      </div>
-                    )}
-
-                    {/* Per-service add-ons */}
-                    {!loadingAddOns && addOns.length > 0 && (
-                      <div className="space-y-2 mt-2">
-                        {addOns.map((a) => {
-                          const checked = selectedAddOnIds.has(a._id);
-                          return (
-                            <label
-                              key={a._id}
-                              className={`flex items-start justify-between gap-3 border rounded-xl p-3 cursor-pointer transition ${
-                                checked
-                                  ? "border-[#543826] bg-orange-50"
-                                  : "border-gray-100 hover:border-gray-200"
-                              } ${a.isRequired ? "opacity-95" : ""}`}
-                            >
-                              <div className="flex items-start gap-3 flex-1">
-                                <input
-                                  type="checkbox"
-                                  checked={checked}
-                                  disabled={a.isRequired}
-                                  onChange={() =>
-                                    toggleAddOn(a._id, a.isRequired)
-                                  }
-                                  className="mt-1"
-                                />
-                                <div>
-                                  <p className="text-sm font-medium text-gray-800">
-                                    {a.name}
-                                    {a.isRequired && (
-                                      <span className="ml-2 text-xs font-semibold text-red-600">
-                                        Required
-                                      </span>
-                                    )}
-                                  </p>
-                                  {a.description && (
-                                    <p className="text-xs text-gray-500 mt-0.5">
-                                      {a.description}
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                              <span className="text-sm font-bold text-orange-600 whitespace-nowrap">
-                                + AED {a.price.toFixed(2)}
-                              </span>
-                            </label>
-                          );
-                        })}
+                          </select>
+                          <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                            <svg className="w-5 h-5 text-[#543826]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                          </div>
+                        </div>
                       </div>
                     )}
 
                    {/* Empty state when no variants and no add-ons */}
-                   {!loadingAddOns && addOns.length === 0 && !service.variants?.length && (service.discountPrice ?? service.actualPrice) == null && (
+                   {addOns.length === 0 && !service.variants?.length && (service.discountPrice ?? service.actualPrice) == null && !(service.subServices?.length) && (
                      <div className="text-center py-10">
                        <p className="text-gray-500">No options available for this service.</p>
                      </div>
@@ -838,9 +819,9 @@ function BookingContent() {
 
                     {selectedAddOns.length > 0 && (
                       <div className="space-y-3">
-                        {selectedAddOns.map((addon) => (
+                        {selectedAddOns.map((addon, i) => (
                           <div
-                            key={addon._id}
+                            key={i}
                             className="flex flex-col gap-3 rounded-3xl border border-gray-100 bg-[#fbfaf7] p-4 sm:flex-row sm:items-center sm:justify-between"
                           >
                             <div>
@@ -858,7 +839,7 @@ function BookingContent() {
                                 AED {addon.price.toFixed(2)}
                               </span>
                               <button
-                                onClick={() => toggleAddOn(addon._id, addon.isRequired)}
+                                onClick={() => toggleAddOn(addon.name, addon.isRequired || false)}
                                 disabled={addon.isRequired}
                                 className="text-red-400 hover:text-red-600 text-lg disabled:opacity-30 disabled:cursor-not-allowed"
                                 title={

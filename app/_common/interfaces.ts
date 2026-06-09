@@ -9,6 +9,13 @@ export interface SubService {
   discountPercent?: number;
 }
 
+export interface ServiceAddOn {
+  name: string;
+  description?: string;
+  price: number;
+  isRequired?: boolean;
+}
+
 export interface Service {
   _id: string;             // use _id because backend returns this
   title: string;
@@ -21,6 +28,7 @@ export interface Service {
   disclaimer?: string;
   images?: string[];
   subServices?: SubService[];
+  addOns?: ServiceAddOn[];
 }
 
 // =================================== services Card interfaces=========================================//
@@ -295,7 +303,7 @@ export interface BookingRequest {
   variantId?: string;
   slotId?: string;
   subServiceName?: string;
-  addOnIds?: string[];
+  addOnNames?: string[];
   guestInfo?: GuestInfo;
 }
 
@@ -341,7 +349,6 @@ export interface BookingResponse {
     price: number;
   } | null;
   addOnsSnapshot?: {
-    addOnId: string;
     name: string;
     price: number;
   }[];

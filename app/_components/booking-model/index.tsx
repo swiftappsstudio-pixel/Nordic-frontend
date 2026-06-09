@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_common/auth-context";
-import { createBooking, getAddOnsByService } from "@/app/_common/api";
-import { AddOn, BookingRequest } from "@/app/_common/interfaces";
+import { createBooking, getServiceDetail } from "@/app/_common/api";
+import { ServiceAddOn, BookingRequest } from "@/app/_common/interfaces";
 
 interface Props {
   isOpen: boolean;
@@ -33,28 +33,23 @@ const BookingModal: React.FC<Props> = ({
   const [submitting, setSubmitting] = useState(false);
 
   // Add-ons for this service only
-  const [addOns, setAddOns] = useState<AddOn[]>([]);
-  const [selectedAddOnIds, setSelectedAddOnIds] = useState<Set<string>>(
-    new Set()
-  );
+  const [addOns, setAddOns] = useState<ServiceAddOn[]>([]);
+  const [selectedAddOnNames, setSelectedAddOnNames] = useState<Set<string>>(new Set());
   const [loadingAddOns, setLoadingAddOns] = useState(false);
 
-  // Fetch this service's add-ons when the modal opens
   useEffect(() => {
     if (!isOpen || !serviceId) return;
 
     let cancelled = false;
     setLoadingAddOns(true);
 
-    getAddOnsByService(serviceId)
-      .then((list) => {
+    getServiceDetail(serviceId)
+      .then((data) => {
         if (cancelled) return;
-        setAddOns(list);
-        // Pre-select any required add-ons so the customer can't skip them
-        const required = new Set(
-          list.filter((a) => a.isRequired).map((a) => a._id)
+        setAddOns(data.addOns || []);
+        setSelectedAddOnNames(
+          new Set((data.addOns || []).filter((a) => a.isRequired).map((a) => a.name))
         );
-        setSelectedAddOnIds(required);
       })
       .catch((err) => {
         console.error("Failed to load add-ons", err);
@@ -73,18 +68,18 @@ const BookingModal: React.FC<Props> = ({
 
   const isGuest = !token;
 
-  const toggleAddOn = (id: string, isRequired: boolean) => {
-    if (isRequired) return; // can't deselect required add-ons
-    setSelectedAddOnIds((prev) => {
+  const toggleAddOn = (name: string, isRequired: boolean) => {
+    if (isRequired) return;
+    setSelectedAddOnNames((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
       return next;
     });
   };
 
   const addOnsTotal = addOns
-    .filter((a) => selectedAddOnIds.has(a._id))
+    .filter((a) => selectedAddOnNames.has(a.name))
     .reduce((sum, a) => sum + a.price, 0);
 
   const grandTotal = price + addOnsTotal;
@@ -115,8 +110,8 @@ const BookingModal: React.FC<Props> = ({
       payload.subServiceName = subServiceName;
     }
 
-    if (selectedAddOnIds.size > 0) {
-      payload.addOnIds = Array.from(selectedAddOnIds);
+    if (selectedAddOnNames.size > 0) {
+      payload.addOnNames = Array.from(selectedAddOnNames);
     }
 
     if (isGuest) {
@@ -220,11 +215,11 @@ const BookingModal: React.FC<Props> = ({
               Add-ons
             </label>
             <div className="space-y-2">
-              {addOns.map((a) => {
-                const checked = selectedAddOnIds.has(a._id);
+              {addOns.map((a, i) => {
+                const checked = selectedAddOnNames.has(a.name);
                 return (
                   <label
-                    key={a._id}
+                    key={i}
                     className={`flex items-start justify-between gap-2 border rounded-md p-2 cursor-pointer ${
                       checked ? "border-amber-700 bg-amber-50" : "border-gray-200"
                     } ${a.isRequired ? "opacity-90" : ""}`}
@@ -234,7 +229,7 @@ const BookingModal: React.FC<Props> = ({
                         type="checkbox"
                         checked={checked}
                         disabled={a.isRequired}
-                        onChange={() => toggleAddOn(a._id, a.isRequired)}
+                        onChange={() => toggleAddOn(a.name, a.isRequired || false)}
                         className="mt-1"
                       />
                       <div>

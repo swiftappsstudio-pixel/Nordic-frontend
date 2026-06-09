@@ -49,13 +49,13 @@ export const AdminSideBar = () => {
   return (
     <div className="w-64 bg-[#5b3c2a] shadow-lg md:block h-screen flex flex-col overflow-hidden">
       {/* Logo */}
-      <div className="shrink-0 my-5 px-5 py-10 flex items-center justify-center border-b-2 border-divider">
+      <div className="shrink-0 px-5 py-3 flex items-center justify-center border-b-2 border-divider">
         <Image
           src="/images/logo.jpeg"
           alt="Nordic Home Healthcare Logo"
-          className="h-12 w-auto"
-          height={48}
-          width={160}
+          className="rounded-full"
+          height={80}
+          width={80}
           unoptimized
         />
       </div>
