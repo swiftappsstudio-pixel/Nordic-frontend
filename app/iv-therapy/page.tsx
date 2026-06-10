@@ -56,8 +56,8 @@ function ServiceCard({ svc }: { svc: Service }) {
           </div>
         )}
         {svc.discountPrice && svc.actualPrice && (
-          <div className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg">
-            {Math.round(((svc.actualPrice - svc.discountPrice) / svc.actualPrice) * 100)}% OFF
+          <div className="absolute top-3 right-3 bg-[#543826] text-white text-[10px] font-bold px-2.5 py-1 rounded-lg">
+            Get Best Offer
           </div>
         )}
       </div>
@@ -168,32 +168,37 @@ const IV_CATEGORIES = [
   {
     tag: "Hydration",
     title: "Hydration Drips",
-    desc: "Replenish fluids and electrolytes — ideal after travel, illness, or intense activity. Fast relief from dehydration and fatigue.",
+    desc: "Replenish fluids and electrolytes fast. Ideal after travel, illness, or intense activity. Feel recharged within 30 minutes.",
     img: "/images/Immune-Boost-Hydration-B.webp",
+    benefits: ["Fast dehydration relief", "Electrolyte balance", "30–60 min session"],
   },
   {
     tag: "Immunity",
     title: "Immunity Boosters",
-    desc: "High-dose Vitamin C, Zinc, and antioxidants to strengthen your immune system and fight off seasonal infections.",
+    desc: "High-dose Vitamin C, Zinc & antioxidants to strengthen your immune system and fight seasonal infections.",
     img: "/images/nurse.png",
+    benefits: ["Vitamin C + Zinc blend", "Fights seasonal bugs", "Strengthens defenses"],
   },
   {
     tag: "Energy",
     title: "Energy & Recovery",
-    desc: "B-complex vitamins, amino acids, and CoQ10 — designed to restore energy, reduce burnout, and accelerate recovery.",
+    desc: "B-complex vitamins, amino acids & CoQ10 to restore energy, reduce burnout, and accelerate recovery.",
     img: "/images/health.png",
+    benefits: ["Beat fatigue fast", "B-complex + CoQ10", "Post-workout recovery"],
   },
   {
     tag: "Beauty",
     title: "Beauty & Glow",
-    desc: "Glutathione, collagen-boosting vitamins, and biotin for radiant skin, stronger hair, and anti-aging from the inside out.",
+    desc: "Glutathione, collagen-boosters & biotin for radiant skin, stronger hair, and visible anti-aging results.",
     img: "/images/health2.png",
+    benefits: ["Glutathione infusion", "Skin radiance boost", "Hair & nail strength"],
   },
   {
     tag: "Detox",
     title: "Detox & Wellness",
-    desc: "Liver-supporting blends, antioxidant drips, and metabolic boosters to cleanse, rebalance, and revitalise your body.",
+    desc: "Liver-supporting blends & antioxidant drips to cleanse, rebalance, and revitalise your body from within.",
     img: "/images/healthcare.png",
+    benefits: ["Liver cleanse support", "Antioxidant flush", "Full-body reset"],
   },
 ];
 
@@ -202,64 +207,100 @@ export default function IVTherapyPage() {
     <div className="bg-[#F7F4EE] min-h-screen font-sans">
 
       {/* HERO */}
-      <section className="relative min-h-[60vh] flex flex-col justify-end overflow-hidden">
+      <section className="relative min-h-[70vh] flex items-center overflow-hidden bg-[#0d0a08]">
         <div className="absolute inset-0">
           <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy at Home Dubai" fill className="object-cover object-center" priority unoptimized />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.72) 80%)" }} />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
         </div>
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pb-12 pt-32">
-          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-white/60 text-[11px] font-medium uppercase tracking-[0.18em] mb-4">
-            IV Drips at Home · Dubai · DHA-Licensed Nurses
-          </motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-medium text-white leading-[1.05] mb-4 max-w-2xl" style={{ fontSize: "clamp(28px, 5vw, 62px)" }}>
-            IV Therapy<br />
-            <span className="text-white/60" style={{ fontSize: "clamp(18px, 3vw, 36px)", fontWeight: 400 }}>at Home in Dubai</span>
-          </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/70 text-base mb-7 max-w-lg">
-            Hydration, immunity, energy, beauty, and detox drips administered by DHA-licensed nurses — right at your doorstep.
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-6">
-            <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-[#1a2e28] font-semibold px-6 py-3 rounded-full text-sm shadow-md">
-              <svg className="w-4 h-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
-              Book an IV drip
-            </a>
-          </motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="flex flex-wrap gap-x-5 gap-y-2">
-            {["DHA Licensed Nurses", "Results in 30–60 min", "All Dubai Areas", "No Clinic Visit Needed"].map((t) => (
-              <div key={t} className="flex items-center gap-1.5">
-                <svg className="w-3 h-3 text-green-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                <span className="text-white/70 text-xs font-medium">{t}</span>
-              </div>
-            ))}
-          </motion.div>
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-[#543826]/15 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full bg-[#543826]/10 blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pt-32 pb-16">
+          <div className="max-w-xl">
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="flex items-center gap-3 mb-6">
+              <div className="h-px w-10 bg-[#C9C3B3]" />
+              <span className="text-[#C9C3B3] text-[11px] font-semibold uppercase tracking-[0.2em]">
+                IV Drips at Home · Dubai · DHA-Licensed
+              </span>
+            </motion.div>
+
+            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-bold text-white leading-[1.08] mb-5" style={{ fontSize: "clamp(32px, 5vw, 58px)" }}>
+              Premium IV Therapy<br />
+              <span className="text-[#C9C3B3]" style={{ fontSize: "clamp(20px, 3vw, 36px)", fontWeight: 500 }}>Delivered to Your Door</span>
+            </motion.h1>
+
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/65 text-base leading-relaxed mb-8 max-w-md">
+              Hydration, immunity, energy, beauty & detox drips — administered by DHA-licensed nurses at your doorstep. No clinic visit needed.
+            </motion.p>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-10">
+              <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-7 py-3.5 rounded-full text-sm shadow-lg shadow-[#543826]/25 transition-all duration-300">
+                <WaIcon className="w-4 h-4" />
+                Book an IV drip
+              </a>
+              <a href={CALL_NUM} className="inline-flex items-center gap-2 bg-white/10 border border-white/25 text-white backdrop-blur-sm font-semibold px-7 py-3.5 rounded-full text-sm hover:bg-white/20 hover:border-white/40 transition-all duration-300">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.263 2.853c-.125-.5-.575-.852-1.091-.852H3.75A2.25 2.25 0 011.5 3.75v2.25z" /></svg>
+                Call us, toll-free
+              </a>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[
+                { label: "DHA Licensed", value: "Nurses" },
+                { label: "Results in", value: "30–60 min" },
+                { label: "All Dubai", value: "Areas" },
+                { label: "No Clinic", value: "Visit Needed" },
+              ].map((item) => (
+                <div key={item.label} className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3">
+                  <p className="text-white/50 text-[10px] uppercase tracking-widest font-medium">{item.label}</p>
+                  <p className="text-white text-sm font-semibold mt-1">{item.value}</p>
+                </div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* IV CATEGORY CARDS */}
-      <section className="py-16 bg-[#F7F4EE]">
+      {/* FEATURES */}
+      <section className="py-20 bg-white">
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
-          <FadeIn className="mb-10">
-            <p className="text-[#543826] text-xs font-semibold uppercase tracking-widest mb-3">Our Drips</p>
-            <h2 className="text-3xl sm:text-4xl font-semibold text-[#1a2e28] leading-tight max-w-lg">IV therapy for every need.</h2>
-            <p className="text-[#6B7280] mt-3 text-base">Clinically-formulated drips, administered at home by DHA-licensed nurses.</p>
+          <FadeIn className="mb-14 text-center">
+            <p className="text-[#543826] text-xs font-semibold uppercase tracking-widest mb-3">Why IV Therapy</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#1a2e28] leading-tight">Feel the difference from within</h2>
           </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {IV_CATEGORIES.map((card, i) => (
-              <FadeIn key={card.title} delay={i * 0.07}>
-                <motion.div whileHover={{ scale: 1.02 }} className="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer" style={{ minHeight: "380px" }}>
-                  <div className="absolute inset-0">
-                    <Image src={card.img} alt={card.title} fill className="object-cover object-center group-hover:scale-105 transition-transform duration-500" unoptimized />
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.72) 70%, rgba(0,0,0,0.85) 100%)" }} />
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251-1.066-.78-1.778-1.75-1.778-1.25 0-2 1.104-2 2.5v4.632m5.75-8.354c.251-1.066.78-1.778 1.75-1.778 1.25 0 2 1.104 2 2.5v4.632M12 12.75V3.104M5 14.5l-1.43 1.43a2.25 2.25 0 01-3.182 0l-.067-.067a2.25 2.25 0 010-3.182l3.32-3.32A2.25 2.25 0 015 14.5z" /></svg>,
+                title: "100% Absorption",
+                desc: "Vitamins delivered directly into your bloodstream — no digestion loss, maximum effect.",
+              },
+              {
+                icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+                title: "Results in 30 Min",
+                desc: "Feel hydration, energy, and clarity within 30–60 minutes of your session starting.",
+              },
+              {
+                icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>,
+                title: "DHA-Licensed Nurses",
+                desc: "Every session is administered by a certified nurse with sterile, medical-grade equipment.",
+              },
+              {
+                icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>,
+                title: "At Your Doorstep",
+                desc: "No clinic, no waiting room. A nurse arrives at your home with everything needed.",
+              },
+            ].map((item, i) => (
+              <FadeIn key={item.title} delay={i * 0.1}>
+                <div className="bg-[#F7F4EE] rounded-2xl p-6 border border-transparent hover:border-[#543826]/15 hover:shadow-md transition-all duration-300">
+                  <div className="w-12 h-12 rounded-xl bg-[#543826] flex items-center justify-center text-white mb-4">
+                    {item.icon}
                   </div>
-                  <div className="relative z-10 flex flex-col justify-between h-full p-5" style={{ minHeight: "380px" }}>
-                    <span className="self-start text-[9px] text-white/60 uppercase tracking-widest font-medium bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/15">{card.tag}</span>
-                    <div className="mt-auto">
-                      <h3 className="text-white font-semibold text-lg leading-snug mb-3">{card.title}</h3>
-                      <p className="text-white/55 text-xs leading-relaxed mb-5">{card.desc}</p>
-                      <motion.a href={`https://wa.me/${WA_NUM}?text=${encodeURIComponent(`Hi! I'd like to book a ${card.title} IV drip at home.`)}`} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.04 }} className="inline-flex items-center bg-white text-[#1F3C34] text-xs font-semibold px-5 py-2.5 rounded-full">Book now</motion.a>
-                    </div>
-                  </div>
-                </motion.div>
+                  <h3 className="font-bold text-[#1a2e28] text-base leading-snug mb-2">{item.title}</h3>
+                  <p className="text-[#6B7280] text-sm leading-relaxed">{item.desc}</p>
+                </div>
               </FadeIn>
             ))}
           </div>
