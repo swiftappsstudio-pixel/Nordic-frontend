@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const REVIEWS = [
   {
@@ -33,23 +33,17 @@ const REVIEWS = [
     badge: "Verified user",
     rating: 4.9,
   },
-
-
 ];
 
-// All videos in order — no repeats
-// Original 2 from images folder + video1-7 + mother
 const VIDEOS = [
-  "/images/video_4.mp4",   // original larki wali
-  "/images/video_1.mp4",   // original second
+  "/images/video_4.mp4",
+  "/images/video_1.mp4",
   "/video/new_one_2.mp4",
   "/video/video3.mp4",
   "/video/new_one_1.mp4",
   "/video/video5.mp4",
 ];
 
-// Build flat items: video → review → video → review → video → review → video → video
-// Result: v1, r1, v2, r2, v3, r3, v4, v5
 type Item =
   | { type: "video"; src: string; key: string }
   | { type: "review"; review: typeof REVIEWS[0]; key: string };
@@ -59,6 +53,9 @@ let vIdx = 0;
 for (let i = 0; i < REVIEWS.length; i++) {
   ITEMS.push({ type: "video", src: VIDEOS[vIdx++], key: `v-${vIdx}` });
   ITEMS.push({ type: "review", review: REVIEWS[i], key: `r-${i}` });
+}
+while (vIdx < VIDEOS.length) {
+  ITEMS.push({ type: "video", src: VIDEOS[vIdx++], key: `v-${vIdx}` });
 }
 // remaining videos
 while (vIdx < VIDEOS.length) {
@@ -138,11 +135,56 @@ function VideoCard({ src }: { src: string }) {
 
 export default function ReviewsSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const autoScrollRef = useRef<number | null>(null);
+  const pausedRef = useRef(false);
 
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
+    pausedRef.current = true;
     scrollRef.current.scrollBy({ left: dir === "left" ? -300 : 300, behavior: "smooth" });
+    setTimeout(() => { pausedRef.current = false; }, 1500);
   };
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    let scrollPos = 0;
+    const speed = 0.5;
+
+    const step = () => {
+      if (pausedRef.current) {
+        autoScrollRef.current = requestAnimationFrame(step);
+        return;
+      }
+      scrollPos += speed;
+      const maxScroll = container.scrollWidth - container.clientWidth;
+
+      if (scrollPos >= maxScroll) {
+        scrollPos = 0;
+        container.style.scrollBehavior = "auto";
+        container.scrollLeft = 0;
+        container.style.scrollBehavior = "smooth";
+      }
+
+      container.scrollLeft = scrollPos;
+      autoScrollRef.current = requestAnimationFrame(step);
+    };
+
+    autoScrollRef.current = requestAnimationFrame(step);
+
+    const handleHover = () => { pausedRef.current = true; };
+    const handleLeave = () => { pausedRef.current = false; };
+
+    container.addEventListener("mouseenter", handleHover);
+    container.addEventListener("mouseleave", handleLeave);
+
+    return () => {
+      if (autoScrollRef.current) cancelAnimationFrame(autoScrollRef.current);
+      container.removeEventListener("mouseenter", handleHover);
+      container.removeEventListener("mouseleave", handleLeave);
+    };
+  }, []);
 
   return (
     <section className="py-16 bg-white">
@@ -151,7 +193,6 @@ export default function ReviewsSection() {
           <h2 className="font-brand text-2xl font-semibold text-[#543826]">
             Loved by our community
           </h2>
-          {/* Arrows */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => scroll("left")}
@@ -173,10 +214,9 @@ export default function ReviewsSection() {
         </div>
       </div>
 
-      {/* Scrollable row */}
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scroll-smooth pb-4 pl-6 pr-6"
+        className="flex gap-4 overflow-x-hidden pb-4 pl-6 pr-6"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {ITEMS.map((item) => {
@@ -187,6 +227,33 @@ export default function ReviewsSection() {
           return (
             <div
               key={item.key}
+              className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl p-4 flex flex-col items-center text-center"
+            >
+              <Stars rating={review.rating} />
+              <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-2">
+                <span className="text-xl font-bold">&ldquo;</span>
+                {review.text}
+                <span className="text-xl font-bold">&rdquo;</span>
+              </p>
+              <div className="flex-1" />
+              <div className="flex flex-col items-center gap-0.5 mt-6">
+                <p className="font-bold text-xs text-[#543826]">{review.name}</p>
+                <div className="flex items-center gap-1">
+                  <p className="text-[11px] text-gray-500">{review.badge}</p>
+                  <BlueTick />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {ITEMS.map((item) => {
+          if (item.type === "video") {
+            return <VideoCard key={`dup-${item.key}`} src={item.src} />;
+          }
+          const review = item.review;
+          return (
+            <div
+              key={`dup-${item.key}`}
               className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl p-4 flex flex-col items-center text-center"
             >
               <Stars rating={review.rating} />

@@ -132,9 +132,9 @@ export default function ServicesSection({
                       </div>
                     )}
                     {svc.discountPrice && svc.actualPrice && (
-                      <div className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg">
-                        {Math.round(((svc.actualPrice - svc.discountPrice) / svc.actualPrice) * 100)}% OFF
-                      </div>
+                      <div className="absolute top-3 right-3 bg-[#543826] text-white text-[10px] font-bold px-2.5 py-1 rounded-lg">
+                      Get Best Offer
+                    </div>
                     )}
                   </div>
 
