@@ -11,7 +11,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-brand: sans-serif;
+  --font-brand: "Pliant", sans-serif;
   --color-primary: var(--primary);
 }
 
@@ -25,7 +25,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif, "Pliant", sans-serif;
 }
 
 .scrollbar-hide::-webkit-scrollbar { display: none; }
