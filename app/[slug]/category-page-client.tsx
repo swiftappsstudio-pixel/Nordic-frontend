@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useInView, AnimatePresence } from "framer-motion";
-import { Category, Service } from "@/app/_common/interfaces";
+import { motion, AnimatePresence } from "framer-motion";
+import { Category, CategoryWithServices, Service } from "@/app/_common/interfaces";
 import { getCategories } from "@/app/_common/api";
 
 const WA_NUM = "971555828945";
@@ -48,29 +48,111 @@ function WaIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
-interface CategoryPageClientProps {
-  category: Category;
-  services: Service[];
+function ServiceCard({ svc }: { svc: Service }) {
+  return (
+    <Link href={`/services/${svc._id}`} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
+      <div className="relative h-48 overflow-hidden bg-gray-100">
+        {svc.images?.[0] ? (
+          <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#543826]/10 to-[#543826]/20 flex items-center justify-center">
+            <svg className="w-10 h-10 text-[#543826]/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            </svg>
+          </div>
+        )}
+        {svc.discountPrice && svc.actualPrice && (
+          <div className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg">
+            {Math.round(((svc.actualPrice - svc.discountPrice) / svc.actualPrice) * 100)}% OFF
+          </div>
+        )}
+      </div>
+      <div className="p-5 flex flex-col flex-1">
+        <h3 className="font-bold text-gray-900 text-base leading-snug mb-2">{svc.title}</h3>
+        {svc.description && (
+          <p className="text-gray-400 text-xs leading-relaxed line-clamp-2 mb-4 flex-1">{svc.description}</p>
+        )}
+        <div className="mb-4">
+          {svc.discountPrice ? (
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl font-bold text-gray-900">AED {svc.discountPrice}</span>
+              <span className="text-sm text-gray-300 line-through font-normal">AED {svc.actualPrice}</span>
+            </div>
+          ) : svc.actualPrice ? (
+            <span className="text-xl font-bold text-gray-900">AED {svc.actualPrice}</span>
+          ) : (
+            <span className="text-sm text-[#543826] font-semibold">Contact for pricing</span>
+          )}
+        </div>
+        <span className="w-full bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-2.5 rounded-xl transition text-sm text-center">
+          Book Now
+        </span>
+      </div>
+    </Link>
+  );
 }
 
-export default function CategoryPageClient({ category, services }: CategoryPageClientProps) {
-  const waMsg = encodeURIComponent(`Hi Nordic! I'd like to learn more about ${category.name} services.`);
+function CategorySection({ cat }: { cat: CategoryWithServices }) {
+  return (
+    <div className="mb-16 last:mb-0">
+      <div className="flex items-center gap-4 mb-6">
+        {cat.image && (
+          <div className="relative w-14 h-14 rounded-xl overflow-hidden">
+            <Image src={cat.image} alt={cat.name} fill className="object-cover" unoptimized />
+          </div>
+        )}
+        <div>
+          <h3 className="font-bold text-gray-900 text-2xl">{cat.name}</h3>
+          {cat.description && (
+            <p className="text-gray-500 text-sm leading-relaxed mt-1">{cat.description}</p>
+          )}
+        </div>
+      </div>
+
+      {cat.services.length === 0 ? (
+        <div className="text-center py-12 bg-gray-50 rounded-2xl">
+          <p className="text-gray-400 text-base mb-4">No services listed yet.</p>
+          <a href={`https://wa.me/${WA_NUM}?text=${encodeURIComponent(`Hi Nordic! I'd like to learn more about ${cat.name} services.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white font-semibold px-6 py-3 rounded-full text-sm">
+            <WaIcon className="w-4 h-4" /> Contact us
+          </a>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {cat.services.map((svc) => (
+            <ServiceCard key={svc._id} svc={svc} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface CategoryPageClientProps {
+  categories: CategoryWithServices[];
+}
+
+export default function CategoryPageClient({ categories }: CategoryPageClientProps) {
+  const mainCategory = categories[0];
+  const waMsg = encodeURIComponent(`Hi Nordic! I'd like to learn more about ${mainCategory?.name || "IV Therapy"} services.`);
   const [otherCategories, setOtherCategories] = useState<Category[]>([]);
   const ctaRef = useRef<HTMLDivElement>(null);
 
   const scrollToCta = () => ctaRef.current?.scrollIntoView({ behavior: "smooth" });
 
   useEffect(() => {
-    getCategories().then((cats) => setOtherCategories(cats.filter((c) => c._id !== category._id))).catch(() => {});
-  }, [category._id]);
+    getCategories().then((cats) => {
+      const ids = categories.map((c) => c._id);
+      setOtherCategories(cats.filter((c) => !ids.includes(c._id)));
+    }).catch(() => {});
+  }, [categories]);
 
   return (
     <div className="bg-[#F7F4EE] min-h-screen font-sans">
       {/* HERO */}
       <section className="relative min-h-[85vh] flex flex-col justify-end overflow-hidden">
         <div className="absolute inset-0">
-          {category.image ? (
-            <Image src={category.image} alt={category.name} fill className="object-cover object-center" priority unoptimized />
+          {mainCategory?.image ? (
+            <Image src={mainCategory.image} alt={mainCategory.name} fill className="object-cover object-center" priority unoptimized />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#1F3C34] to-[#2D5B4F]" />
           )}
@@ -79,18 +161,18 @@ export default function CategoryPageClient({ category, services }: CategoryPageC
 
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pb-10 pt-32">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-white/65 text-[11px] font-medium uppercase tracking-[0.18em] mb-4">
-            {category.name} &middot; Home Healthcare in Dubai
+            IV Therapy &middot; Home Healthcare in Dubai
           </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-medium text-white leading-[1.05] tracking-tight mb-4 max-w-2xl" style={{ fontSize: "clamp(38px, 5.5vw, 68px)" }}>
-            {category.name}
+            IV Therapy
             <br />
             <span className="text-white/70" style={{ fontWeight: 400, fontSize: "clamp(28px, 4vw, 52px)" }}>
               at home, on your schedule.
             </span>
           </motion.h1>
-          {category.description && (
+          {mainCategory?.description && (
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/80 text-base leading-relaxed mb-7 max-w-lg">
-              {category.description}
+              {mainCategory.description}
             </motion.p>
           )}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-8">
@@ -124,66 +206,17 @@ export default function CategoryPageClient({ category, services }: CategoryPageC
         </div>
       </section>
 
-      {/* SERVICES */}
+      {/* OUR SERVICES - Multiple Categories */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="max-w-xl mb-12">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-xl mb-12">
             <p className="text-[#543826] text-xs font-semibold uppercase tracking-widest mb-3">Our Services</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug">{category.name} Services</h2>
-          </div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug">IV Therapy Services</h2>
+          </motion.div>
 
-          {services.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-gray-400 text-base mb-4">No services listed yet for this category.</p>
-              <a href={`https://wa.me/${WA_NUM}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white font-semibold px-6 py-3 rounded-full text-sm">
-                <WaIcon className="w-4 h-4" /> Contact us for more info
-              </a>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {services.map((svc) => (
-                <Link key={svc._id} href={`/services/${svc._id}`} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
-                  <div className="relative h-48 overflow-hidden bg-gray-100">
-                    {svc.images?.[0] ? (
-                      <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#543826]/10 to-[#543826]/20 flex items-center justify-center">
-                        <svg className="w-10 h-10 text-[#543826]/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
-                      </div>
-                    )}
-                    {svc.discountPrice && svc.actualPrice && (
-                      <div className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg">
-                        {Math.round(((svc.actualPrice - svc.discountPrice) / svc.actualPrice) * 100)}% OFF
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-5 flex flex-col flex-1">
-                    <h3 className="font-bold text-gray-900 text-base leading-snug mb-2">{svc.title}</h3>
-                    {svc.description && (
-                      <p className="text-gray-400 text-xs leading-relaxed line-clamp-2 mb-4 flex-1">{svc.description}</p>
-                    )}
-                    <div className="mb-4">
-                      {svc.discountPrice ? (
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-xl font-bold text-gray-900">AED {svc.discountPrice}</span>
-                          <span className="text-sm text-gray-300 line-through font-normal">AED {svc.actualPrice}</span>
-                        </div>
-                      ) : svc.actualPrice ? (
-                        <span className="text-xl font-bold text-gray-900">AED {svc.actualPrice}</span>
-                      ) : (
-                        <span className="text-sm text-[#543826] font-semibold">Contact for pricing</span>
-                      )}
-                    </div>
-                    <span className="w-full bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-2.5 rounded-xl transition text-sm text-center">
-                      Book Now
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+          {categories.map((cat) => (
+            <CategorySection key={cat._id} cat={cat} />
+          ))}
         </div>
       </section>
 
@@ -273,7 +306,7 @@ export default function CategoryPageClient({ category, services }: CategoryPageC
               <span className="text-[#543826] text-xs font-semibold">UAE&apos;s trusted home healthcare provider.</span>
             </div>
             <h2 className="font-bold text-[#1a2e28] leading-[1.12] mb-4" style={{ fontSize: "clamp(26px, 3.5vw, 44px)" }}>
-              Book your first<br />{category.name.toLowerCase()} visit today.
+              Book your first<br />IV Therapy visit today.
             </h2>
             <p className="text-[#6B7280] text-sm leading-relaxed mb-8 max-w-sm mx-auto">
               DHA-licensed nurses and caregivers, Nordic-employed and never freelance. Flexible plans from AED 33/hr.

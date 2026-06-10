@@ -81,7 +81,7 @@ export default function AddBannerModal({ onSubmit, onCancel, editData }: AddBann
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-start justify-center z-50 py-8 overflow-y-auto">
-      <div className="bg-white rounded-xl w-full max-w-lg p-6 shadow-xl my-auto">
+      <div className="bg-white rounded-xl w-full max-w-lg p-6 shadow-xl my-auto max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 scrollbar-thin scrollbar-thumb-gray-300">
         <div className="flex justify-between items-center mb-6 border-b pb-2">
           <h2 className="text-xl font-semibold text-gray-800">{editData ? "Edit Banner" : "Add Banner"}</h2>
           <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 transition">✖</button>

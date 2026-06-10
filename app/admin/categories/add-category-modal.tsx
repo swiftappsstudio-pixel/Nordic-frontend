@@ -56,8 +56,8 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl w-full max-w-md p-6 shadow-xl transform transition-all scale-100">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-start justify-center z-50 py-8 overflow-y-auto">
+      <div className="bg-white rounded-xl w-full max-w-md p-6 shadow-xl my-auto max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 scrollbar-thin scrollbar-thumb-gray-300">
         {/* Header */}
         <div className="flex justify-between items-center mb-6 border-b pb-2">
           <h2 className="text-xl font-semibold text-gray-800">
