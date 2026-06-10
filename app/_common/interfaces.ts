@@ -255,6 +255,10 @@ export interface Category {
   viewHome?: boolean;
 }
 
+export interface CategoryWithServices extends Category {
+  services: Service[];
+}
+
 // ============================================================================
 // VARIANT INTERFACES
 // ============================================================================

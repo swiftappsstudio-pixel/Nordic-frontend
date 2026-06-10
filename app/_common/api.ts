@@ -10,6 +10,7 @@ import {
   ResendOTPRequest,
   MessageResponse,
   Category,
+  CategoryWithServices,
   ServiceWithVariants,
   Slot,
   BookingRequest,
@@ -489,6 +490,17 @@ export const getBanners = async (): Promise<Banner[]> => {
   });
 
   if (!res.ok) throw new Error("Failed to fetch banners");
+
+  const data = await res.json();
+  return data.data;
+};
+
+export const getCategoryByLink = async (link: string): Promise<CategoryWithServices[]> => {
+  const res = await fetch(`${API_BASE_URL}/categories/link/${link}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch categories by link");
 
   const data = await res.json();
   return data.data;
