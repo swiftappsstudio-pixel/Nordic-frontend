@@ -95,26 +95,16 @@ function ServiceCard({ svc }: { svc: Service }) {
 function CategorySection({ cat }: { cat: CategoryWithServices }) {
   return (
     <div className="mb-16 last:mb-0">
-      <div className="flex items-center gap-4 mb-6">
-        {cat.image && (
-          <div className="relative w-14 h-14 rounded-xl overflow-hidden">
-            <Image src={cat.image} alt={cat.name} fill className="object-cover" unoptimized />
-          </div>
+      <div className="mb-6">
+        <h3 className="text-black font-brand text-[clamp(22px,2.4vw,36px)] leading-[1.2] font-normal tracking-[-0.3px] lg:tracking-[-0.6px]">Services in &ldquo;<span className="font-bold underline" style={{ textDecorationColor: "#543826" }}>{cat.name}</span>&rdquo;</h3>
+        {cat.description && (
+          <p className="text-gray-500 text-sm leading-relaxed mt-1">{cat.description}</p>
         )}
-        <div>
-          <h3 className="font-bold text-gray-900 text-2xl">{cat.name}</h3>
-          {cat.description && (
-            <p className="text-gray-500 text-sm leading-relaxed mt-1">{cat.description}</p>
-          )}
-        </div>
       </div>
 
       {cat.services.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-2xl">
-          <p className="text-gray-400 text-base mb-4">No services listed yet.</p>
-          <a href={`https://wa.me/${WA_NUM}?text=${encodeURIComponent(`Hi Nordic! I'd like to learn more about ${cat.name} services.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white font-semibold px-6 py-3 rounded-full text-sm">
-            <WaIcon className="w-4 h-4" /> Contact us
-          </a>
+          <p className="text-gray-400 text-base">No services exist in this category yet.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -160,37 +150,31 @@ export default function CategoryPageClient({ categories }: CategoryPageClientPro
         </div>
 
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pb-10 pt-32">
-          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-white/65 text-[11px] font-medium uppercase tracking-[0.18em] mb-4">
-            IV Therapy &middot; Home Healthcare in Dubai
-          </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-medium text-white leading-[1.05] tracking-tight mb-4 max-w-2xl" style={{ fontSize: "clamp(38px, 5.5vw, 68px)" }}>
-            IV Therapy
+            Lose weight in 4 weeks with
             <br />
             <span className="text-white/70" style={{ fontWeight: 400, fontSize: "clamp(28px, 4vw, 52px)" }}>
-              at home, on your schedule.
+              our online weight loss clinic
             </span>
           </motion.h1>
-          {mainCategory?.description && (
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/80 text-base leading-relaxed mb-7 max-w-lg">
-              {mainCategory.description}
-            </motion.p>
-          )}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-8">
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/80 text-base leading-relaxed mb-6 max-w-lg">
+            Personalized for each individual with long lasting results
+          </motion.p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.35 }} className="flex flex-col gap-3 mb-8">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-[#25D366]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+              <span className="text-white/80 text-sm font-medium">Prescription treatments proven by science</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-[#25D366]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+              <span className="text-white/80 text-sm font-medium">24x7 access to care and doctors, 100% online, and over 1000+ satisfied users</span>
+            </div>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3">
             <motion.a href={`https://wa.me/${WA_NUM}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-flex items-center gap-2 bg-white text-[#222222] font-semibold px-6 py-3 rounded-full text-sm shadow-md">
               <svg className="w-4 h-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
               Talk to us now
             </motion.a>
-            <motion.a href={CALL_NUM} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-flex items-center gap-2 bg-white/15 border border-white/50 text-white backdrop-blur-sm font-semibold px-6 py-3 rounded-full text-sm">
-              Call us, toll-free
-            </motion.a>
-          </motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.5 }} className="flex flex-wrap gap-x-6 gap-y-1.5">
-            {[{ icon: "⭐", text: "4.9 rated" }, { icon: "👨‍👩‍👧‍👦", text: "3,000+ families" }, { icon: "🏥", text: "DHA Licensed" }, { icon: "🩺", text: "Clinically trained" }, { icon: "👩‍⚕️", text: "Nordic-employed" }, { icon: "💰", text: "From AED 33/hr" }].map(item => (
-              <div key={item.text} className="flex items-center gap-1.5">
-                <span className="text-sm">{item.icon}</span>
-                <span className="text-white/75 text-xs font-medium whitespace-nowrap">{item.text}</span>
-              </div>
-            ))}
           </motion.div>
         </div>
       </section>
@@ -207,11 +191,12 @@ export default function CategoryPageClient({ categories }: CategoryPageClientPro
       </section>
 
       {/* OUR SERVICES - Multiple Categories */}
-      <section className="py-24 bg-white">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-xl mb-12">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-12">
             <p className="text-[#543826] text-xs font-semibold uppercase tracking-widest mb-3">Our Services</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug">IV Therapy Services</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Our Services in {mainCategory?.name || "Weight Loss"}</h2>
+            <p className="text-gray-400 text-sm mt-2">All services delivered at home by DHA-licensed professionals across Dubai.</p>
           </motion.div>
 
           {categories.map((cat) => (

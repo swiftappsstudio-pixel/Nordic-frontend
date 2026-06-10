@@ -131,19 +131,12 @@ function CategoryServicesSection() {
         {categories.map((cat) => (
           <div key={cat._id} className="mb-16">
             <FadeIn>
-              <div className="flex items-center gap-4 mb-6">
-                {cat.image && (
-                  <div className="relative w-14 h-14 rounded-xl overflow-hidden">
-                    <Image src={cat.image} alt={cat.name} fill className="object-cover" unoptimized />
-                  </div>
-                )}
-                <div>
-                  <h3 className="font-bold text-gray-900 text-2xl">Services in &ldquo;{cat.name}&rdquo;</h3>
+              <div className="mb-6">
+                  <h3 className="text-black font-brand text-[clamp(22px,2.4vw,36px)] leading-[1.2] font-normal tracking-[-0.3px] lg:tracking-[-0.6px]">Services in &ldquo;<span className="font-bold underline" style={{ textDecorationColor: "#543826" }}>{cat.name}</span>&rdquo;</h3>
                   {cat.description && (
                     <p className="text-gray-500 text-sm leading-relaxed mt-1">{cat.description}</p>
                   )}
                 </div>
-              </div>
             </FadeIn>
 
 {cat.services.length === 0 ? (
@@ -207,62 +200,57 @@ export default function IVTherapyPage() {
     <div className="bg-[#F7F4EE] min-h-screen font-sans">
 
       {/* HERO */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden bg-[#0d0a08]">
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[#1a2e28]">
         <div className="absolute inset-0">
           <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy at Home Dubai" fill className="object-cover object-center" priority unoptimized />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/70 to-transparent" />
         </div>
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-[#543826]/15 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full bg-[#543826]/10 blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pt-32 pb-16">
-          <div className="max-w-xl">
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="flex items-center gap-3 mb-6">
-              <div className="h-px w-10 bg-[#C9C3B3]" />
-              <span className="text-[#C9C3B3] text-[11px] font-semibold uppercase tracking-[0.2em]">
-                IV Drips at Home · Dubai · DHA-Licensed
-              </span>
-            </motion.div>
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pt-28 pb-16">
+          <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-16 items-center">
+            <div>
+              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-5">
+                <span className="inline-flex items-center gap-2 bg-[#543826]/15 border border-[#543826]/20 text-[#C9C3B3] text-[11px] font-semibold uppercase tracking-[0.15em] px-4 py-2 rounded-full">
+                  <svg className="w-3.5 h-3.5 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
+                  IV Drips at Home · Dubai · DHA-Licensed
+                </span>
+              </motion.div>
 
-            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-bold text-white leading-[1.08] mb-5" style={{ fontSize: "clamp(32px, 5vw, 58px)" }}>
-              Premium IV Therapy<br />
-              <span className="text-[#C9C3B3]" style={{ fontSize: "clamp(20px, 3vw, 36px)", fontWeight: 500 }}>Delivered to Your Door</span>
-            </motion.h1>
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-bold text-white leading-[1.1] mb-4" style={{ fontSize: "clamp(36px, 5vw, 60px)" }}>
+                Dubai's Trusted<br />At-Home IV Drip Therapy
+              </motion.h1>
 
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/65 text-base leading-relaxed mb-8 max-w-md">
-              Hydration, immunity, energy, beauty & detox drips — administered by DHA-licensed nurses at your doorstep. No clinic visit needed.
-            </motion.p>
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/70 text-base leading-relaxed mb-8 max-w-md">
+                Doctor-formulated IV treatments delivered to your doorstep by DHA-licensed nurses across Dubai. Boost hydration, recovery, immunity, and wellness with convenient same-day appointments.
+              </motion.p>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-10">
-              <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-7 py-3.5 rounded-full text-sm shadow-lg shadow-[#543826]/25 transition-all duration-300">
-                <WaIcon className="w-4 h-4" />
-                Book an IV drip
-              </a>
-              <a href={CALL_NUM} className="inline-flex items-center gap-2 bg-white/10 border border-white/25 text-white backdrop-blur-sm font-semibold px-7 py-3.5 rounded-full text-sm hover:bg-white/20 hover:border-white/40 transition-all duration-300">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.263 2.853c-.125-.5-.575-.852-1.091-.852H3.75A2.25 2.25 0 011.5 3.75v2.25z" /></svg>
-                Call us, toll-free
-              </a>
-            </motion.div>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-8">
+                <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white hover:bg-white/90 text-black font-semibold px-7 py-3.5 rounded-full text-sm transition-all duration-300">
+                  <WaIcon className="w-4 h-4" />
+                  Book Your IV Drip
+                </a>
+              </motion.div>
 
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {[
-                { label: "DHA Licensed", value: "Nurses" },
-                { label: "Results in", value: "30–60 min" },
-                { label: "All Dubai", value: "Areas" },
-                { label: "No Clinic", value: "Visit Needed" },
-              ].map((item) => (
-                <div key={item.label} className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3">
-                  <p className="text-white/50 text-[10px] uppercase tracking-widest font-medium">{item.label}</p>
-                  <p className="text-white text-sm font-semibold mt-1">{item.value}</p>
+              
+            </div>
+
+            <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="hidden lg:block">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ minHeight: "480px" }}>
+                <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy nurse at home" fill className="object-cover object-center" unoptimized />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e28]/50 via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-4">
+                    <p className="text-white font-semibold text-sm">Starting from AED 199</p>
+                    <p className="text-white/60 text-xs mt-1">Home delivery · DHA-licensed · Same-day booking</p>
+                  </div>
                 </div>
-              ))}
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* FEATURES */}
+      {/* FEATURES — "Feel the difference from within" — commented out
       <section className="py-20 bg-white">
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
           <FadeIn className="mb-14 text-center">
@@ -306,6 +294,7 @@ export default function IVTherapyPage() {
           </div>
         </div>
       </section>
+      — end comment */}
 
       {/* SERVICES — grouped by category from admin */}
       <CategoryServicesSection />
