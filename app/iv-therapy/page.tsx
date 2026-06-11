@@ -216,12 +216,16 @@ export default function IVTherapyPage() {
                 </span>
               </motion.div>
 
-              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-bold text-white leading-[1.1] mb-4" style={{ fontSize: "clamp(36px, 5vw, 60px)" }}>
-                Dubai's Trusted<br />At-Home IV Drip Therapy
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-bold text-white leading-[1.1] mb-3" style={{ fontSize: "clamp(32px, 5vw, 60px)" }}>
+                Premium IV Drip Therapy in UAE<br />
+                <span className="font-normal text-white/70" style={{ fontSize: "clamp(18px, 3vw, 36px)" }}>Doctor-Formulated, Home Delivered</span>
               </motion.h1>
 
-              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/70 text-base leading-relaxed mb-8 max-w-md">
-                Doctor-formulated IV treatments delivered to your doorstep by DHA-licensed nurses across Dubai. Boost hydration, recovery, immunity, and wellness with convenient same-day appointments.
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/60 text-base leading-relaxed mb-4 max-w-md">
+                Hydration, Immunity & Recovery
+              </motion.p>
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} className="text-white/80 text-lg font-medium mb-8 max-w-md">
+                Get your customized wellness drip
               </motion.p>
 
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-8">
