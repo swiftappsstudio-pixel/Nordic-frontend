@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Eye, Pencil, Trash2, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useAuth } from "@/app/_common/auth-context";
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
@@ -15,6 +16,7 @@ interface Service {
   discountPrice?: number;
   category?: string;
   isFeatured?: boolean;
+  images?: string[];
 }
 
 export default function ServicesPage() {
@@ -97,6 +99,7 @@ export default function ServicesPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-100 text-gray-700">
               <tr>
+                <th className="px-5 py-4 text-left">Image</th>
                 <th className="px-5 py-4 text-left">Title</th>
                 <th className="px-5 py-4 text-left">Description</th>
                 <th className="px-5 py-4 text-left">Price</th>
@@ -112,6 +115,19 @@ export default function ServicesPage() {
                   key={s._id}
                   className="border-t hover:bg-gray-50 transition"
                 >
+                  <td className="px-5 py-4">
+                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                      {s.images?.[0] ? (
+                        <Image src={s.images[0]} alt={s.title} fill className="object-cover" unoptimized />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-300">
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022 18.75V5.25A2.25 2.25 0 0019.75 3H4.25A2.25 2.25 0 002 5.25v13.5A2.25 2.25 0 004.25 21z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-5 py-4 font-medium text-gray-800">
                     {s.title}
                   </td>

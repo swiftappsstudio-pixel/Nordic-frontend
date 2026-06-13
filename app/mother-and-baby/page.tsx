@@ -855,11 +855,25 @@ export default function MotherAndBabyPage() {
 
           {/* Heading */}
           <FadeIn className="mb-10">
-            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1F3C34] leading-tight max-w-lg">
-              Care for every stage, from one trained team.
-            </h2>
-            <p className="text-[#6B7280] mt-3 text-base">Nordic-employed. NICU-trained. Never a freelance pool.</p>
-          </FadeIn>
+  <h2
+    className="
+      text-[#143D3D]
+      text-[clamp(34px,4vw,52px)]
+      leading-[1.1]
+      font-normal
+      tracking-[-0.04em]
+    "
+    style={{ fontFamily: "Inter, sans-serif" }}
+  >
+    Care for every stage, from one trained team.
+  </h2>
+
+  <p className="mt-3 text-base text-[#7A7A7A] max-w-2xl">
+    Nordic-employed. NICU-trained. Never a freelance pool.
+  </p>
+</FadeIn>
+
+          
 
           {/* 5 Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">

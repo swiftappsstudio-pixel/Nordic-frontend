@@ -93,19 +93,35 @@ function CategoryServicesSection() {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <FadeIn className="mb-12">
+        {/* <FadeIn className="mb-12">
           <p className="text-[#1a2e28] text-xs font-semibold uppercase tracking-widest mb-3">Our Services</p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Our Services in Peptide Therapy</h2>
           <p className="text-gray-400 text-sm mt-2">All peptide therapies delivered at home by DHA-licensed professionals across Dubai.</p>
-        </FadeIn>
+        </FadeIn> */}
 
         {categories.map((cat) => (
           <div key={cat._id} className="mb-16">
-            <FadeIn>
-              <div className="mb-6">
-                <h3 className="text-black font-brand text-[clamp(22px,2.4vw,36px)] leading-[1.2] font-normal tracking-[-0.3px] lg:tracking-[-0.6px]"> &ldquo;<span className="font-bold underline" style={{ textDecorationColor: "#1a2e28" }}>{cat.name}</span>&rdquo;</h3>
+             <FadeIn>
+              <div className="mb-12">
+               
+
+                <h1
+                  className="
+        font-inter
+        text-[#143D3D]
+        text-[clamp(32px,4vw,56px)]
+        leading-[1.1]
+        font-medium
+        tracking-[-0.03em]
+      "
+                >
+                  {cat.name}
+                </h1>
+
                 {cat.description && (
-                  <p className="text-gray-500 text-sm leading-relaxed mt-1">{cat.description}</p>
+                  <p className="mt-4 max-w-3xl text-lg text-[#6B7280] leading-relaxed">
+                    {cat.description}
+                  </p>
                 )}
               </div>
             </FadeIn>

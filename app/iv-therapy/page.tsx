@@ -22,20 +22,21 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
-function FaqItem({ q, a }: { q: string; a: string }) {
+function FaqItem({ q, a, idx }: { q: string; a: string; idx: number }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="py-4">
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between gap-6 text-left group">
-        <span className="text-[#1a2e28] text-sm font-medium leading-snug group-hover:text-[#2D5B4F] transition-colors">{q}</span>
-        <span className="shrink-0 w-6 h-6 flex items-center justify-center text-[#1a2e28]/50">
-          <svg className={`w-4 h-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+    <div className={`rounded-xl transition-all duration-300 ${open ? "bg-[#1a2e28]/5 shadow-sm" : "bg-transparent"}`}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-4 text-left group px-4 py-4">
+        <span className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-300 ${open ? "bg-[#1a2e28] text-white" : "bg-[#1a2e28]/10 text-[#1a2e28]"}`}>{String(idx + 1).padStart(2, "0")}</span>
+        <span className="text-[#1a2e28] text-sm font-medium leading-snug group-hover:text-[#2D5B4F] transition-colors flex-1">{q}</span>
+        <span className="shrink-0 w-6 h-6 flex items-center justify-center">
+          <svg className={`w-4 h-4 transition-all duration-300 ${open ? "rotate-180 text-[#1a2e28]" : "text-[#1a2e28]/40"}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
         </span>
       </button>
-      <motion.div initial={false} animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }} transition={{ duration: 0.22 }} className="overflow-hidden">
-        <p className="text-[#6B7280] text-sm leading-relaxed pt-3 pb-1 max-w-2xl">{a}</p>
+      <motion.div initial={false} animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
+        <p className="text-[#6B7280] text-sm leading-relaxed px-4 pb-4 pl-[60px]">{a}</p>
       </motion.div>
     </div>
   );
@@ -122,21 +123,37 @@ function CategoryServicesSection() {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <FadeIn className="mb-12">
+        {/* <FadeIn className="mb-12">
           <p className="text-[#543826] text-xs font-semibold uppercase tracking-widest mb-3">Our Services</p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Our Services in IV Therapy</h2>
           <p className="text-gray-400 text-sm mt-2">All IV drips delivered at home by DHA-licensed nurses across Dubai.</p>
-        </FadeIn>
+        </FadeIn> */}
 
         {categories.map((cat) => (
           <div key={cat._id} className="mb-16">
-            <FadeIn>
-              <div className="mb-6">
-                  <h3 className="text-black font-brand text-[clamp(22px,2.4vw,36px)] leading-[1.2] font-normal tracking-[-0.3px] lg:tracking-[-0.6px]"> &ldquo;<span className="font-bold underline" style={{ textDecorationColor: "#543826" }}>{cat.name}</span>&rdquo;</h3>
-                  {cat.description && (
-                    <p className="text-gray-500 text-sm leading-relaxed mt-1">{cat.description}</p>
-                  )}
-                </div>
+             <FadeIn>
+              <div className="mb-12">
+               
+
+                <h1
+                  className="
+        font-inter
+        text-[#143D3D]
+        text-[clamp(32px,4vw,56px)]
+        leading-[1.1]
+        font-medium
+        tracking-[-0.03em]
+      "
+                >
+                  {cat.name}
+                </h1>
+
+                {cat.description && (
+                  <p className="mt-4 max-w-3xl text-lg text-[#6B7280] leading-relaxed">
+                    {cat.description}
+                  </p>
+                )}
+              </div>
             </FadeIn>
 
 {cat.services.length === 0 ? (
@@ -304,26 +321,23 @@ export default function IVTherapyPage() {
       <CategoryServicesSection />
 
       {/* FAQ */}
-      <section className="bg-[#F7F4EE] py-20 px-6">
-        <div className="max-w-[1100px] mx-auto">
-          <div className="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16 items-start">
-            <FadeIn>
-              <h2 className="font-semibold text-[#1a2e28] leading-[1.1] sticky top-24" style={{ fontSize: "clamp(28px, 3vw, 42px)" }}>
-                Questions?<br />Answers.
-              </h2>
-            </FadeIn>
-            <div className="divide-y divide-[#1a2e28]/10">
-              {[
-                { q: "What is IV therapy?", a: "IV therapy delivers vitamins, minerals, electrolytes, and medications directly into your bloodstream via a sterile drip — bypassing digestion for maximum absorption and faster results." },
-                { q: "Is IV therapy safe at home?", a: "Absolutely. All sessions are administered by DHA-licensed nurses with sterile, medical-grade equipment. Your vitals are monitored throughout the entire session." },
-                { q: "How long does an IV drip session take?", a: "Most sessions take 30–60 minutes depending on the drip type. The nurse stays with you the entire time to monitor comfort and progress." },
-                { q: "Do I need a prescription?", a: "No prescription is required for our wellness drips (hydration, immunity, energy, beauty, detox). If a medically-specific drip is needed, our visiting doctor can issue a prescription." },
-                { q: "What areas in Dubai do you cover?", a: "We cover all Dubai areas — Marina, Downtown, JBR, Palm Jumeirah, DIFC, Business Bay, JLT, and more. A nurse arrives at your door at your scheduled time." },
-                { q: "How much does IV therapy cost?", a: "Prices vary by drip type. Visit our services section above for transparent pricing, or message us on WhatsApp for a personalised recommendation." },
-                { q: "Can I book same-day?", a: "Yes. Most bookings are confirmed within 15 minutes and a nurse can arrive within 60 minutes for urgent requests." },
-                { q: "What drips are available?", a: "We offer Hydration, Immunity Boost, Energy & Recovery, Beauty & Glow, Detox & Wellness, and custom-formulated drips based on your specific health goals." },
-              ].map(({ q, a }) => <FaqItem key={q} q={q} a={a} />)}
-            </div>
+      <section className="bg-[#F7F4EE] py-16 px-6">
+        <div className="max-w-[900px] mx-auto">
+          <FadeIn className="mb-10 text-center">
+            <p className="text-[#2D5B4F] text-xs font-semibold uppercase tracking-widest mb-3">FAQ</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#1a2e28]">Questions? Answers.</h2>
+          </FadeIn>
+          <div className="space-y-2">
+            {[
+              { q: "What is IV therapy?", a: "IV therapy delivers vitamins, minerals, electrolytes, and medications directly into your bloodstream via a sterile drip — bypassing digestion for maximum absorption and faster results." },
+              { q: "Is IV therapy safe at home?", a: "Absolutely. All sessions are administered by DHA-licensed nurses with sterile, medical-grade equipment. Your vitals are monitored throughout the entire session." },
+              { q: "How long does an IV drip session take?", a: "Most sessions take 30–60 minutes depending on the drip type. The nurse stays with you the entire time to monitor comfort and progress." },
+              { q: "Do I need a prescription?", a: "No prescription is required for our wellness drips (hydration, immunity, energy, beauty, detox). If a medically-specific drip is needed, our visiting doctor can issue a prescription." },
+              { q: "What areas in Dubai do you cover?", a: "We cover all Dubai areas — Marina, Downtown, JBR, Palm Jumeirah, DIFC, Business Bay, JLT, and more. A nurse arrives at your door at your scheduled time." },
+              { q: "How much does IV therapy cost?", a: "Prices vary by drip type. Visit our services section above for transparent pricing, or message us on WhatsApp for a personalised recommendation." },
+              { q: "Can I book same-day?", a: "Yes. Most bookings are confirmed within 15 minutes and a nurse can arrive within 60 minutes for urgent requests." },
+              { q: "What drips are available?", a: "We offer Hydration, Immunity Boost, Energy & Recovery, Beauty & Glow, Detox & Wellness, and custom-formulated drips based on your specific health goals." },
+            ].map(({ q, a }, i) => <FaqItem key={q} q={q} a={a} idx={i} />)}
           </div>
         </div>
       </section>
