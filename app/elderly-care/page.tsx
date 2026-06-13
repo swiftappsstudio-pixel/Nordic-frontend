@@ -2,13 +2,149 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { getCategoryByLink } from "@/app/_common/api";
+import { CategoryWithServices, Service } from "@/app/_common/interfaces";
 import ServicesSection from "@/app/_components/services-section";
 
 // ─── Config ───────────────────────────────────────────────────────────────
 const WA_NUM = "971555828945";
 const WA_MSG = encodeURIComponent("Hi Nordic! I'd like to learn more about Elderly Care services.");
 const CALL_NUM = "tel:+971555828945";
+
+const HERO_SLIDES = [
+  { src: "/images/elder_patient_2.png", alt: "Elderly patient care at home" },
+  { src: "/images/elder_patient_1.png", alt: "Compassionate elderly caregiver" },
+  { src: "/images/older5.jpg", alt: "Elderly care at home Dubai" },
+];
+
+function ServiceCard({ svc }: { svc: Service }) {
+  const waLink = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(`Hi Nordic! I'd like to learn more about ${svc.title}.`)}`;
+  return (
+    <a href={waLink} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl" style={{ minHeight: "340px" }}>
+      <div className="absolute inset-0">
+        {svc.images?.[0] ? (
+          <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#1a2e28]/20 to-[#1a2e28]/40" />
+        )}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.75) 100%)" }} />
+      </div>
+      <div className="relative z-10 flex flex-col justify-between h-full p-5" style={{ minHeight: "340px" }}>
+        <div>
+          <h3 className="text-white font-semibold text-base leading-snug">{svc.title}</h3>
+          {svc.description && (
+            <p className="text-white/60 text-xs leading-relaxed line-clamp-2 mt-2">{svc.description}</p>
+          )}
+        </div>
+        <div className="mt-auto">
+          <span className="inline-flex items-center gap-1.5 bg-white text-[#1a2e28] text-xs font-semibold px-5 py-2.5 rounded-full group-hover:bg-[#F7F4EE] transition">
+            Learn more
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function CategoryServicesSection() {
+  const [categories, setCategories] = useState<CategoryWithServices[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getCategoryByLink("elderly-care")
+      .then((data) => setCategories(data))
+      .catch(() => setCategories([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-4 border-[#1a2e28]/20 border-t-[#1a2e28] rounded-full animate-spin" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!categories.length) return null;
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+
+        {categories.map((cat) => (
+          <div key={cat._id} className="mb-16">
+            <FadeIn>
+              <div className="mb-6">
+                <h3 className="text-black font-brand text-[clamp(22px,2.4vw,36px)] leading-[1.2] font-normal tracking-[-0.3px] lg:tracking-[-0.6px]">{cat.name}</h3>
+                {cat.description && (
+                  <p className="text-gray-500 text-sm leading-relaxed mt-1">{cat.description}</p>
+                )}
+              </div>
+            </FadeIn>
+
+            {cat.services.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-2xl">
+                <p className="text-gray-400 text-base">No services exist in this category yet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {cat.services.map((svc) => (
+                  <ServiceCard key={svc._id} svc={svc} />
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function HeroSlider() {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="relative flex flex-col items-center justify-center mx-auto lg:ml-[80px]" style={{ minHeight: "320px", maxWidth: "260px" }}>
+      <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shadow-lg">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="absolute inset-0"
+          >
+            <Image src={HERO_SLIDES[active].src} alt={HERO_SLIDES[active].alt} fill className="object-cover object-center" unoptimized />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+      <div className="flex items-center gap-1.5 mt-3">
+        {HERO_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setActive(i)}
+            className={`rounded-full transition-all duration-300 ${i === active ? "w-5 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/40"}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ─── Reusable Components ──────────────────────────────────────────────────
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -489,77 +625,47 @@ export default function ElderlyCarePage() {
     <div className="bg-[#F7F4EE] min-h-screen font-sans">
 
       {/* HERO */}
-      <section className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden">
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/images/older5.jpg" alt="Elderly care at home Dubai" fill className="object-cover object-center" priority unoptimized />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.65) 75%, rgba(0,0,0,0.72) 100%)" }} />
+          <Image src="/images/nurse_with_elder.png" alt="Elderly care at home Dubai" fill className="object-cover object-center" priority unoptimized />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a2e28]/85 via-[#2D5B4F]/75 to-[#1a2e28]/85" />
         </div>
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pb-10 pt-32">
-          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-white/65 text-[11px] font-medium uppercase tracking-[0.18em] mb-4">
-            Companion Care · Elderly Care · Post-Hospital Support in Dubai
-          </motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-medium text-white leading-[1.05] tracking-tight mb-4 max-w-2xl" style={{ fontSize: "clamp(28px, 5.5vw, 68px)" }}>
-            Daytime. Overnight. Post-hospital and beyond.
-            <br />
-            <span className="text-white/70" style={{ fontWeight: 400, fontSize: "clamp(20px, 4vw, 52px)" }}>
-              One trained caregiver, every step of the way.
-            </span>
-          </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/80 text-base leading-relaxed mb-7 max-w-lg">
-            Compassionate, clinically-trained care for your loved ones — at home, on your schedule.
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-8">
-            <motion.a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-flex items-center gap-2 bg-white text-[#222222] font-semibold px-6 py-3 rounded-full text-sm shadow-md">
-              <svg className="w-4 h-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
-              Talk to us now
-            </motion.a>
-          </motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.5 }} className="flex flex-wrap gap-x-4 gap-y-2">
-            {[{ icon: "⭐", text: "4.9 rated" }, { icon: "👨‍👩‍👧‍👦", text: "3,000+ families" }, { icon: "🏥", text: "DHA License #2985077" }, { icon: "🩺", text: "Clinically trained" }, { icon: "👩‍⚕️", text: "Nordic-employed" }, { icon: "💰", text: "From AED 33/hr" }].map(item => (
-              <div key={item.text} className="flex items-center gap-1.5">
-                <span className="text-sm">{item.icon}</span>
-                <span className="text-white/75 text-xs font-medium">{item.text}</span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
 
-      {/* CARE FOR EVERY STAGE */}
-      <section className="py-16 bg-[#F7F4EE]">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
-          <FadeIn className="mb-10">
-            <h2 className="text-4xl sm:text-5xl font-semibold text-[#1F3C34] leading-tight max-w-lg">Care for every stage, from one trained team.</h2>
-            <p className="text-[#6B7280] mt-3 text-base">Nordic-employed. Clinically trained. Never a freelance pool.</p>
-          </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {[
-              { tag: "Companion Care", title: "Companion & daily support", desc: "Friendly company, help with errands, meals, and the daily routines that keep life comfortable and independent at home.", img: "/images/older2.jpg" },
-              { tag: "Post-Hospital", title: "Post-hospital recovery", desc: "Clinically-trained caregivers for those critical weeks after discharge — medication, mobility, and follow-up care at home.", img: "/images/older3.jpg" },
-              { tag: "Daily Care", title: "Daily personal care", desc: "Hands-on personal care through the day — bathing, dressing, feeding, and the routines that preserve dignity and comfort.", img: "/images/older4.jpg" },
-              { tag: "Night and Overnight", title: "Overnight care, every night", desc: "Clinically-trained caregivers through the night for monitoring, mobility, and peace of mind for the whole family.", img: "/images/older5.jpg" },
-              { tag: "Dementia Support", title: "Dementia & specialist care", desc: "Specialist caregivers trained in dementia and Alzheimer's care — safe, compassionate, and consistent at home.", img: "/images/older7.jpg" },
-            ].map((card, i) => (
-              <FadeIn key={card.title} delay={i * 0.07}>
-                <motion.div whileHover={{ scale: 1.02 }} className="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer" style={{ minHeight: "380px" }}>
-                  <div className="absolute inset-0">
-                    <Image src={card.img} alt={card.title} fill className="object-cover object-center group-hover:scale-105 transition-transform duration-500" unoptimized />
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.72) 70%, rgba(0,0,0,0.85) 100%)" }} />
-                  </div>
-                  <div className="relative z-10 flex flex-col justify-between h-full p-5" style={{ minHeight: "380px" }}>
-                    <span className="self-start text-[9px] text-white/60 uppercase tracking-widest font-medium bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/15">{card.tag}</span>
-                    <div className="mt-auto">
-                      <h3 className="text-white font-semibold text-lg leading-snug mb-3">{card.title}</h3>
-                      <p className="text-white/55 text-xs leading-relaxed mb-5">{card.desc}</p>
-                      <motion.a href={`https://wa.me/${WA_NUM}?text=${encodeURIComponent(`Hi! I'd like to learn more about ${card.title}.`)}`} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.04 }} className="inline-flex items-center bg-white text-[#1F3C34] text-xs font-semibold px-5 py-2.5 rounded-full">Learn more</motion.a>
-                    </div>
-                  </div>
-                </motion.div>
-              </FadeIn>
-            ))}
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pt-28 pb-16">
+          <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-16 items-center">
+            <div>
+              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-5">
+                <span className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white/70 text-[11px] font-semibold uppercase tracking-[0.15em] px-4 py-2 rounded-full">
+                  Elderly Care · Dubai · DHA-Licensed
+                </span>
+              </motion.div>
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-bold text-white leading-[1.1] mb-3 max-w-2xl" style={{ fontSize: "clamp(32px, 5vw, 56px)" }}>
+                Elderly Care at Home<br />
+                <span className="font-normal text-white/70" style={{ fontSize: "clamp(18px, 3vw, 34px)" }}>Clinically-Trained, Nordic-Employed Caregivers</span>
+              </motion.h1>
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/60 text-base leading-relaxed mb-6 max-w-md">
+                Daytime. Overnight. Post-hospital and beyond.
+              </motion.p>
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} className="text-white/80 text-lg font-medium mb-8 max-w-lg">
+                One trained caregiver, every step of the way.
+              </motion.p>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3">
+                <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white text-[#1a2e28] font-semibold px-7 py-3.5 rounded-full text-sm hover:bg-[#F7F4EE] transition">
+                  <svg className="w-4 h-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
+                  Talk to us now
+                </a>
+              </motion.div>
+            </div>
+
+            <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0, y: [0, -12, 0] }} transition={{ duration: 0.8, delay: 0.4, y: { duration: 3, repeat: Infinity, ease: "easeInOut" } }} className="hidden lg:block">
+              <HeroSlider />
+            </motion.div>
           </div>
         </div>
       </section>
+
+      {/* SERVICES — grouped by category from admin */}
+      <CategoryServicesSection />
 
       {/* SCROLL STICKY */}
       <ScrollStickySection />

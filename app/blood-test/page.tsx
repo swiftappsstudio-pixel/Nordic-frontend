@@ -103,7 +103,7 @@ function CategoryServicesSection() {
           <div key={cat._id} className="mb-16">
             <FadeIn>
               <div className="mb-6">
-                <h3 className="text-black font-brand text-[clamp(22px,2.4vw,36px)] leading-[1.2] font-normal tracking-[-0.3px] lg:tracking-[-0.6px]">Services in &ldquo;<span className="font-bold underline" style={{ textDecorationColor: "#1a2e28" }}>{cat.name}</span>&rdquo;</h3>
+                <h3 className="text-black font-brand text-[clamp(22px,2.4vw,36px)] leading-[1.2] font-normal tracking-[-0.3px] lg:tracking-[-0.6px]"> &ldquo;<span className="font-bold underline" style={{ textDecorationColor: "#1a2e28" }}>{cat.name}</span>&rdquo;</h3>
                 {cat.description && (
                   <p className="text-gray-500 text-sm leading-relaxed mt-1">{cat.description}</p>
                 )}
