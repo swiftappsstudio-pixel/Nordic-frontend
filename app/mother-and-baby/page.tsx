@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView, useAnimation, useScroll, useTransform } from "framer-motion";
+import { getCategoryByLink } from "@/app/_common/api";
+import { CategoryWithServices, Service } from "@/app/_common/interfaces";
 import ServicesSection from "@/app/_components/services-section";
 
 // ─── Config ───────────────────────────────────────────────────────────────
@@ -74,6 +76,92 @@ const FAQS = [
   { q: "Can I pause or change my care plan?", a: "Yes, always. Nordic plans are completely flexible. You can increase hours, reduce visits, swap your nurse, or pause your plan with just 24 hours notice — no penalties." },
 ];
 
+function ServiceCard({ svc }: { svc: Service }) {
+  const waLink = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(`Hi Nordic! I'd like to learn more about ${svc.title}.`)}`;
+  return (
+    <a href={waLink} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl" style={{ minHeight: "340px" }}>
+      <div className="absolute inset-0">
+        {svc.images?.[0] ? (
+          <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#1a2e28]/20 to-[#1a2e28]/40" />
+        )}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.75) 100%)" }} />
+      </div>
+      <div className="relative z-10 flex flex-col justify-between h-full p-5" style={{ minHeight: "340px" }}>
+        <div>
+          <h3 className="text-white font-semibold text-base leading-snug">{svc.title}</h3>
+          {svc.description && (
+            <p className="text-white/60 text-xs leading-relaxed line-clamp-2 mt-2">{svc.description}</p>
+          )}
+        </div>
+        <div className="mt-auto flex justify-center">
+          <span className="inline-flex items-center gap-1.5 bg-white text-[#1a2e28] text-xs font-semibold px-5 py-2.5 rounded-full group-hover:bg-[#F7F4EE] transition">
+            Book Now
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function CategoryServicesSection() {
+  const [categories, setCategories] = useState<CategoryWithServices[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getCategoryByLink("mother-and-baby")
+      .then((data) => setCategories(data))
+      .catch(() => setCategories([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-4 border-[#1a2e28]/20 border-t-[#1a2e28] rounded-full animate-spin" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!categories.length) return null;
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        {categories.map((cat) => (
+          <div key={cat._id} className="mb-16">
+            <FadeIn>
+              <div className="mb-6">
+                <h3 className="text-black font-brand text-[clamp(22px,2.4vw,36px)] leading-[1.2] font-normal tracking-[-0.3px] lg:tracking-[-0.6px]">{cat.name}</h3>
+                {cat.description && (
+                  <p className="text-gray-500 text-sm leading-relaxed mt-1">{cat.description}</p>
+                )}
+              </div>
+            </FadeIn>
+
+            {cat.services.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-2xl">
+                <p className="text-gray-400 text-base">No services exist in this category yet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {cat.services.map((svc) => (
+                  <ServiceCard key={svc._id} svc={svc} />
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // ─── Reusable Components ───────────────────────────────────────────────────
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -135,9 +223,9 @@ function ScrollStickySection() {
   //    x travels from far offscreen to 0 then stays at 0 (locked)
   //    scale grows 0.5 → 1 then stays at 1 (locked)
   //    adding a keyframe at 1.0 ensures they never move again after arriving
-  const leftX  = useTransform(scrollYProgress, [0.62, 0.82, 1.0], [-480, 0, 0]);
-  const leftO  = useTransform(scrollYProgress, [0.62, 0.72], [0, 1]);
-  const leftS  = useTransform(scrollYProgress, [0.62, 0.82, 1.0], [0.45, 1, 1]);
+  const leftX = useTransform(scrollYProgress, [0.62, 0.82, 1.0], [-480, 0, 0]);
+  const leftO = useTransform(scrollYProgress, [0.62, 0.72], [0, 1]);
+  const leftS = useTransform(scrollYProgress, [0.62, 0.82, 1.0], [0.45, 1, 1]);
 
   const rightX = useTransform(scrollYProgress, [0.65, 0.85, 1.0], [480, 0, 0]);
   const rightO = useTransform(scrollYProgress, [0.65, 0.75], [0, 1]);
@@ -156,195 +244,195 @@ function ScrollStickySection() {
           <h3 className="text-white font-semibold text-2xl mb-3">Care that comes to you.</h3>
           <p className="text-white/60 text-sm mb-6 max-w-xs mx-auto">Nordic-employed nurses. NICU-trained. Available 24/7 across Dubai.</p>
           <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white text-sm font-semibold px-6 py-3 rounded-full shadow-lg">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511" /></svg>
             Talk to us now
           </a>
         </div>
       </div>
 
       {/* Desktop — full sticky scroll experience */}
-      <div ref={containerRef} style={{ height: "600vh" }} className="relative hidden lg:block">
-      <div className="sticky top-0 h-screen overflow-hidden bg-[#1a2e28]">
+      <div ref={containerRef} style={{ height: "350vh" }} className="relative hidden lg:block">
+        <div className="sticky top-0 h-screen overflow-hidden bg-[#1a2e28]">
 
-        {/* ── BACKGROUND VIDEO ── */}
-        <motion.div
-          style={{ opacity: bgVideoO }}
-          className="absolute inset-0 z-0 pointer-events-none"
-        >
-          <video
-            autoPlay muted loop playsInline
-            className="w-full h-full object-cover"
+          {/* ── BACKGROUND VIDEO ── */}
+          <motion.div
+            style={{ opacity: bgVideoO }}
+            className="absolute inset-0 z-0 pointer-events-none"
           >
-            <source src="/video/mother-bg.mp4" type="video/mp4" />
-            <source src="/video/mother.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-black/45" />
-        </motion.div>
-
-        {/* ── TEXT PHASE — hidden on mobile, visible lg+ ── */}
-        <motion.div
-          style={{ opacity: textGroupO }}
-          className="hidden lg:flex absolute inset-0 z-10 pointer-events-none items-center justify-center"
-        >
-          {/* The text is laid out relative to the center video width so words hug it */}
-          <div className="relative w-full h-full">
-
-            {/* LEFT TEXT — right-aligned, sits just left of center video */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 text-right"
-              style={{ right: "calc(50% + clamp(110px, 14vw, 210px) + 24px)" }}
+            <video
+              autoPlay muted loop playsInline
+              className="w-full h-full object-cover"
             >
-              <div style={{ overflow: "visible" }}>
-                <motion.p
-                  style={{ opacity: t1o, y: t1y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
-                  className="text-white select-none drop-shadow-xl whitespace-nowrap"
-                >
-                  Devoted
-                </motion.p>
-              </div>
-              <div style={{ overflow: "visible", marginTop: "6px" }}>
-                <motion.p
-                  style={{ opacity: t3o, y: t3y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
-                  className="text-white/80 select-none drop-shadow-xl whitespace-nowrap"
-                >
-                  to you
-                </motion.p>
-              </div>
-            </div>
+              <source src="/video/mother-bg.mp4" type="video/mp4" />
+              <source src="/video/mother.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-black/45" />
+          </motion.div>
 
-            {/* RIGHT TEXT — left-aligned, sits just right of center video */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 text-left"
-              style={{ left: "calc(50% + clamp(110px, 14vw, 210px) + 24px)" }}
-            >
-              <div style={{ overflow: "visible" }}>
-                <motion.p
-                  style={{ opacity: t2o, y: t2y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
-                  className="text-white select-none drop-shadow-xl whitespace-nowrap"
-                >
-                  heart and
-                </motion.p>
-              </div>
-              <div style={{ overflow: "visible", marginTop: "6px" }}>
-                <motion.p
-                  style={{ opacity: t4o, y: t4y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
-                  className="text-white/80 select-none drop-shadow-xl whitespace-nowrap"
-                >
-                  your little one
-                </motion.p>
-              </div>
-            </div>
+          {/* ── TEXT PHASE — hidden on mobile, visible lg+ ── */}
+          <motion.div
+            style={{ opacity: textGroupO }}
+            className="hidden lg:flex absolute inset-0 z-10 pointer-events-none items-center justify-center"
+          >
+            {/* The text is laid out relative to the center video width so words hug it */}
+            <div className="relative w-full h-full">
 
-          </div>
-        </motion.div>
-
-        {/* ── CENTER VIDEO FRAME — large portrait, always visible ── */}
-        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-          <div className="relative" style={{ width: "clamp(200px, 26vw, 380px)", aspectRatio: "9/16" }}>
-            <div className="w-full h-full border-[3px] border-white rounded-[28px] overflow-hidden shadow-2xl bg-black">
-              <video
-                autoPlay muted loop playsInline
-                className="w-full h-full object-cover"
+              {/* LEFT TEXT — right-aligned, sits just left of center video */}
+              <div
+                className="absolute top-1/2 -translate-y-1/2 text-right"
+                style={{ right: "calc(50% + clamp(110px, 14vw, 210px) + 24px)" }}
               >
-                <source src="/video/mother.mp4" type="video/mp4" />
-              </video>
-            </div>
-            {/* WA button */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-auto">
-              <a
-                href="https://wa.me/971555828945"
-                target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-1.5 bg-[#25D366] text-white text-[11px] font-semibold px-4 py-2 rounded-full shadow-lg whitespace-nowrap"
+                <div style={{ overflow: "visible" }}>
+                  <motion.p
+                    style={{ opacity: t1o, y: t1y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
+                    className="text-white select-none drop-shadow-xl whitespace-nowrap"
+                  >
+                    Devoted
+                  </motion.p>
+                </div>
+                <div style={{ overflow: "visible", marginTop: "6px" }}>
+                  <motion.p
+                    style={{ opacity: t3o, y: t3y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
+                    className="text-white/80 select-none drop-shadow-xl whitespace-nowrap"
+                  >
+                    to you
+                  </motion.p>
+                </div>
+              </div>
+
+              {/* RIGHT TEXT — left-aligned, sits just right of center video */}
+              <div
+                className="absolute top-1/2 -translate-y-1/2 text-left"
+                style={{ left: "calc(50% + clamp(110px, 14vw, 210px) + 24px)" }}
               >
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
-                Talk to us now
-              </a>
+                <div style={{ overflow: "visible" }}>
+                  <motion.p
+                    style={{ opacity: t2o, y: t2y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
+                    className="text-white select-none drop-shadow-xl whitespace-nowrap"
+                  >
+                    heart and
+                  </motion.p>
+                </div>
+                <div style={{ overflow: "visible", marginTop: "6px" }}>
+                  <motion.p
+                    style={{ opacity: t4o, y: t4y, fontSize: "clamp(36px, 5vw, 70px)", fontWeight: 600, lineHeight: 1.05 }}
+                    className="text-white/80 select-none drop-shadow-xl whitespace-nowrap"
+                  >
+                    your little one
+                  </motion.p>
+                </div>
+              </div>
+
+            </div>
+          </motion.div>
+
+          {/* ── CENTER VIDEO FRAME — large portrait, always visible ── */}
+          <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+            <div className="relative" style={{ width: "clamp(200px, 26vw, 380px)", aspectRatio: "9/16" }}>
+              <div className="w-full h-full border-[3px] border-white rounded-[28px] overflow-hidden shadow-2xl bg-black">
+                <video
+                  autoPlay muted loop playsInline
+                  className="w-full h-full object-cover"
+                >
+                  <source src="/video/mother.mp4" type="video/mp4" />
+                </video>
+              </div>
+              {/* WA button */}
+              <div className="absolute bottom-20 left-1/2 -translate-x-1/2 pointer-events-auto">
+                <a
+                  href="https://wa.me/971555828945"
+                  target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 bg-[#25D366] text-white text-[11px] font-semibold px-4 py-2 rounded-full shadow-lg whitespace-nowrap"
+                >
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511" /></svg>
+                  Talk to us now
+                </a>
+              </div>
             </div>
           </div>
+
+          {/* ── LEFT CARDS — hidden on mobile/tablet, visible on lg+ ── */}
+          <motion.div
+            style={{
+              opacity: leftO,
+              x: leftX,
+              scale: leftS,
+              position: "absolute",
+              right: "calc(50% + clamp(100px, 13vw, 195px) + 12px)",
+              top: "50%",
+              translateY: "-50%",
+              width: "clamp(270px, 24vw, 370px)",
+              zIndex: 30,
+              transformOrigin: "right center",
+            }}
+            className="hidden lg:flex flex-col gap-3 pointer-events-none"
+          >
+            {/* Card 1 — Every caregiver is vetted */}
+            <div className="bg-white rounded-2xl p-5 shadow-2xl border border-[#E8E4DC]">
+              <div className="relative h-14 mb-4">
+                {[2, 1, 0].map((i) => (
+                  <div key={i} className="absolute rounded-xl overflow-hidden bg-[#e8e4dc] flex items-end justify-center"
+                    style={{ width: "48px", height: "56px", left: `${i * 16}px`, bottom: 0, zIndex: 3 - i, transform: `rotate(${i === 0 ? -8 : i === 1 ? -2 : 4}deg)` }}>
+                    <svg className="w-8 h-8 text-[#2D5B4F]/40 mb-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" /></svg>
+                  </div>
+                ))}
+                <div className="absolute bottom-0 z-10" style={{ left: "36px" }}>
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md">
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  </div>
+                </div>
+              </div>
+              <h3 className="font-bold text-[#222222] text-base leading-snug mb-1.5">Every caregiver is vetted</h3>
+              <p className="text-[#6B7280] text-xs leading-relaxed">Background checks, skill assessments, licence verification, and reference calls.</p>
+            </div>
+
+            {/* Card 2 — All female */}
+            <div className="bg-white rounded-2xl p-5 shadow-2xl border border-[#E8E4DC]">
+              <svg className="w-7 h-7 text-[#2D5B4F] mb-3" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 12v5m-2.5 2.5h5" />
+              </svg>
+              <h3 className="font-bold text-[#222222] text-lg">All female caregivers</h3>
+            </div>
+          </motion.div>
+
+          {/* ── RIGHT CARDS — hidden on mobile/tablet, visible on lg+ ── */}
+          <motion.div
+            style={{
+              opacity: rightO,
+              x: rightX,
+              scale: rightS,
+              position: "absolute",
+              left: "calc(50% + clamp(100px, 13vw, 195px) + 12px)",
+              top: "50%",
+              translateY: "-50%",
+              width: "clamp(270px, 24vw, 370px)",
+              zIndex: 30,
+              transformOrigin: "left center",
+            }}
+            className="hidden lg:flex flex-col gap-3 pointer-events-none"
+          >
+            {/* Card 3 — Same caregiver */}
+            <div className="bg-white rounded-2xl p-5 shadow-2xl border border-[#E8E4DC]">
+              <div className="flex gap-1.5 mb-4">
+                {["S", "M", "T", "W", "T", "S"].map((d, i) => (
+                  <div key={i} className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ${i === 0 ? "bg-[#2D5B4F] text-white" : "bg-[#2D5B4F]/10 text-[#2D5B4F]"}`}>{d}</div>
+                ))}
+              </div>
+              <h3 className="font-bold text-[#222222] text-base leading-snug mb-1.5">Same caregiver every time</h3>
+              <p className="text-[#6B7280] text-xs leading-relaxed">Subscribe to a weekly or monthly plan and keep the exact same caregiver at home.</p>
+            </div>
+
+            {/* Card 4 — NICU */}
+            <div className="bg-white rounded-2xl p-5 shadow-2xl border border-[#E8E4DC]">
+              <div className="w-14 h-14 bg-[#F0ECE4] rounded-2xl flex items-center justify-center mb-4">
+                <svg className="w-8 h-8 text-[#2D5B4F]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+              </div>
+              <h3 className="font-bold text-[#222222] text-lg leading-snug">NICU-trained newborn caregivers</h3>
+            </div>
+          </motion.div>
+
         </div>
-
-        {/* ── LEFT CARDS — hidden on mobile/tablet, visible on lg+ ── */}
-        <motion.div
-          style={{
-            opacity: leftO,
-            x: leftX,
-            scale: leftS,
-            position: "absolute",
-            right: "calc(50% + clamp(100px, 13vw, 195px) + 12px)",
-            top: "50%",
-            translateY: "-50%",
-            width: "clamp(270px, 24vw, 370px)",
-            zIndex: 30,
-            transformOrigin: "right center",
-          }}
-          className="hidden lg:flex flex-col gap-3 pointer-events-none"
-        >
-          {/* Card 1 — Every caregiver is vetted */}
-          <div className="bg-white rounded-2xl p-5 shadow-2xl border border-[#E8E4DC]">
-            <div className="relative h-14 mb-4">
-              {[2,1,0].map((i) => (
-                <div key={i} className="absolute rounded-xl overflow-hidden bg-[#e8e4dc] flex items-end justify-center"
-                  style={{ width: "48px", height: "56px", left: `${i * 16}px`, bottom: 0, zIndex: 3-i, transform: `rotate(${i===0?-8:i===1?-2:4}deg)` }}>
-                  <svg className="w-8 h-8 text-[#2D5B4F]/40 mb-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                </div>
-              ))}
-              <div className="absolute bottom-0 z-10" style={{ left: "36px" }}>
-                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md">
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
-                </div>
-              </div>
-            </div>
-            <h3 className="font-bold text-[#222222] text-base leading-snug mb-1.5">Every caregiver is vetted</h3>
-            <p className="text-[#6B7280] text-xs leading-relaxed">Background checks, skill assessments, licence verification, and reference calls.</p>
-          </div>
-
-          {/* Card 2 — All female */}
-          <div className="bg-white rounded-2xl p-5 shadow-2xl border border-[#E8E4DC]">
-            <svg className="w-7 h-7 text-[#2D5B4F] mb-3" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-              <circle cx="12" cy="8" r="4"/><path strokeLinecap="round" strokeLinejoin="round" d="M12 12v5m-2.5 2.5h5"/>
-            </svg>
-            <h3 className="font-bold text-[#222222] text-lg">All female caregivers</h3>
-          </div>
-        </motion.div>
-
-        {/* ── RIGHT CARDS — hidden on mobile/tablet, visible on lg+ ── */}
-        <motion.div
-          style={{
-            opacity: rightO,
-            x: rightX,
-            scale: rightS,
-            position: "absolute",
-            left: "calc(50% + clamp(100px, 13vw, 195px) + 12px)",
-            top: "50%",
-            translateY: "-50%",
-            width: "clamp(270px, 24vw, 370px)",
-            zIndex: 30,
-            transformOrigin: "left center",
-          }}
-          className="hidden lg:flex flex-col gap-3 pointer-events-none"
-        >
-          {/* Card 3 — Same caregiver */}
-          <div className="bg-white rounded-2xl p-5 shadow-2xl border border-[#E8E4DC]">
-            <div className="flex gap-1.5 mb-4">
-              {["S","M","T","W","T","S"].map((d,i) => (
-                <div key={i} className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ${i===0?"bg-[#2D5B4F] text-white":"bg-[#2D5B4F]/10 text-[#2D5B4F]"}`}>{d}</div>
-              ))}
-            </div>
-            <h3 className="font-bold text-[#222222] text-base leading-snug mb-1.5">Same caregiver every time</h3>
-            <p className="text-[#6B7280] text-xs leading-relaxed">Subscribe to a weekly or monthly plan and keep the exact same caregiver at home.</p>
-          </div>
-
-          {/* Card 4 — NICU */}
-          <div className="bg-white rounded-2xl p-5 shadow-2xl border border-[#E8E4DC]">
-            <div className="w-14 h-14 bg-[#F0ECE4] rounded-2xl flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-[#2D5B4F]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-            </div>
-            <h3 className="font-bold text-[#222222] text-lg leading-snug">NICU-trained newborn caregivers</h3>
-          </div>
-        </motion.div>
-
       </div>
-    </div>
     </>
   );
 }
@@ -355,21 +443,25 @@ const VIDEO_TESTIMONIALS = [
     quote: "After my C-section I was completely overwhelmed. Nordic sent a night nurse the very next day — she walked in, took charge, and I finally slept for the first time in three days. I cannot put into words what that meant.",
     name: "Mariam Al-Suwaidi",
     role: "Mother of newborn · Arabian Ranches",
+    img: "/images/mother3.jpg",
   },
   {
     quote: "Our daughter was born six weeks early and we were terrified to bring her home. Our Nordic nurse had real NICU experience and arrived knowing exactly what to monitor. That knowledge gave our whole family peace of mind.",
     name: "Layla Al-Rashidi",
     role: "Mother of twins · Downtown Dubai",
+    img: "/images/mother2.jpg",
   },
   {
     quote: "I was hesitant at first — I thought I should manage on my own. But our caregiver was so warm and professional that she felt like family within a week. Same face, same care, every single day.",
     name: "Jessica Thornton",
     role: "First-time mother · Palm Jumeirah",
+    img: "/images/mother3.jpg",
   },
   {
     quote: "The sleep routine they helped us build changed everything. Our baby went from waking five times a night to sleeping through in just twelve days. I went back to work feeling like a real person again.",
     name: "Hessa Al-Marzouqi",
     role: "Postpartum recovery · Business Bay",
+    img: "/images/mother4.jpg",
   },
 ];
 
@@ -380,80 +472,38 @@ function VideoTestimonialSection() {
   const next = () => setActive((p) => (p + 1) % total);
   const t = VIDEO_TESTIMONIALS[active];
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActive((p) => (p + 1) % total);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [total]);
+
   return (
     <section className="bg-[#1a2e28] pt-24 pb-20 px-6 overflow-hidden">
       <div className="max-w-[900px] mx-auto">
-
-        {/* Header */}
         <div className="flex items-start justify-between mb-8 gap-4 flex-wrap">
-          <h2
-            className="text-white font-semibold leading-[1.2]"
-            style={{ fontSize: "clamp(20px, 2.5vw, 32px)" }}
-          >
+          <h2 className="text-white font-semibold leading-[1.2]" style={{ fontSize: "clamp(20px, 2.5vw, 32px)" }}>
             They trusted us with the<br />most important job in the world.
           </h2>
           <div className="flex items-center gap-2 shrink-0 mt-1">
-            <button
-              onClick={prev}
-              className="w-9 h-9 rounded-full border border-white/25 flex items-center justify-center text-white/60 hover:border-white/60 hover:text-white transition"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
+            <button onClick={prev} className="w-9 h-9 rounded-full border border-white/25 flex items-center justify-center text-white/60 hover:border-white/60 hover:text-white transition">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <button
-              onClick={next}
-              className="w-9 h-9 rounded-full bg-white/10 border border-white/25 flex items-center justify-center text-white hover:bg-white/20 transition"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
+            <button onClick={next} className="w-9 h-9 rounded-full bg-white/10 border border-white/25 flex items-center justify-center text-white hover:bg-white/20 transition">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
             </button>
           </div>
         </div>
 
-        {/* Card */}
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
-          className="bg-[#F7F4EE] rounded-2xl overflow-hidden flex flex-col sm:flex-row"
-          style={{ minHeight: "300px" }}
-        >
-          {/* Left — video (same for all cards) */}
-          <div className="relative sm:w-[40%] shrink-0" style={{ minHeight: "220px" }}>
-            <video
-              autoPlay muted loop playsInline
-              className="absolute inset-0 w-full h-full object-cover"
-            >
-              <source src="/video/mother.mp4" type="video/mp4" />
-            </video>
-            {/* Icon overlays */}
-            <div className="absolute top-3 right-3 flex gap-1.5 z-10">
-              <div className="w-7 h-7 bg-black/35 rounded-full flex items-center justify-center">
-                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                </svg>
-              </div>
-              <div className="w-7 h-7 bg-black/35 rounded-full flex items-center justify-center">
-                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                </svg>
-              </div>
-            </div>
+        <motion.div key={active} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: "easeOut" }} className="bg-[#F7F4EE] rounded-2xl overflow-hidden flex flex-col sm:flex-row" style={{ minHeight: "300px" }}>
+          <div className="relative sm:w-[40%] shrink-0" style={{ minHeight: "300px" }}>
+            <Image src={t.img} alt={t.name} fill className="object-cover object-center" unoptimized />
           </div>
-
-          {/* Right — quote text (changes on click) */}
           <div className="flex flex-col justify-between px-8 sm:px-10 py-8 flex-1">
             <div>
-              <p className="text-[#2D5B4F] text-[10px] font-semibold uppercase tracking-[0.22em] mb-5">
-                Real Mothers, Real Words
-              </p>
-              <blockquote
-                className="text-[#1a2e28] font-medium leading-[1.65]"
-                style={{ fontSize: "clamp(14px, 1.4vw, 18px)" }}
-              >
+              <p className="text-[#2D5B4F] text-[10px] font-semibold uppercase tracking-[0.22em] mb-5">Real Mothers, Real Words</p>
+              <blockquote className="text-[#1a2e28] font-medium leading-[1.65]" style={{ fontSize: "clamp(14px, 1.4vw, 18px)" }}>
                 &ldquo;{t.quote}&rdquo;
               </blockquote>
             </div>
@@ -464,19 +514,14 @@ function VideoTestimonialSection() {
           </div>
         </motion.div>
 
-        {/* Dots */}
-        <div className="flex items-center gap-2 mt-6 justify-center">
-          {VIDEO_TESTIMONIALS.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className={`rounded-full transition-all duration-300 ${
-                i === active ? "w-6 h-2 bg-white" : "w-2 h-2 bg-white/25"
-              }`}
-            />
+        <div className="flex items-center gap-4 mt-6 justify-center">
+          {VIDEO_TESTIMONIALS.map((t, i) => (
+            <button key={i} onClick={() => setActive(i)} className="group flex flex-col items-center gap-1.5">
+              <div className={`transition-all duration-300 rounded-full ${i === active ? "w-10 h-2.5 bg-white" : i < active ? "w-2.5 h-2.5 bg-white/60" : "w-2.5 h-2.5 bg-white/25"}`} />
+              <span className={`text-xs font-semibold transition-colors duration-300 ${i === active ? "text-white" : "text-white/40"}`}>{t.name.split(" ")[0]}</span>
+            </button>
           ))}
         </div>
-
       </div>
     </section>
   );
@@ -681,33 +726,21 @@ function StarRow({ n }: { n: number }) {
   );
 }
 
-function FaqItem({ q, a }: { q: string; a: string }) {
+function FaqItem({ q, a, idx }: { q: string; a: string; idx: number }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="py-4">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-6 text-left group"
-      >
-        <span className="text-[#1a2e28] text-sm font-medium leading-snug group-hover:text-[#2D5B4F] transition-colors">
-          {q}
-        </span>
-        <span className="shrink-0 w-6 h-6 flex items-center justify-center text-[#1a2e28]/50">
-          <svg
-            className={`w-4 h-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-            fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
-          >
+    <div className={`rounded-xl transition-all duration-300 ${open ? "bg-[#1a2e28]/5 shadow-sm" : "bg-transparent"}`}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-4 text-left group px-4 py-4">
+        <span className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-300 ${open ? "bg-[#1a2e28] text-white" : "bg-[#1a2e28]/10 text-[#1a2e28]"}`}>{String(idx + 1).padStart(2, "0")}</span>
+        <span className="text-[#1a2e28] text-sm font-medium leading-snug group-hover:text-[#2D5B4F] transition-colors flex-1">{q}</span>
+        <span className="shrink-0 w-6 h-6 flex items-center justify-center">
+          <svg className={`w-4 h-4 transition-all duration-300 ${open ? "rotate-180 text-[#1a2e28]" : "text-[#1a2e28]/40"}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
         </span>
       </button>
-      <motion.div
-        initial={false}
-        animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
-        transition={{ duration: 0.22 }}
-        className="overflow-hidden"
-      >
-        <p className="text-[#6B7280] text-sm leading-relaxed pt-3 pb-1 max-w-2xl">{a}</p>
+      <motion.div initial={false} animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
+        <p className="text-[#6B7280] text-sm leading-relaxed px-4 pb-4 pl-[60px]">{a}</p>
       </motion.div>
     </div>
   );
@@ -748,213 +781,64 @@ export default function MotherAndBabyPage() {
 
       {/* ══════════════════════════
           SECTION 2 — HERO
-          Exact DarDoc Mother & Baby style
+          Matching IV Therapy hero style
       ══════════════════════════ */}
-      <section className="relative min-h-[100dvh] flex flex-col justify-end overflow-hidden">
-        {/* Background — real photo */}
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[#1a2e28]">
         <div className="absolute inset-0">
-          <Image
-            src="/images/mother.png"
-            alt="Mother and Baby care at home"
-            fill
-            className="object-cover object-center"
-            priority
-            unoptimized
-          />
-          {/* Dark overlay — bottom-heavy so text is readable */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.65) 75%, rgba(0,0,0,0.72) 100%)" }} />
+          <Image src="/images/mother.png" alt="Mother and Baby care at home in Dubai" fill className="object-cover object-center" priority unoptimized />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/70 to-transparent" />
         </div>
 
-        {/* Content — bottom-left anchored like DarDoc */}
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pb-10 pt-32">
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pt-28 pb-16">
+          <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-16 items-center">
+            <div>
+              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-5">
+                <span className="inline-flex items-center gap-2 bg-[#2D5B4F]/15 border border-[#2D5B4F]/20 text-[#C9C3B3] text-[11px] font-semibold uppercase tracking-[0.15em] px-4 py-2 rounded-full">
+                  <svg className="w-3.5 h-3.5 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
+                  Mother & Baby Care · Dubai · DHA-Licensed
+                </span>
+              </motion.div>
 
-          {/* Small label — uppercase, wide tracking */}
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-white/65 text-[11px] font-medium uppercase tracking-[0.18em] mb-4"
-          >
-            Maternity Care · Newborn Care · Post-Natal Support in Dubai
-          </motion.p>
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-bold text-white leading-[1.1] mb-3" style={{ fontSize: "clamp(32px, 5vw, 60px)" }}>
+                Premium Mother & Baby Care in UAE<br />
+                <span className="font-normal text-white/70" style={{ fontSize: "clamp(18px, 3vw, 36px)" }}>NICU-Trained, Home Delivered</span>
+              </motion.h1>
 
-          {/* Main heading — font-weight 500, exact DarDoc sizing */}
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-medium text-white leading-[1.05] tracking-tight mb-4 max-w-2xl"
-            style={{ fontSize: "clamp(28px, 5.5vw, 68px)" }}
-          >
-            Pregnancy. Newborn. Nights and beyond.
-            <br />
-            <span className="text-white/70" style={{ fontWeight: 400, fontSize: "clamp(20px, 4vw, 52px)" }}>
-              One trained caregiver, every step of the way.
-            </span>
-          </motion.h1>
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/60 text-base leading-relaxed mb-4 max-w-md">
+                Pregnancy, Newborn & Post-Natal Support
+              </motion.p>
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} className="text-white/80 text-lg font-medium mb-8 max-w-md">
+                One trained caregiver, every step of the way
+              </motion.p>
 
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-white/80 text-base leading-relaxed mb-7 max-w-lg"
-          >
-            From your first scan to your baby&apos;s first laugh.
-          </motion.p>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-8">
+                <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white hover:bg-white/90 text-black font-semibold px-7 py-3.5 rounded-full text-sm transition-all duration-300">
+                  <svg className="w-4 h-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
+                  Talk to us now
+                </a>
+              </motion.div>
+            </div>
 
-          {/* CTA Buttons — exact DarDoc style */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-wrap gap-3 mb-8"
-          >
-            <motion.a
-              href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`}
-              target="_blank" rel="noopener noreferrer"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 bg-white text-[#222222] font-semibold px-6 py-3 rounded-full text-sm shadow-md"
-            >
-              <svg className="w-4 h-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
-              Talk to us now
-            </motion.a>
-          </motion.div>
-
-          {/* Trust bar — inline at bottom like DarDoc */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            className="flex flex-wrap gap-x-4 gap-y-2"
-          >
-            {[
-              { icon: "⭐", text: "4.9 rated" },
-              { icon: "👶", text: "3,000+ mothers" },
-              { icon: "🏥", text: "DHA License #2985077" },
-              { icon: "🩺", text: "NICU · BLS trained" },
-              { icon: "👩‍⚕️", text: "Nordic-employed" },
-              { icon: "💰", text: "From AED 33/hr" },
-            ].map(item => (
-              <div key={item.text} className="flex items-center gap-1.5">
-                <span className="text-sm">{item.icon}</span>
-                <span className="text-white/75 text-xs font-medium whitespace-nowrap">{item.text}</span>
+            <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="hidden lg:block">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ minHeight: "480px" }}>
+                <Image src="/images/mother2.jpg" alt="Mother and Baby care nurse at home" fill className="object-cover object-center" unoptimized />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e28]/50 via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-4">
+                    <p className="text-white font-semibold text-sm">Starting from AED 33/hr</p>
+                    <p className="text-white/60 text-xs mt-1">Home visits · DHA-licensed · NICU-trained nurses</p>
+                  </div>
+                </div>
               </div>
-            ))}
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ══════════════════════════
-          SECTION 2B — CARE FOR EVERY STAGE
-          5 image cards — exact DarDoc style
+          SERVICES — grouped by category from API
       ══════════════════════════ */}
-      <section className="py-16 bg-[#F7F4EE]">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
-
-          {/* Heading */}
-          <FadeIn className="mb-10">
-  <h2
-    className="
-      text-[#143D3D]
-      text-[clamp(34px,4vw,52px)]
-      leading-[1.1]
-      font-normal
-      tracking-[-0.04em]
-    "
-    style={{ fontFamily: "Inter, sans-serif" }}
-  >
-    Care for every stage, from one trained team.
-  </h2>
-
-  <p className="mt-3 text-base text-[#7A7A7A] max-w-2xl">
-    Nordic-employed. NICU-trained. Never a freelance pool.
-  </p>
-</FadeIn>
-
-          
-
-          {/* 5 Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {[
-              {
-                tag: "Before Birth",
-                title: "Pre-natal & midwife support",
-                desc: "Prenatal check-ins and midwife support at home. Sets up the team that will care for you after delivery.",
-                img: "/images/nurse.png",
-              },
-              {
-                tag: "Specialised Newborn",
-                title: "Premature & post-procedure care",
-                desc: "NICU-trained caregivers for moments that need real expertise. Premature babies, post-procedures, and specialist-grade newborn care.",
-                img: "/images/nurse2.png",
-              },
-              {
-                tag: "Daily Newborn",
-                title: "Newborn & post-natal care",
-                desc: "Feeding, sleep, and newborn routines for those first few months. The hands-on support every new parent really needs from the start.",
-                img: "/images/mother2.jpg",
-              },
-              {
-                tag: "Night and Overnight",
-                title: "Overnight care, every night",
-                desc: "NICU-trained caregivers through the night, so you can actually sleep. The first night feels like getting your life back.",
-                img: "/images/mother3.jpg",
-              },
-              {
-                tag: "On-Demand",
-                title: "Occasional babysitting",
-                desc: "Trained caregivers for date nights, work calls, or plans you love. Same vetted caregivers, by the hour, never a stranger.",
-                img: "/images/mother4.jpg",
-              },
-            ].map((card, i) => (
-              <FadeIn key={card.title} delay={i * 0.07}>
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer"
-                  style={{ minHeight: "380px" }}
-                >
-                  {/* Background image */}
-                  <div className="absolute inset-0">
-                    <Image
-                      src={card.img}
-                      alt={card.title}
-                      fill
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                      unoptimized
-                    />
-                    {/* Gradient overlay — dark at bottom */}
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.72) 70%, rgba(0,0,0,0.85) 100%)" }} />
-                  </div>
-
-                  {/* Content */}
-                  <div className="relative z-10 flex flex-col justify-between h-full p-5" style={{ minHeight: "380px" }}>
-                    {/* Top tag */}
-                    <span className="self-start text-[9px] text-white/60 uppercase tracking-widest font-medium bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/15">
-                      {card.tag}
-                    </span>
-
-                    {/* Bottom content */}
-                    <div className="mt-auto">
-                      <h3 className="text-white font-semibold text-lg leading-snug mb-3">{card.title}</h3>
-                      <p className="text-white/55 text-xs leading-relaxed mb-5">{card.desc}</p>
-                      <motion.a
-                        href={`https://wa.me/${WA_NUM}?text=${encodeURIComponent(`Hi! I'd like to learn more about ${card.title}.`)}`}
-                        target="_blank" rel="noopener noreferrer"
-                        whileHover={{ scale: 1.04 }}
-                        className="inline-flex items-center bg-white text-[#1F3C34] text-xs font-semibold px-5 py-2.5 rounded-full"
-                      >
-                        Learn more
-                      </motion.a>
-                    </div>
-                  </div>
-                </motion.div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
+      <CategoryServicesSection />
 
       {/* ══════════════════════════
           SECTION 3B — SCROLL STICKY
@@ -984,38 +868,28 @@ export default function MotherAndBabyPage() {
 
       {/* ══════════════════════════
           SECTION 10 — FAQ
-          DarDoc style — left heading, right accordion
       ══════════════════════════ */}
-      <section className="bg-[#F7F4EE] py-20 px-6">
-        <div className="max-w-[1100px] mx-auto">
-          <div className="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16 items-start">
-
-            {/* Left — heading */}
-            <FadeIn>
-              <h2 className="font-semibold text-[#1a2e28] leading-[1.1] sticky top-24"
-                style={{ fontSize: "clamp(28px, 3vw, 42px)" }}>
-                Questions?<br />Answers.
-              </h2>
-            </FadeIn>
-
-            {/* Right — accordion */}
-            <div className="divide-y divide-[#1a2e28]/10">
-              {[
-                { q: "How does newborn care at home with Nordic work?", a: "We match you with a NICU-trained, Nordic-employed caregiver based on your baby's age, your schedule, and your specific needs. Your caregiver arrives briefed and ready — no strangers, no surprises." },
-                { q: "What is the difference between a maternity nurse, a caregiver, and a nanny?", a: "A maternity nurse is clinically trained for newborn and postpartum care. A caregiver provides daily support including feeding, bathing, and health monitoring. A nanny focuses on general childcare. Nordic provides maternity nurses and caregivers — never untrained nannies." },
-                { q: "Do you offer pre-natal and post-natal support beyond newborn care?", a: "Yes. We offer prenatal home visits, midwife support, postpartum recovery care, and lactation guidance — covering the full journey from pregnancy through the fourth trimester." },
-                { q: "Do you offer overnight or night-nurse care?", a: "Absolutely. Our overnight care is one of our most popular services. A NICU-trained caregiver takes the night shift so you can sleep, recover, and wake up rested." },
-                { q: "Can you help with breastfeeding support?", a: "Yes. Our lactation-trained nurses provide hands-on breastfeeding guidance, latch support, and feeding schedules — at home, on your schedule." },
-                { q: "Do you provide specialised care for premature babies?", a: "Yes. We have NICU-trained caregivers with direct experience caring for premature and medically complex newborns. We also coordinate with your hospital team if needed." },
-                { q: "Can I book a caregiver for just a few hours or one night?", a: "Yes. We offer hourly, daily, overnight, and monthly plans. Whether you need a few hours of relief or full-time support, we have a plan for you." },
-                { q: "Are your caregivers Nordic employees or freelancers?", a: "All our caregivers are directly employed by Nordic — never freelancers or from a third-party pool. This means consistent standards, proper training, and full accountability." },
-                { q: "Are your caregivers NICU-trained?", a: "Yes. Every caregiver we place for newborn and infant care holds NICU training or equivalent clinical certification, with a minimum of 3 years of neonatal experience." },
-                { q: "Is Nordic a licensed care provider in the UAE?", a: "Yes. Nordic holds a valid DHA (Dubai Health Authority) license and operates fully within UAE healthcare regulations." },
-                { q: "Can I keep the same caregiver throughout my journey?", a: "Yes. With a weekly or monthly plan, you are assigned the same caregiver for every visit. Consistency matters — for you and your baby." },
-                { q: "What if I do not like the assigned caregiver?", a: "We will replace your caregiver, no questions asked. Your comfort and your baby's wellbeing come first. We will find the right match for your family." },
-              ].map(({ q, a }) => <FaqItem key={q} q={q} a={a} />)}
-            </div>
-
+      <section className="bg-[#F7F4EE] py-16 px-6">
+        <div className="max-w-[900px] mx-auto">
+          <FadeIn className="mb-10 text-center">
+            <p className="text-[#2D5B4F] text-xs font-semibold uppercase tracking-widest mb-3">FAQ</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#1a2e28]">Questions? Answers.</h2>
+          </FadeIn>
+          <div className="space-y-2">
+            {[
+              { q: "How does newborn care at home with Nordic work?", a: "We match you with a NICU-trained, Nordic-employed caregiver based on your baby's age, your schedule, and your specific needs. Your caregiver arrives briefed and ready — no strangers, no surprises." },
+              { q: "What is the difference between a maternity nurse, a caregiver, and a nanny?", a: "A maternity nurse is clinically trained for newborn and postpartum care. A caregiver provides daily support including feeding, bathing, and health monitoring. A nanny focuses on general childcare. Nordic provides maternity nurses and caregivers — never untrained nannies." },
+              { q: "Do you offer pre-natal and post-natal support beyond newborn care?", a: "Yes. We offer prenatal home visits, midwife support, postpartum recovery care, and lactation guidance — covering the full journey from pregnancy through the fourth trimester." },
+              { q: "Do you offer overnight or night-nurse care?", a: "Absolutely. Our overnight care is one of our most popular services. A NICU-trained caregiver takes the night shift so you can sleep, recover, and wake up rested." },
+              { q: "Can you help with breastfeeding support?", a: "Yes. Our lactation-trained nurses provide hands-on breastfeeding guidance, latch support, and feeding schedules — at home, on your schedule." },
+              { q: "Do you provide specialised care for premature babies?", a: "Yes. We have NICU-trained caregivers with direct experience caring for premature and medically complex newborns. We also coordinate with your hospital team if needed." },
+              { q: "Can I book a caregiver for just a few hours or one night?", a: "Yes. We offer hourly, daily, overnight, and monthly plans. Whether you need a few hours of relief or full-time support, we have a plan for you." },
+              { q: "Are your caregivers Nordic employees or freelancers?", a: "All our caregivers are directly employed by Nordic — never freelancers or from a third-party pool. This means consistent standards, proper training, and full accountability." },
+              { q: "Are your caregivers NICU-trained?", a: "Yes. Every caregiver we place for newborn and infant care holds NICU training or equivalent clinical certification, with a minimum of 3 years of neonatal experience." },
+              { q: "Is Nordic a licensed care provider in the UAE?", a: "Yes. Nordic holds a valid DHA (Dubai Health Authority) license and operates fully within UAE healthcare regulations." },
+              { q: "Can I keep the same caregiver throughout my journey?", a: "Yes. With a weekly or monthly plan, you are assigned the same caregiver for every visit. Consistency matters — for you and your baby." },
+              { q: "What if I do not like the assigned caregiver?", a: "We will replace your caregiver, no questions asked. Your comfort and your baby's wellbeing come first. We will find the right match for your family." },
+            ].map(({ q, a }, i) => <FaqItem key={q} q={q} a={a} idx={i} />)}
           </div>
         </div>
       </section>

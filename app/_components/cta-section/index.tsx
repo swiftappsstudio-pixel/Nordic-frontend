@@ -25,7 +25,7 @@ export const CTASection: React.FC<CtaSectionProps> = ({
 
   return (
     <section
-      className="relative w-full py-20 flex items-center justify-center text-white overflow-hidden"
+      className="relative w-full pt-10 pb-8 mt-6 flex items-center justify-center text-white overflow-hidden"
       style={{
         backgroundImage: `url(${imageUrl})`,
         backgroundSize: "cover",
@@ -55,7 +55,7 @@ export const CTASection: React.FC<CtaSectionProps> = ({
           Book via WhatsApp
         </button>
 
-        <p className="font-brand text-xs text-white/30 mt-6">
+        <p className="font-brand text-xs text-white/30 mt-4 pb-0">
           Quick response &bull; No app required &bull; Available 24/7
         </p>
       </div>

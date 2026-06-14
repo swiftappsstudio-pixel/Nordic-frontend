@@ -15,7 +15,7 @@ const FOOTER_SERVICES = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#543826] text-white pt-12 pb-6">
+    <footer className="bg-[#543826] text-white pt-10 pb-6">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-10 mb-10">
           <div className="flex flex-col items-center md:items-start">

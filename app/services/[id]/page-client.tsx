@@ -71,7 +71,7 @@ export default function ServiceDetailPage({ id }: Props) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-28 pb-16">
+    <div className="min-h-screen bg-gray-50 pt-28 ">
       <div className="max-w-6xl mx-auto px-5">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
