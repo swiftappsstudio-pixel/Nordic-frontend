@@ -206,6 +206,7 @@ export function ServiceWizard() {
   const addonArray = useFieldArray({ control, name: "addons" });
 
   const watchedTitle = watch("title");
+  const watchedCategory = watch("category");
 
   /* ================= LOAD CATEGORIES ================= */
 
@@ -219,9 +220,10 @@ export function ServiceWizard() {
   // Keep slug auto-synced with title until the user edits the slug manually
   useEffect(() => {
     if (!slugTouched) {
-      setValue("slug", slugify(watchedTitle || ""));
+      const parts = [watchedCategory, watchedTitle].filter(Boolean).map(slugify);
+      setValue("slug", parts.join("-"));
     }
-  }, [watchedTitle, slugTouched, setValue]);
+  }, [watchedTitle, watchedCategory, slugTouched, setValue]);
 
   /* ================= IMAGE HELPERS ================= */
 
