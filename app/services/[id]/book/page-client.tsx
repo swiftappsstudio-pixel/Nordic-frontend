@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getServiceDetail, createBooking, getCategories, getServicesByCategory, getServices } from "@/app/_common/api";
@@ -15,7 +15,7 @@ import {
 } from "@/app/_common/interfaces";
 import { useAuth } from "@/app/_common/auth-context";
 
-type Step = "addons" | "datetime" | "cart" | "info" | "payments";
+type Step = "addons" | "datetime" | "summary";
 
 interface Props {
   id: string;
@@ -24,9 +24,7 @@ interface Props {
 const STEPS: { key: Step; label: string; icon: string }[] = [
   { key: "addons", label: "Add-ons", icon: "+" },
   { key: "datetime", label: "Date & Time", icon: "📅" },
-  { key: "cart", label: "Cart", icon: "🛒" },
-  { key: "info", label: "Your Information", icon: "👤" },
-  { key: "payments", label: "Payments", icon: "💳" },
+  { key: "summary", label: "Summary", icon: "📋" },
 ];
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -41,6 +39,7 @@ function BookingContent({ id }: Props) {
   const { user, token } = useAuth();
 
   const [step, setStep] = useState<Step>("addons");
+  const stepRef = useRef<HTMLDivElement>(null);
   const [service, setService] = useState<ServiceWithVariants | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [loading, setLoading] = useState(true);
@@ -92,6 +91,12 @@ function BookingContent({ id }: Props) {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (stepRef.current) {
+      stepRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [step]);
+
   const getDaysInMonth = (month: number, year: number) => new Date(year, month + 1, 0).getDate();
   const getFirstDayOfMonth = (month: number, year: number) => { const day = new Date(year, month, 1).getDay(); return day === 0 ? 6 : day - 1; };
   const isDateDisabled = (day: number) => { const date = new Date(calendarYear, calendarMonth, day); const today = new Date(); today.setHours(0, 0, 0, 0); return date < today; };
@@ -111,13 +116,12 @@ function BookingContent({ id }: Props) {
   const canProceed = () => {
     if (step === "addons") return true;
     if (step === "datetime") return !!(selectedDate && selectedTime);
-    if (step === "cart") return true;
-    if (step === "info") { if (user) return true; return !!(guestInfo.fullName && guestInfo.email && guestInfo.phone); }
+    if (step === "summary") { if (user) return true; return !!(guestInfo.fullName && guestInfo.email && guestInfo.phone); }
     return true;
   };
 
-  const goNext = () => { const idx = currentStepIndex; if (step === "info" && user) { setStep("payments"); return; } if (idx < STEPS.length - 1) setStep(STEPS[idx + 1].key); };
-  const goBack = () => { const idx = currentStepIndex; if (step === "payments" && user) { setStep("cart"); return; } if (idx > 0) setStep(STEPS[idx - 1].key); };
+  const goNext = () => { const idx = currentStepIndex; if (idx < STEPS.length - 1) setStep(STEPS[idx + 1].key); };
+  const goBack = () => { const idx = currentStepIndex; if (idx > 0) setStep(STEPS[idx - 1].key); };
 
   const handleConfirmBooking = async () => {
     setSubmitting(true); setBookingError("");
@@ -190,7 +194,7 @@ function BookingContent({ id }: Props) {
         <div className="rounded-3xl bg-[#f9f7f3] p-6 shadow-sm border border-transparent hover:border-gray-200 transition-all duration-300">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-sm text-gray-500">Streamlined booking in five clear steps</p>
+              <p className="text-sm text-gray-500">Streamlined booking in three clear steps</p>
               <h1 className="text-2xl md:text-3xl font-semibold text-[#1f2937]">Book your service with confidence</h1>
             </div>
             <div className="text-right">
@@ -224,7 +228,7 @@ function BookingContent({ id }: Props) {
             </div>
           </div>
         </div>
-        <div className="flex-1 bg-white rounded-3xl shadow-xl p-6 flex flex-col overflow-hidden">
+        <div ref={stepRef} className="flex-1 bg-white rounded-3xl shadow-xl p-6 flex flex-col overflow-hidden">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 {currentStepIndex > 0 && <button onClick={goBack} className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 text-gray-500">&#8249;</button>}
@@ -305,48 +309,34 @@ function BookingContent({ id }: Props) {
                   )}
                 </div>
               )}
-              {step === "cart" && (
+              {step === "summary" && (
                 <div>
-                  <p className="text-gray-500 text-sm mb-6">Review your selected services before proceeding.</p>
+                  <p className="text-gray-500 text-sm mb-6">Review your booking, provide your information, and confirm payment.</p>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl"><div><p className="font-semibold text-gray-800">{service.title}</p>{selectedVariant ? <p className="text-sm text-gray-500">{selectedVariant.name} — {selectedVariant.sessions} sessions</p> : <p className="text-sm text-gray-500">1 Session</p>}{selectedDate && <p className="text-xs text-gray-400 mt-1">{new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>}</div><span className="text-orange-600 font-bold text-lg">AED {basePrice.toFixed(2)}</span></div>
+                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl"><div><p className="font-semibold text-gray-800">{service.title}</p>{selectedVariant ? <p className="text-sm text-gray-500">{selectedVariant.name} — {selectedVariant.sessions} sessions</p> : <p className="text-sm text-gray-500">1 Session</p>}{selectedDate && <p className="text-xs text-gray-400 mt-1">{new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{selectedTime && ` • ${(() => { const [h, m] = selectedTime.split(":"); const hour = parseInt(h); const ampm = hour >= 12 ? "PM" : "AM"; const h12 = hour % 12 || 12; return `${h12}:${m} ${ampm}`; })()}`}</p>}</div><span className="text-orange-600 font-bold text-lg">AED {basePrice.toFixed(2)}</span></div>
                     {cartItems.map((addon, i) => (
                       <div key={i} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                         <div className="flex items-center gap-3"><span className="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded">Add-on</span><p className="font-medium text-gray-800">{addon.title}</p></div>
                         <div className="flex items-center gap-3"><span className="text-orange-600 font-bold">AED {addon.price.toFixed(2)}</span><button onClick={() => setCartItems((prev) => prev.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-lg">&times;</button></div>
                       </div>
                     ))}
-                    <div className="flex justify-between items-center p-4 bg-orange-50 rounded-xl mt-4"><span className="font-bold text-[#543826] text-lg">Total</span><span className="font-bold text-orange-600 text-lg">AED {totalPrice.toFixed(2)}</span></div>
                   </div>
-                </div>
-              )}
-              {step === "info" && (
-                <div><p className="text-gray-500 text-sm mb-6">Please provide your details to complete the booking.</p>
-                  <div className="space-y-4">
-                    <div><label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label><input type="text" value={guestInfo.fullName} onChange={(e) => setGuestInfo({ ...guestInfo, fullName: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="Enter your full name" /></div>
-                    <div><label className="block text-sm font-medium text-gray-700 mb-1">Email *</label><input type="email" value={guestInfo.email} onChange={(e) => setGuestInfo({ ...guestInfo, email: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="Enter your email" /></div>
-                    <div><label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label><input type="tel" value={guestInfo.phone} onChange={(e) => setGuestInfo({ ...guestInfo, phone: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="+971 XX XXX XXXX" /></div>
-                    
-                  </div>
-                </div>
-              )}
-              {step === "payments" && (
-                <div><p className="text-gray-500 text-sm mb-6">Review your booking and confirm payment.</p>
-                  <div className="space-y-3">
-                    <div className="flex justify-between py-2 border-b"><span className="text-gray-500 text-sm">Service</span><span className="font-medium text-gray-800 text-sm">{service.title}</span></div>
-                    <div className="flex justify-between py-2 border-b"><span className="text-gray-500 text-sm">Package</span><span className="font-medium text-gray-800 text-sm">{selectedVariant ? selectedVariant.name : "1 Session"}</span></div>
-                    {selectedDate && <div className="flex justify-between py-2 border-b"><span className="text-gray-500 text-sm">Date</span><span className="font-medium text-gray-800 text-sm">{new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span></div>}
-                    {cartItems.length > 0 && <div className="flex justify-between py-2 border-b"><span className="text-gray-500 text-sm">Add-ons</span><span className="font-medium text-gray-800 text-sm">{cartItems.length} item(s) — AED {addonsTotal.toFixed(2)}</span></div>}
-                    <div className="flex justify-between py-2 border-b"><span className="text-gray-500 text-sm">Patient</span><span className="font-medium text-gray-800 text-sm">{user ? user.name : guestInfo.fullName}</span></div>
+                  <div className="mt-6 space-y-4">
+                      <p className="text-sm font-medium text-gray-700">Your Information</p>
+                      <div><label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label><input type="text" value={guestInfo.fullName} onChange={(e) => setGuestInfo({ ...guestInfo, fullName: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="Enter your full name" /></div>
+                      <div><label className="block text-sm font-medium text-gray-700 mb-1">Email *</label><input type="email" value={guestInfo.email} onChange={(e) => setGuestInfo({ ...guestInfo, email: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="Enter your email" /></div>
+                      <div><label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label><input type="tel" value={guestInfo.phone} onChange={(e) => setGuestInfo({ ...guestInfo, phone: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="+971 XX XXX XXXX" /></div>
+                    </div>
+                  <div className="space-y-3 mt-6">
                     <div className="flex justify-between py-2 border-b"><span className="text-gray-500 text-sm">Payment Method</span><span className="font-medium text-gray-800 text-sm">Cash on Delivery</span></div>
                     <div className="flex justify-between items-center py-3 bg-orange-50 rounded-xl px-4"><span className="font-bold text-[#543826]">Total</span><span className="font-bold text-orange-600 text-lg">AED {totalPrice.toFixed(2)}</span></div>
                   </div>
-                  {bookingError && <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg p-3 mb-4">{bookingError}</div>}
+                  {bookingError && <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg p-3 mt-4">{bookingError}</div>}
                 </div>
               )}
             </div>
             <div className="flex justify-end pt-4 border-t border-gray-100 mt-2">
-              {step === "payments" ? (
+              {step === "summary" ? (
                 <button disabled={submitting} onClick={handleConfirmBooking} className="bg-[#543826] hover:bg-[#3e2a1c] disabled:opacity-50 text-white font-semibold px-8 py-3 rounded-xl transition">{submitting ? "Booking..." : "Confirm Booking"}</button>
               ) : (
                 <button disabled={!canProceed()} onClick={goNext} className="border border-gray-300 text-gray-700 font-medium px-8 py-3 rounded-xl hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition">Continue</button>
