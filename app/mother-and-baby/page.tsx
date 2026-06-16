@@ -785,7 +785,7 @@ export default function MotherAndBabyPage() {
       ══════════════════════════ */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[#1a2e28]">
         <div className="absolute inset-0">
-          <Image src="/images/mother.png" alt="Mother and Baby care at home in Dubai" fill className="object-cover object-center" priority unoptimized />
+          <Image src="/images/mother_child_2.png" alt="Mother and Baby care at home in Dubai" fill className="object-cover object-center" priority unoptimized />
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/70 to-transparent" />
         </div>
 
@@ -821,7 +821,7 @@ export default function MotherAndBabyPage() {
 
             <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="hidden lg:block">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ minHeight: "480px" }}>
-                <Image src="/images/mother2.jpg" alt="Mother and Baby care nurse at home" fill className="object-cover object-center" unoptimized />
+                <Image src="/images/mother_child_1.png" alt="Mother and Baby care nurse at home" fill className="object-cover object-center" unoptimized />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e28]/50 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-4">
