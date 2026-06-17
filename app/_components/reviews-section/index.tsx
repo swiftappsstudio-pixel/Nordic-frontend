@@ -1,65 +1,19 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
-const REVIEWS = [
-  {
-    text: "Nordic transformed how I experience healthcare at home. The nurse was punctual, warm, and incredibly knowledgeable. I will never go back to a clinic for routine care again.",
-    name: "Valeria Costa Martínez",
-    badge: "Verified user",
-    rating: 5,
-  },
-  {
-    text: "From the moment I messaged Nordic on WhatsApp to the moment the nurse left, everything felt effortless. Real professionals who treat you like a person, not a patient number.",
-    name: "Erik Johansson",
-    badge: "Verified user",
-    rating: 4.8,
-  },
-  {
-    text: "The IV therapy at home was a revelation. No waiting, no clinic, no stress. The nurse was expert and reassuring. I felt the difference within an hour. Absolutely worth it.",
-    name: "Sofia Andersen",
-    badge: "Verified user",
-    rating: 4.9,
-  },
-  {
-    text: "Nordic made booking home healthcare feel as easy as ordering a cab. The nurse arrived on time, explained everything clearly, and the whole experience was genuinely five-star.",
-    name: "Ahmed Al-Mansoori",
-    badge: "Verified user",
-    rating: 5,
-  },
-  {
-    text: "Having a NICU-trained nurse at home after my baby arrived gave our whole family confidence. She knew every answer before we even asked the question. Nordic is simply the best.",
-    name: "Priya Sharma",
-    badge: "Verified user",
-    rating: 4.9,
-  },
-];
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
-const VIDEOS = [
-  "/images/video_4.mp4",
-  "/images/video_1.mp4",
-  "/video/new_one_2.mp4",
-  "/video/video3.mp4",
-  "/video/new_one_1.mp4",
-  "/video/video5.mp4",
-];
-
-type Item =
-  | { type: "video"; src: string; key: string }
-  | { type: "review"; review: typeof REVIEWS[0]; key: string };
-
-const ITEMS: Item[] = [];
-let vIdx = 0;
-for (let i = 0; i < REVIEWS.length; i++) {
-  ITEMS.push({ type: "video", src: VIDEOS[vIdx++], key: `v-${vIdx}` });
-  ITEMS.push({ type: "review", review: REVIEWS[i], key: `r-${i}` });
-}
-while (vIdx < VIDEOS.length) {
-  ITEMS.push({ type: "video", src: VIDEOS[vIdx++], key: `v-${vIdx}` });
-}
-// remaining videos
-while (vIdx < VIDEOS.length) {
-  ITEMS.push({ type: "video", src: VIDEOS[vIdx++], key: `v-${vIdx}` });
+interface ReviewData {
+  _id: string;
+  description: string;
+  value: number;
+  reviewBy: string;
+  media?: string;
+  mediaType?: string;
+  isActive?: boolean;
+  sortOrder?: number;
 }
 
 function Stars({ rating }: { rating: number }) {
@@ -91,7 +45,7 @@ function BlueTick() {
   );
 }
 
-function VideoCard({ src }: { src: string }) {
+function VideoMediaCard({ src }: { src: string }) {
   const [playing, setPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -102,7 +56,7 @@ function VideoCard({ src }: { src: string }) {
   };
 
   return (
-    <div className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl relative overflow-hidden cursor-pointer group">
+    <div className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl overflow-hidden relative cursor-pointer group">
       <video
         ref={videoRef}
         src={src}
@@ -115,10 +69,7 @@ function VideoCard({ src }: { src: string }) {
         className="w-full h-full object-cover"
       />
       {!playing && (
-        <div
-          className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors"
-          onClick={togglePlay}
-        >
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors" onClick={togglePlay}>
           <div className="w-12 h-12 rounded-full bg-[#543826] flex items-center justify-center group-hover:bg-[#3e2a1c] transition-colors shadow-lg">
             <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
@@ -133,10 +84,50 @@ function VideoCard({ src }: { src: string }) {
   );
 }
 
+function ImageMediaCard({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl overflow-hidden relative">
+      <Image src={src} alt={alt} fill className="object-cover" unoptimized />
+    </div>
+  );
+}
+
+function ReviewTextCard({ review }: { review: ReviewData }) {
+  return (
+    <div className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl p-4 flex flex-col items-center text-center">
+      <Stars rating={review.value} />
+      <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-3">
+        <span className="text-xl font-bold">&ldquo;</span>
+        {review.description}
+        <span className="text-xl font-bold">&rdquo;</span>
+      </p>
+      <div className="flex-1" />
+      <div className="flex flex-col items-center gap-0.5 mt-6">
+        <p className="font-bold text-xs text-[#543826]">{review.reviewBy}</p>
+        <div className="flex items-center gap-1">
+          <p className="text-[11px] text-gray-500">Verified review</p>
+          <BlueTick />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ReviewsSection() {
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const autoScrollRef = useRef<number | null>(null);
   const pausedRef = useRef(false);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/reviews`)
+      .then((res) => res.json())
+      .then((data) => {
+        const list = Array.isArray(data.data) ? data.data : [];
+        setReviews(list.filter((r: ReviewData) => r.isActive));
+      })
+      .catch(() => setReviews([]));
+  }, []);
 
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -147,7 +138,7 @@ export default function ReviewsSection() {
 
   useEffect(() => {
     const container = scrollRef.current;
-    if (!container) return;
+    if (!container || reviews.length === 0) return;
 
     let scrollPos = 0;
     const speed = 0.5;
@@ -184,7 +175,9 @@ export default function ReviewsSection() {
       container.removeEventListener("mouseenter", handleHover);
       container.removeEventListener("mouseleave", handleLeave);
     };
-  }, []);
+  }, [reviews]);
+
+  if (reviews.length === 0) return null;
 
   return (
     <section className="py-16 bg-white">
@@ -219,59 +212,15 @@ export default function ReviewsSection() {
         className="flex gap-4 overflow-x-hidden pb-4 pl-6 pr-6"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {ITEMS.map((item) => {
-          if (item.type === "video") {
-            return <VideoCard key={item.key} src={item.src} />;
+        {reviews.map((review) => {
+          const cards = [];
+          if (review.media && review.mediaType === "video") {
+            cards.push(<VideoMediaCard key={`media-${review._id}`} src={review.media} />);
+          } else if (review.media && review.mediaType === "image") {
+            cards.push(<ImageMediaCard key={`media-${review._id}`} src={review.media} alt={review.reviewBy} />);
           }
-          const review = item.review;
-          return (
-            <div
-              key={item.key}
-              className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl p-4 flex flex-col items-center text-center"
-            >
-              <Stars rating={review.rating} />
-              <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-2">
-                <span className="text-xl font-bold">&ldquo;</span>
-                {review.text}
-                <span className="text-xl font-bold">&rdquo;</span>
-              </p>
-              <div className="flex-1" />
-              <div className="flex flex-col items-center gap-0.5 mt-6">
-                <p className="font-bold text-xs text-[#543826]">{review.name}</p>
-                <div className="flex items-center gap-1">
-                  <p className="text-[11px] text-gray-500">{review.badge}</p>
-                  <BlueTick />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-        {ITEMS.map((item) => {
-          if (item.type === "video") {
-            return <VideoCard key={`dup-${item.key}`} src={item.src} />;
-          }
-          const review = item.review;
-          return (
-            <div
-              key={`dup-${item.key}`}
-              className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl p-4 flex flex-col items-center text-center"
-            >
-              <Stars rating={review.rating} />
-              <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-2">
-                <span className="text-xl font-bold">&ldquo;</span>
-                {review.text}
-                <span className="text-xl font-bold">&rdquo;</span>
-              </p>
-              <div className="flex-1" />
-              <div className="flex flex-col items-center gap-0.5 mt-6">
-                <p className="font-bold text-xs text-[#543826]">{review.name}</p>
-                <div className="flex items-center gap-1">
-                  <p className="text-[11px] text-gray-500">{review.badge}</p>
-                  <BlueTick />
-                </div>
-              </div>
-            </div>
-          );
+          cards.push(<ReviewTextCard key={`text-${review._id}`} review={review} />);
+          return cards;
         })}
       </div>
     </section>

@@ -9,6 +9,7 @@ import {BiShoppingBag} from "react-icons/bi";
 import { BiCalendar } from "react-icons/bi";
 import { MdOutlineViewCarousel } from "react-icons/md";
 import { MdDashboard } from "react-icons/md";
+import { MdStarRate } from "react-icons/md";
 
 export const AdminSideBar = () => {
   const pathname = usePathname();
@@ -43,6 +44,11 @@ export const AdminSideBar = () => {
       href: "/admin/banners",
       label: "Banner Management",
       icon: <MdOutlineViewCarousel className="h-7 w-7 mr-2" />,
+    },
+    {
+      href: "/admin/reviews",
+      label: "Reviews",
+      icon: <MdStarRate className="h-7 w-7 mr-2" />,
     },
   ];
 
