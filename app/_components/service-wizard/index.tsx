@@ -65,7 +65,7 @@ const optionalNumber = (min: number) =>
 const variantSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
   price: requiredNumber(0),
-  sessions: requiredNumber(1, "Required (≥ 1)"),
+  sessions: optionalNumber(0),
   freeSessions: optionalNumber(0),
   validityInDays: requiredNumber(1, "Required (≥ 1)"),
   isDefault: z.boolean(),
@@ -364,7 +364,7 @@ export function ServiceWizard() {
           serviceId,
           name: v.name,
           price: Number(v.price),
-          sessions: Number(v.sessions),
+          sessions: v.sessions ? Number(v.sessions) : undefined,
           freeSessions: Number(v.freeSessions || 0),
           validityInDays: Number(v.validityInDays),
           isDefault: v.isDefault,
@@ -879,6 +879,7 @@ export function ServiceWizard() {
                       <input
                         type="number"
                         {...register(`variants.${i}.sessions`)}
+                        min={0}
                         placeholder="Sessions"
                         className={inputClass(!!e?.sessions)}
                       />
@@ -888,6 +889,7 @@ export function ServiceWizard() {
                       <input
                         type="number"
                         {...register(`variants.${i}.freeSessions`)}
+                        min={0}
                         placeholder="Free Sessions"
                         className={inputClass(!!e?.freeSessions)}
                       />
