@@ -137,6 +137,7 @@ export default function ServiceDetailPage({ id }: Props) {
 
           {/* ====== Right — Info ====== */}
           <div className="space-y-6">
+            <h1 className="text-3xl font-bold text-[#543826]">{service.title}</h1>
             {service.description && (
               <p className="text-gray-700 leading-relaxed text-[15px]">
                 {service.description}
@@ -201,11 +202,11 @@ export default function ServiceDetailPage({ id }: Props) {
               </div>
             </div>
 
-            {!(service.category === "IV Therapy") && ((service.discountPrice ?? service.actualPrice) != null || service.variants?.length) ? (
+            {(service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null) || service.variants?.length > 0 ? (
               <div>
                 <h3 className="font-semibold text-[#543826] mb-3">Select Package</h3>
                 <div className="grid gap-3">
-                  {(service.discountPrice ?? service.actualPrice) != null && (
+                  {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null && (
                     <button
                       onClick={() => { setUseBasePrice(true); setSelectedVariant(null); }}
                       className={`w-full text-left p-4 rounded-xl border-2 transition ${
@@ -249,9 +250,9 @@ export default function ServiceDetailPage({ id }: Props) {
                           </p>
                           {variant.description && <p className="text-gray-500 text-sm mt-1">{variant.description}</p>}
                           <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                            <span>{variant.sessions} sessions</span>
+                            {variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
                             {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}
-                            <span>Valid {variant.validityInDays} days</span>
+                            {variant.validityInDays > 0 && <span>Valid {variant.validityInDays} days</span>}
                           </div>
                         </div>
                         <span className="text-orange-600 font-bold text-lg">AED {variant.price}</span>

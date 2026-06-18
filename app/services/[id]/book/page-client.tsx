@@ -21,7 +21,7 @@ interface Props {
   id: string;
 }
 
-const STEPS: { key: Step; label: string; icon: string }[] = [
+const ALL_STEPS: { key: Step; label: string; icon: string }[] = [
   { key: "addons", label: "Add-ons", icon: "+" },
   { key: "datetime", label: "Date & Time", icon: "📅" },
   { key: "summary", label: "Summary", icon: "📋" },
@@ -68,6 +68,9 @@ function BookingContent({ id }: Props) {
         const subIndex = searchParams.get("sub");
         const found = data.variants?.find((v) => v._id === variantId);
         setSelectedVariant(found || data.variants?.find((v) => v.isDefault) || data.variants?.[0] || null);
+        if (!data.addOns?.length) {
+          setStep("datetime");
+        }
         if (subIndex !== null && data.subServices?.[parseInt(subIndex)]) {
           const sub = data.subServices[parseInt(subIndex)];
           setCartItems([{ serviceId: id as string, title: sub.name, price: sub.price }]);
@@ -111,17 +114,18 @@ function BookingContent({ id }: Props) {
   const basePrice = selectedVariant?.price ?? service?.discountPrice ?? service?.actualPrice ?? 0;
   const addonsTotal = cartItems.reduce((sum, a) => sum + a.price, 0);
   const totalPrice = basePrice + addonsTotal;
-  const currentStepIndex = STEPS.findIndex((s) => s.key === step);
+  const hasAddOns = (service?.addOns?.length ?? 0) > 0;
+  const activeSteps = hasAddOns ? ALL_STEPS : ALL_STEPS.filter(s => s.key !== "addons");
+  const currentStepIndex = activeSteps.findIndex((s) => s.key === step);
 
   const canProceed = () => {
-    if (step === "addons") return true;
     if (step === "datetime") return !!(selectedDate && selectedTime);
     if (step === "summary") { if (user) return true; return !!(guestInfo.fullName && guestInfo.email && guestInfo.phone); }
     return true;
   };
 
-  const goNext = () => { const idx = currentStepIndex; if (idx < STEPS.length - 1) setStep(STEPS[idx + 1].key); };
-  const goBack = () => { const idx = currentStepIndex; if (idx > 0) setStep(STEPS[idx - 1].key); };
+  const goNext = () => { const idx = currentStepIndex; if (idx < activeSteps.length - 1) setStep(activeSteps[idx + 1].key); };
+  const goBack = () => { const idx = currentStepIndex; if (idx > 0) setStep(activeSteps[idx - 1].key); };
 
   const handleConfirmBooking = async () => {
     setSubmitting(true); setBookingError("");
@@ -194,20 +198,20 @@ function BookingContent({ id }: Props) {
         <div className="rounded-3xl bg-[#f9f7f3] p-6 shadow-sm border border-transparent hover:border-gray-200 transition-all duration-300">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-sm text-gray-500">Streamlined booking in three clear steps</p>
-              <h1 className="text-2xl md:text-3xl font-semibold text-[#1f2937]">Book your service with confidence</h1>
+              <p className="text-sm text-gray-500">{hasAddOns ? "Streamlined booking in three clear steps" : "Book your service — select date, review & confirm"}</p>
+              <h1 className="text-2xl md:text-3xl font-semibold text-[#1f2937]">{hasAddOns ? "Book your service with confidence" : "Complete your booking"}</h1>
             </div>
             <div className="text-right">
-              <p className="text-xs uppercase tracking-[0.25em] text-gray-400">Step {currentStepIndex + 1} of {STEPS.length}</p>
-              <p className="text-base font-semibold text-[#543826]">{STEPS[currentStepIndex].label}</p>
+              <p className="text-xs uppercase tracking-[0.25em] text-gray-400">Step {currentStepIndex + 1} of {activeSteps.length}</p>
+              <p className="text-base font-semibold text-[#543826]">{activeSteps[currentStepIndex].label}</p>
             </div>
           </div>
           <div className="mt-6">
             <div className="relative h-2 rounded-full bg-gray-200 overflow-hidden">
-              <div className="absolute inset-y-0 left-0 bg-linear-to-r from-green-500 to-[#543826] transition-all duration-500 ease-out" style={{ width: `${(currentStepIndex / (STEPS.length - 1)) * 100}%` }} />
+              <div className="absolute inset-y-0 left-0 bg-linear-to-r from-green-500 to-[#543826] transition-all duration-500 ease-out" style={{ width: `${(currentStepIndex / (activeSteps.length - 1)) * 100}%` }} />
             </div>
             <div className="relative mt-4 flex items-center justify-between gap-3">
-              {STEPS.map((s, i) => {
+              {activeSteps.map((s, i) => {
                 const isCompleted = i < currentStepIndex;
                 const isActive = i === currentStepIndex;
                 return (
@@ -232,17 +236,17 @@ function BookingContent({ id }: Props) {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 {currentStepIndex > 0 && <button onClick={goBack} className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 text-gray-500">&#8249;</button>}
-                <h2 className="text-xl font-semibold text-gray-400">{STEPS[currentStepIndex]?.label}</h2>
+                <h2 className="text-xl font-semibold text-gray-400">{activeSteps[currentStepIndex]?.label}</h2>
               </div>
               <button onClick={() => router.push(`/services/${id}`)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl">&times;</button>
             </div>
             <div className="flex-1 overflow-y-auto">
-              {step === "addons" && (
+              {step === "addons" && hasAddOns && (
                 <div>
                   {(service.variants && service.variants.length > 0) || (service.discountPrice ?? service.actualPrice) != null ? (
                     <div className="mb-5"><label className="block text-sm font-medium text-gray-700 mb-2">Select Package</label>
                       <select value={selectedVariant?._id || "__base__"} onChange={(e) => { if (e.target.value === "__base__") { setSelectedVariant(null); } else { const v = service.variants?.find((v2) => v2._id === e.target.value); if (v) setSelectedVariant(v); } }} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        {(service.discountPrice ?? service.actualPrice) != null && <option value="__base__">1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}</option>}
+                        {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null && <option value="__base__">1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}</option>}
                         {service.variants?.map((v) => <option key={v._id} value={v._id}>{v.name} — AED {v.price} ({v.sessions} sessions)</option>)}
                       </select>
                     </div>
@@ -271,6 +275,15 @@ function BookingContent({ id }: Props) {
               )}
               {step === "datetime" && (
                 <div>
+                  {!hasAddOns && ((service.variants && service.variants.length > 0) || (service.discountPrice ?? service.actualPrice) != null) && (
+                    <div className="mb-5">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Select Package</label>
+                      <select value={selectedVariant?._id || "__base__"} onChange={(e) => { if (e.target.value === "__base__") { setSelectedVariant(null); } else { const v = service.variants?.find((v2) => v2._id === e.target.value); if (v) setSelectedVariant(v); } }} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null && <option value="__base__">1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}</option>}
+                        {service.variants?.map((v) => <option key={v._id} value={v._id}>{v.name} — AED {v.price} ({v.sessions} sessions)</option>)}
+                      </select>
+                    </div>
+                  )}
                   <div className="flex items-center gap-3 mb-6">
                     <select value={calendarMonth} onChange={(e) => setCalendarMonth(parseInt(e.target.value))} className="bg-[#8a7060] text-white px-4 py-2.5 rounded-lg text-sm font-medium appearance-none cursor-pointer pr-8" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 20 20'%3E%3Cpath d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 8px center", backgroundSize: "16px" }}>
                       {MONTHS.map((m, i) => <option key={m} value={i}>{m}</option>)}
@@ -313,7 +326,7 @@ function BookingContent({ id }: Props) {
                 <div>
                   <p className="text-gray-500 text-sm mb-6">Review your booking, provide your information, and confirm payment.</p>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl"><div><p className="font-semibold text-gray-800">{service.title}</p>{selectedVariant ? <p className="text-sm text-gray-500">{selectedVariant.name} — {selectedVariant.sessions} sessions</p> : <p className="text-sm text-gray-500">1 Session</p>}{selectedDate && <p className="text-xs text-gray-400 mt-1">{new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{selectedTime && ` • ${(() => { const [h, m] = selectedTime.split(":"); const hour = parseInt(h); const ampm = hour >= 12 ? "PM" : "AM"; const h12 = hour % 12 || 12; return `${h12}:${m} ${ampm}`; })()}`}</p>}</div><span className="text-orange-600 font-bold text-lg">AED {basePrice.toFixed(2)}</span></div>
+                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl"><div><p className="font-semibold text-gray-800">{service.title}</p>{selectedVariant ? <p className="text-sm text-gray-500">{selectedVariant.name} — {selectedVariant.sessions} sessions</p> : service.category === "IV Therapy" ? <p className="text-sm text-gray-500">1 Session</p> : null}{selectedDate && <p className="text-xs text-gray-400 mt-1">{new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{selectedTime && ` • ${(() => { const [h, m] = selectedTime.split(":"); const hour = parseInt(h); const ampm = hour >= 12 ? "PM" : "AM"; const h12 = hour % 12 || 12; return `${h12}:${m} ${ampm}`; })()}`}</p>}</div><span className="text-orange-600 font-bold text-lg">AED {basePrice.toFixed(2)}</span></div>
                     {cartItems.map((addon, i) => (
                       <div key={i} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                         <div className="flex items-center gap-3"><span className="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded">Add-on</span><p className="font-medium text-gray-800">{addon.title}</p></div>

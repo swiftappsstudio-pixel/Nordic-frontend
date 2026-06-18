@@ -19,7 +19,7 @@ import ReviewsSection from "@/app/_components/reviews-section";
 
 type Step = "addons" | "datetime" | "summary";
 
-const STEPS: { key: Step; label: string; icon: string }[] = [
+const ALL_STEPS: { key: Step; label: string; icon: string }[] = [
   { key: "addons", label: "Add-ons", icon: "+" },
   { key: "datetime", label: "Date & Time", icon: "📅" },
   { key: "summary", label: "Summary", icon: "📋" },
@@ -95,6 +95,9 @@ function BookingContent() {
             data.variants?.[0] ||
             null
         );
+        if (!(data.addOns?.length && data.addOns.length > 0)) {
+          setStep("datetime");
+        }
         // Handle sub-service param (e.g., ?sub=0 for first sub-service)
         const subIdx = searchParams.get("sub");
         if (subIdx !== null && data.subServices) {
@@ -125,18 +128,7 @@ function BookingContent() {
      }
    }, [user]);
 
-// Auto-skip addons step if no variants/addons/sub-services available
-     useEffect(() => {
-       if (!loading && service) {
-         const hasVariants = service.variants?.length && service.variants.length > 0;
-         const hasBasePrice = (service.discountPrice ?? service.actualPrice) != null;
-         const hasAddOns = service.addOns?.length && service.addOns.length > 0;
-         const hasSubServices = service.subServices?.length && service.subServices.length > 0;
-         if (!hasVariants && !hasBasePrice && !hasAddOns && !hasSubServices) {
-           setStep("datetime");
-         }
-       }
-     }, [loading, service]);
+ // Dynamic steps based on addOns - skip addons step when no addOns
 
   useEffect(() => {
     if (stepRef.current) {
@@ -207,11 +199,13 @@ function BookingContent() {
   const addOnsTotal = selectedAddOns.reduce((sum, a) => sum + a.price, 0);
   const totalPrice = selectedSubService ? subServicePrice + addOnsTotal : basePrice + addOnsTotal;
 
+  const hasAddOns = (addOns.length ?? 0) > 0;
+  const activeSteps = hasAddOns ? ALL_STEPS : ALL_STEPS.filter(s => s.key !== "addons");
+
   // Step navigation
-  const currentStepIndex = STEPS.findIndex((s) => s.key === step);
+  const currentStepIndex = activeSteps.findIndex((s) => s.key === step);
 
   const canProceed = () => {
-    if (step === "addons") return true;
     if (step === "datetime") return !!(selectedDate && selectedTime);
     if (step === "summary") {
       if (user) return true;
@@ -222,15 +216,15 @@ function BookingContent() {
 
   const goNext = () => {
     const idx = currentStepIndex;
-    if (idx < STEPS.length - 1) {
-      setStep(STEPS[idx + 1].key);
+    if (idx < activeSteps.length - 1) {
+      setStep(activeSteps[idx + 1].key);
     }
   };
 
   const goBack = () => {
     const idx = currentStepIndex;
     if (idx > 0) {
-      setStep(STEPS[idx - 1].key);
+      setStep(activeSteps[idx - 1].key);
     }
   };
 
@@ -399,10 +393,10 @@ function BookingContent() {
                 </div>
                 <div className="text-right">
                   <p className="text-xs uppercase tracking-[0.25em] text-gray-400">
-                    Step {currentStepIndex + 1} of {STEPS.length}
+                    Step {currentStepIndex + 1} of {activeSteps.length}
                   </p>
                   <p className="text-base font-semibold text-[#543826]">
-                    {STEPS[currentStepIndex]?.label}
+                    {activeSteps[currentStepIndex]?.label}
                   </p>
                 </div>
               </div>
@@ -411,11 +405,11 @@ function BookingContent() {
                 <div className="relative h-2 rounded-full bg-gray-200 overflow-hidden">
                   <div
                     className="absolute inset-y-0 left-0 bg-linear-to-r from-green-500 to-[#543826] transition-all duration-500 ease-out"
-                    style={{ width: `${(currentStepIndex / (STEPS.length - 1)) * 100}%` }}
+                    style={{ width: `${(currentStepIndex / (activeSteps.length - 1)) * 100}%` }}
                   />
                 </div>
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  {STEPS.map((s, i) => {
+                <div className="mt-4 grid grid-cols-{activeSteps.length} gap-3">
+                  {activeSteps.map((s, i) => {
                     const isCompleted = i < currentStepIndex;
                     const isActive = i === currentStepIndex;
                     return (
@@ -463,7 +457,7 @@ function BookingContent() {
                     </button>
                   )}
                   <h2 className="text-xl font-semibold text-gray-400">
-                    {STEPS[currentStepIndex]?.label}
+                    {activeSteps[currentStepIndex]?.label}
                   </h2>
                 </div>
                 <button
@@ -475,8 +469,8 @@ function BookingContent() {
               </div>
 
                {/* ========== STEP CONTENT ========== */}
-                 {/* ========== STEP: ADD-ONS ========== */}
-                 {step === "addons" && (
+                  {/* ========== STEP: ADD-ONS ========== */}
+                  {step === "addons" && hasAddOns && (
                    <div>
                     {/* Add-ons dropdown */}
                     {addOns.length > 0 && (
@@ -557,7 +551,7 @@ function BookingContent() {
                             }}
                             className="w-full appearance-none border-2 border-[#543826]/20 rounded-3xl px-5 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
                           >
-                            {(service.discountPrice ?? service.actualPrice) !=
+                            {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) !=
                               null && (
                               <option value="__base__">
                                 1 Session — AED{" "}
@@ -593,11 +587,48 @@ function BookingContent() {
               {/* ========== STEP: DATE & TIME ========== */}
               {step === "datetime" && (
                 <div className="space-y-6">
+                  {!hasAddOns && !selectedSubService && ((service.variants && service.variants.length > 0) || (service.discountPrice ?? service.actualPrice) != null) && (
+                    <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+                      <label className="block text-sm font-semibold text-[#543826] uppercase tracking-wider mb-2">
+                        Select Package
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={selectedVariant?._id || "__base__"}
+                          onChange={(e) => {
+                            if (e.target.value === "__base__") {
+                              setSelectedVariant(null);
+                            } else {
+                              const v = service.variants?.find(
+                                (v2: any) => v2._id === e.target.value
+                              );
+                              if (v) setSelectedVariant(v);
+                            }
+                          }}
+                          className="w-full appearance-none border-2 border-[#543826]/20 rounded-3xl px-5 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
+                        >
+                          {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null && (
+                            <option value="__base__">
+                              1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}
+                            </option>
+                          )}
+                          {service.variants?.map((v: any) => (
+                            <option key={v._id} value={v._id}>
+                              {v.name} — AED {v.price} ({v.sessions} sessions)
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                          <svg className="w-5 h-5 text-[#543826]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#543826]">
-                          Step 2
+                          {hasAddOns ? "Step 2" : "Step 1"}
                         </p>
                         <h3 className="mt-3 text-2xl font-semibold text-gray-900">
                           Pick your date and time
@@ -769,7 +800,7 @@ function BookingContent() {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#543826]">
-                          Step 3
+                          {hasAddOns ? "Step 3" : "Step 2"}
                         </p>
                         <h3 className="mt-3 text-2xl font-semibold text-gray-900">
                           Summary
@@ -795,9 +826,9 @@ function BookingContent() {
                             <p className="text-sm text-gray-500 mt-1">
                               {selectedVariant.name} — {selectedVariant.sessions} sessions
                             </p>
-                          ) : (
+                          ) : service.category === "IV Therapy" ? (
                             <p className="text-sm text-gray-500 mt-1">1 Session</p>
-                          )}
+                          ) : null}
                           {selectedDate && (
                             <p className="text-sm text-gray-500 mt-1">
                               {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
@@ -1053,14 +1084,14 @@ function BookingContent() {
                         {selectedVariant.sessions} sessions
                       </p>
                     </div>
-                  ) : (
+                  ) : service.category === "IV Therapy" ? (
                     <div className="rounded-2xl bg-orange-50 p-3">
                       <p className="text-xs text-gray-600">Package</p>
                       <p className="mt-1 font-semibold text-gray-900">
                         Single Session
                       </p>
                     </div>
-                  )}
+                  ) : null}
 
                   {/* Selected Add-ons Counter */}
                   {selectedAddOns.length > 0 && (
@@ -1103,7 +1134,7 @@ function BookingContent() {
                   <div className="rounded-2xl bg-gray-50 p-3 border border-gray-200">
                     <p className="text-xs text-gray-600 uppercase tracking-wider">Progress</p>
                     <div className="mt-2 flex gap-1">
-                      {STEPS.map((_, i) => (
+                      {activeSteps.map((_, i) => (
                         <div
                           key={i}
                           className={`h-2 flex-1 rounded-full transition-all duration-300 ${
@@ -1117,7 +1148,7 @@ function BookingContent() {
                       ))}
                     </div>
                     <p className="mt-2 text-xs font-semibold text-[#543826]">
-                      Step {currentStepIndex + 1} of {STEPS.length}
+                      Step {currentStepIndex + 1} of {activeSteps.length}
                     </p>
                   </div>
                 </div>
