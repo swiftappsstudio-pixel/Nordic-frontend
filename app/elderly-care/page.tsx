@@ -33,9 +33,9 @@ function ServiceCard({ svc }: { svc: Service }) {
       </div>
       <div className="relative z-10 flex flex-col justify-between h-full p-5" style={{ minHeight: "340px" }}>
         <div>
-          <h3 className="text-white font-semibold text-base leading-snug">{svc.title}</h3>
+          <h3 className="text-white font-bold text-lg leading-snug">{svc.title}</h3>
           {svc.description && (
-            <p className="text-white/60 text-xs leading-relaxed line-clamp-2 mt-2">{svc.description}</p>
+            <p className="text-white/90 text-sm font-semibold leading-relaxed line-clamp-3 mt-2">{svc.description}</p>
           )}
         </div>
         <div className="mt-auto flex justify-center">
@@ -62,7 +62,7 @@ function CategoryServicesSection() {
   if (loading) {
     return (
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="px-8 sm:px-12 lg:px-16">
           <div className="flex justify-center py-20">
             <div className="w-10 h-10 border-4 border-[#1a2e28]/20 border-t-[#1a2e28] rounded-full animate-spin" />
           </div>
@@ -75,7 +75,7 @@ function CategoryServicesSection() {
 
   return (
     <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="px-8 sm:px-12 lg:px-16">
 
         {categories.map((cat) => (
           <div key={cat._id} className="mb-16">

@@ -8,8 +8,8 @@ export default function StatsSection() {
       description: "Across online consults and at-home visits in the UAE.",
     },
     {
-      value: "4 years since 2023",
-      label: "Since launch",
+      value: "4+",
+      label: "Years since launch",
       description: "Redefining healthcare in the UAE since 2021.",
     },
     {

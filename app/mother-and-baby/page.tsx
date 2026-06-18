@@ -119,7 +119,7 @@ function CategoryServicesSection() {
   if (loading) {
     return (
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="px-8 sm:px-12 lg:px-16">
           <div className="flex justify-center py-20">
             <div className="w-10 h-10 border-4 border-[#1a2e28]/20 border-t-[#1a2e28] rounded-full animate-spin" />
           </div>
@@ -132,7 +132,7 @@ function CategoryServicesSection() {
 
   return (
     <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="px-8 sm:px-12 lg:px-16">
         {categories.map((cat) => (
           <div key={cat._id} className="mb-16">
             <FadeIn>

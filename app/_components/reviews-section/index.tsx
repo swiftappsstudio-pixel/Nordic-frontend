@@ -24,7 +24,7 @@ function Stars({ rating }: { rating: number }) {
         const partial = !filled && i === Math.ceil(rating);
         const fraction = partial ? rating - Math.floor(rating) : 0;
         return (
-          <svg key={i} className="w-5 h-5" viewBox="0 0 20 20" fill="none">
+          <svg key={i} className="w-4 md:w-5 h-4 md:h-5" viewBox="0 0 20 20" fill="none">
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.948a1 1 0 00.95.69h4.168c.969 0 1.371 1.24.588 1.81l-3.392 2.463a1 1 0 00-.364 1.118l1.287 3.948c.3.921-.755 1.688-1.54 1.118l-3.392-2.463a1 1 0 00-1.175 0l-3.392 2.463c-.784.487-1.838-.197-1.539-1.118l1.287-3.948a1 1 0 00-.364-1.118L2.014 8.427c-.783-.487-.38-1.81.588-1.81h4.168a1 1 0 00.95-.69l1.286-3.948z" fill="#543826" clipPath={partial ? `inset(0 ${(1 - fraction) * 100}% 0 0)` : undefined} />
             {!filled && !partial && (
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.948a1 1 0 00.95.69h4.168c.969 0 1.371 1.24.588 1.81l-3.392 2.463a1 1 0 00-.364 1.118l1.287 3.948c.3.921-.755 1.688-1.54 1.118l-3.392-2.463a1 1 0 00-1.175 0l-3.392 2.463c-.784.487-1.838-.197-1.539-1.118l1.287-3.948a1 1 0 00-.364-1.118L2.014 8.427c-.783-.487-.38-1.81.588-1.81h4.168a1 1 0 00.95-.69l1.286-3.948z" fill="#C9C3B3" />
@@ -32,14 +32,14 @@ function Stars({ rating }: { rating: number }) {
           </svg>
         );
       })}
-      <span className="font-brand text-sm font-extrabold text-[#543826] ml-1">{rating}</span>
+      <span className="font-brand text-xs md:text-sm font-extrabold text-[#543826] ml-1">{rating}</span>
     </div>
   );
 }
 
 function BlueTick() {
   return (
-    <svg className="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+    <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
       <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.245.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zM7.4 5.802a1 1 0 00-1.414-1.414L9 11.586L8.16 10.69a1 1 0 00-1.414 1.414l1.746 1.746a1 1 0 001.414 0l3.586-3.586z" clipRule="evenodd" />
     </svg>
   );
@@ -56,7 +56,7 @@ function VideoMediaCard({ src }: { src: string }) {
   };
 
   return (
-    <div className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl overflow-hidden relative cursor-pointer group">
+    <div className="shrink-0 w-[200px] md:w-[260px] lg:w-[280px] h-[280px] md:h-[340px] lg:h-[360px] bg-[#F7EEE0] rounded-xl overflow-hidden relative cursor-pointer group">
       <video
         ref={videoRef}
         src={src}
@@ -70,8 +70,8 @@ function VideoMediaCard({ src }: { src: string }) {
       />
       {!playing && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors" onClick={togglePlay}>
-          <div className="w-12 h-12 rounded-full bg-[#543826] flex items-center justify-center group-hover:bg-[#3e2a1c] transition-colors shadow-lg">
-            <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 md:w-12 h-10 md:h-12 rounded-full bg-[#543826] flex items-center justify-center group-hover:bg-[#3e2a1c] transition-colors shadow-lg">
+            <svg className="w-4 md:w-5 h-4 md:h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
@@ -86,7 +86,7 @@ function VideoMediaCard({ src }: { src: string }) {
 
 function ImageMediaCard({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl overflow-hidden relative">
+    <div className="shrink-0 w-[200px] md:w-[260px] lg:w-[280px] h-[280px] md:h-[340px] lg:h-[360px] bg-[#F7EEE0] rounded-xl overflow-hidden relative">
       <Image src={src} alt={alt} fill className="object-cover" unoptimized />
     </div>
   );
@@ -94,18 +94,18 @@ function ImageMediaCard({ src, alt }: { src: string; alt: string }) {
 
 function ReviewTextCard({ review }: { review: ReviewData }) {
   return (
-    <div className="shrink-0 w-[260px] h-[340px] bg-[#F7EEE0] rounded-xl p-4 flex flex-col items-center text-center">
+    <div className="shrink-0 w-[200px] md:w-[260px] lg:w-[280px] h-[280px] md:h-[340px] lg:h-[360px] bg-[#F7EEE0] rounded-xl p-3 md:p-4 flex flex-col items-center text-center">
       <Stars rating={review.value} />
-      <p className="font-brand text-base font-bold text-[#543826] leading-snug mt-3">
-        <span className="text-xl font-bold">&ldquo;</span>
+      <p className="font-brand text-sm md:text-base font-bold text-[#543826] leading-snug mt-2 md:mt-3">
+        <span className="text-lg md:text-xl font-bold">&ldquo;</span>
         {review.description}
-        <span className="text-xl font-bold">&rdquo;</span>
+        <span className="text-lg md:text-xl font-bold">&rdquo;</span>
       </p>
       <div className="flex-1" />
-      <div className="flex flex-col items-center gap-0.5 mt-6">
-        <p className="font-bold text-xs text-[#543826]">{review.reviewBy}</p>
+      <div className="flex flex-col items-center gap-0.5 mt-4 md:mt-6">
+        <p className="font-bold text-[10px] md:text-xs text-[#543826]">{review.reviewBy}</p>
         <div className="flex items-center gap-1">
-          <p className="text-[11px] text-gray-500">Verified review</p>
+          <p className="text-[10px] md:text-[11px] text-gray-500">Verified review</p>
           <BlueTick />
         </div>
       </div>
@@ -132,7 +132,8 @@ export default function ReviewsSection() {
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
     pausedRef.current = true;
-    scrollRef.current.scrollBy({ left: dir === "left" ? -300 : 300, behavior: "smooth" });
+    const amount = scrollRef.current.clientWidth * 0.6;
+    scrollRef.current.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
     setTimeout(() => { pausedRef.current = false; }, 1500);
   };
 
@@ -180,26 +181,26 @@ export default function ReviewsSection() {
   if (reviews.length === 0) return null;
 
   return (
-    <section className="py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="font-brand text-2xl font-semibold text-[#543826]">
+    <section className="py-10 md:py-16 bg-white">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="flex items-center justify-between mb-6 md:mb-10">
+          <h2 className="font-brand text-xl md:text-2xl font-semibold text-[#543826]">
             Loved by our community
           </h2>
           <div className="flex items-center gap-2">
             <button
               onClick={() => scroll("left")}
-              className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#543826] hover:text-[#543826] transition"
+              className="w-7 h-7 md:w-9 md:h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#543826] hover:text-[#543826] transition"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button
               onClick={() => scroll("right")}
-              className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#543826] hover:text-[#543826] transition"
+              className="w-7 h-7 md:w-9 md:h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#543826] hover:text-[#543826] transition"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -209,7 +210,7 @@ export default function ReviewsSection() {
 
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-hidden pb-4 pl-6 pr-6"
+        className="flex gap-3 md:gap-4 overflow-x-hidden pb-4 pl-4 md:pl-6 pr-4 md:pr-6"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {reviews.map((review) => {

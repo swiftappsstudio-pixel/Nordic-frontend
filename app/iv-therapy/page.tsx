@@ -109,7 +109,7 @@ function CategoryServicesSection() {
   if (loading) {
     return (
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="px-8 sm:px-12 lg:px-16">
           <div className="flex justify-center py-20">
             <div className="w-10 h-10 border-4 border-[#543826]/20 border-t-[#543826] rounded-full animate-spin" />
           </div>
@@ -122,7 +122,7 @@ function CategoryServicesSection() {
 
   return (
     <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="px-8 sm:px-12 lg:px-16">
         {/* <FadeIn className="mb-12">
           <p className="text-[#543826] text-xs font-semibold uppercase tracking-widest mb-3">Our Services</p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Our Services in IV Therapy</h2>
