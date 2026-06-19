@@ -91,7 +91,17 @@ export default function UsersPage() {
         Users
       </h1>
 
-      {/* Table */}
+      {/* Content */}
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-[#593e30] border-t-transparent rounded-full animate-spin" />
+            <p className="text-gray-500 font-medium">Loading users...</p>
+          </div>
+        </div>
+      ) : users.length === 0 ? (
+        <div className="bg-white border rounded p-6 text-center text-gray-500">No users found</div>
+      ) : (
       <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
         <table className="w-full border-collapse">
           <thead className="bg-gray-100">
@@ -105,20 +115,7 @@ export default function UsersPage() {
           </thead>
 
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-10 text-center">
-                  Loading...
-                </td>
-              </tr>
-            ) : users.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-10 text-center">
-                  No users found
-                </td>
-              </tr>
-            ) : (
-              users.map(user => (
+              {users.map(user => (
                 <tr
                   key={user._id}
                   className="border-t hover:bg-gray-50"
@@ -193,11 +190,11 @@ export default function UsersPage() {
                     )}
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

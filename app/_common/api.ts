@@ -20,6 +20,7 @@ import {
   GuestInfo,
   Banner,
 } from "@/app/_common/interfaces";
+import { authFetch } from "@/app/_common/auth-fetch";
 
 // =========================================== Auth API CALLS ===========================================//
 
@@ -137,7 +138,7 @@ export const changePassword = async (
   data: { currentPassword: string; newPassword: string },
   token: string,
 ): Promise<MessageResponse> => {
-  const res = await fetch(`${API_BASE_URL}/users/change-password`, {
+  const res = await authFetch(`${API_BASE_URL}/users/change-password`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -156,7 +157,7 @@ export const changePassword = async (
 };
 
 export const getUserProfile = async (token: string) => {
-  const res = await fetch(`${API_BASE_URL}/users/me`, {
+  const res = await authFetch(`${API_BASE_URL}/users/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -291,7 +292,7 @@ export const createBooking = async (
   };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE_URL}/bookings`, {
+  const res = await authFetch(`${API_BASE_URL}/bookings`, {
     method: "POST",
     headers,
     body: JSON.stringify(data),
@@ -307,7 +308,7 @@ export const createBooking = async (
 export const getMyBookings = async (
   token: string,
 ): Promise<BookingResponse[]> => {
-  const res = await fetch(`${API_BASE_URL}/bookings/my`, {
+  const res = await authFetch(`${API_BASE_URL}/bookings/my`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -331,7 +332,7 @@ export const lookupGuestBookings = async (phone: string): Promise<BookingRespons
 export const getAdminBookings = async (
   token: string,
 ): Promise<BookingResponse[]> => {
-  const res = await fetch(`${API_BASE_URL}/admin/bookings?limit=100`, {
+  const res = await authFetch(`${API_BASE_URL}/admin/bookings?limit=100`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
@@ -350,7 +351,7 @@ export const getAdminBookingsByDateRange = async (
   startDate: string,
   endDate: string,
 ): Promise<BookingResponse[]> => {
-  const res = await fetch(
+  const res = await authFetch(
     `${API_BASE_URL}/admin/bookings/calendar?startDate=${startDate}&endDate=${endDate}`,
     {
       headers: { Authorization: `Bearer ${token}` },
@@ -371,7 +372,7 @@ export const adminCreateBooking = async (
   token: string,
   data: BookingRequest & { guestInfo: GuestInfo },
 ): Promise<BookingResponse> => {
-  const res = await fetch(`${API_BASE_URL}/admin/bookings`, {
+  const res = await authFetch(`${API_BASE_URL}/admin/bookings`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -395,7 +396,7 @@ export const adminRescheduleBooking = async (
   preferredDate: string,
   preferredTime: string,
 ): Promise<BookingResponse> => {
-  const res = await fetch(`${API_BASE_URL}/admin/bookings/${bookingId}/reschedule`, {
+  const res = await authFetch(`${API_BASE_URL}/admin/bookings/${bookingId}/reschedule`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -418,7 +419,7 @@ export const adminUpdateBookingStatus = async (
   bookingId: string,
   status: "confirmed" | "cancelled" | "completed",
 ): Promise<BookingResponse> => {
-  const res = await fetch(`${API_BASE_URL}/admin/bookings/${bookingId}/status`, {
+  const res = await authFetch(`${API_BASE_URL}/admin/bookings/${bookingId}/status`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -437,7 +438,7 @@ export const adminUpdateBookingStatus = async (
 };
 
 export const adminDeleteBooking = async (token: string, bookingId: string): Promise<void> => {
-  const res = await fetch(`${API_BASE_URL}/admin/bookings/${bookingId}`, {
+  const res = await authFetch(`${API_BASE_URL}/admin/bookings/${bookingId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -468,7 +469,7 @@ export const getAddOnsByService = async (serviceId: string): Promise<AddOn[]> =>
 export const getAdminDashboardStats = async (
   token: string,
 ): Promise<DashboardStats> => {
-  const res = await fetch(`${API_BASE_URL}/admin/stats`, {
+  const res = await authFetch(`${API_BASE_URL}/admin/stats`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });

@@ -15,6 +15,7 @@ import { useForm, useFieldArray, Controller, type FieldPath } from "react-hook-f
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/app/_common/auth-context";
+import { authFetch } from "@/app/_common/auth-fetch";
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
@@ -244,7 +245,7 @@ export function ServiceWizard() {
   const uploadSingleFile = async (file: File): Promise<string> => {
     const fd = new FormData();
     fd.append("file", file);
-    const res = await fetch(`${API_BASE_URL}/upload`, {
+    const res = await authFetch(`${API_BASE_URL}/upload`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: fd,
@@ -290,7 +291,7 @@ export function ServiceWizard() {
 
     let id = serviceId;
     if (!id) {
-      const res = await fetch(`${API_BASE_URL}/services`, {
+      const res = await authFetch(`${API_BASE_URL}/services`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -303,7 +304,7 @@ export function ServiceWizard() {
       id = data.data._id;
       setServiceId(id);
     } else {
-      const res = await fetch(`${API_BASE_URL}/services/${id}`, {
+      const res = await authFetch(`${API_BASE_URL}/services/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -328,7 +329,7 @@ export function ServiceWizard() {
     if (!serviceId) throw new Error("Service has not been created yet");
     const v = getValues();
 
-    const res = await fetch(`${API_BASE_URL}/services/${serviceId}`, {
+    const res = await authFetch(`${API_BASE_URL}/services/${serviceId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -354,7 +355,7 @@ export function ServiceWizard() {
     const { variants } = getValues();
 
     for (const v of variants) {
-      const res = await fetch(`${API_BASE_URL}/admin/variants`, {
+      const res = await authFetch(`${API_BASE_URL}/admin/variants`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -390,7 +391,7 @@ export function ServiceWizard() {
       isRequired: a.isRequired,
     }));
 
-    const res = await fetch(`${API_BASE_URL}/services/${serviceId}`, {
+    const res = await authFetch(`${API_BASE_URL}/services/${serviceId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -409,7 +410,7 @@ export function ServiceWizard() {
     if (!serviceId) throw new Error("Service has not been created yet");
     const { isActive, isFeatured } = getValues();
 
-    const res = await fetch(`${API_BASE_URL}/services/${serviceId}`, {
+    const res = await authFetch(`${API_BASE_URL}/services/${serviceId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -466,7 +467,7 @@ export function ServiceWizard() {
     setBusy(true);
     try {
       if (serviceId) {
-        await fetch(`${API_BASE_URL}/services/${serviceId}`, {
+        await authFetch(`${API_BASE_URL}/services/${serviceId}`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,

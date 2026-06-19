@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Pencil, Trash2, Star } from "lucide-react";
 import { useAuth } from "@/app/_common/auth-context";
+import { authFetch } from "@/app/_common/auth-fetch";
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
@@ -62,7 +63,7 @@ export default function ServiceDetailPage({ id }: Props) {
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this service?")) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/services/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const res = await authFetch(`${API_BASE_URL}/services/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error("Delete failed");
       router.push("/admin/services");
     } catch { alert("Failed to delete service"); }
@@ -70,7 +71,7 @@ export default function ServiceDetailPage({ id }: Props) {
 
   const toggleFeatured = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/services/${id}/featured`, { method: "PATCH", headers: { Authorization: `Bearer ${token}` } });
+      const res = await authFetch(`${API_BASE_URL}/services/${id}/featured`, { method: "PATCH", headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
       setService((prev) => (prev ? { ...prev, isFeatured: data.data.isFeatured } : prev));
@@ -78,7 +79,14 @@ export default function ServiceDetailPage({ id }: Props) {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen"><div className="w-10 h-10 border-4 border-[#543826] border-t-transparent rounded-full animate-spin" /></div>;
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-[#593e30] border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-500 font-medium">Loading service...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!service) {

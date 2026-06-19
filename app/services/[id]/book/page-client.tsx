@@ -65,12 +65,16 @@ function BookingContent({ id }: Props) {
       .then((data) => {
         setService(data);
         const variantId = searchParams.get("variant");
-        const subIndex = searchParams.get("sub");
-        const found = data.variants?.find((v) => v._id === variantId);
-        setSelectedVariant(found || data.variants?.find((v) => v.isDefault) || data.variants?.[0] || null);
+        if (variantId) {
+          const found = data.variants?.find((v) => v._id === variantId);
+          setSelectedVariant(found || data.variants?.find((v) => v.isDefault) || data.variants?.[0] || null);
+        } else {
+          setSelectedVariant(null);
+        }
         if (!data.addOns?.length) {
           setStep("datetime");
         }
+        const subIndex = searchParams.get("sub");
         if (subIndex !== null && data.subServices?.[parseInt(subIndex)]) {
           const sub = data.subServices[parseInt(subIndex)];
           setCartItems([{ serviceId: id as string, title: sub.name, price: sub.price }]);
@@ -174,17 +178,14 @@ function BookingContent({ id }: Props) {
                 );
                 window.open(`https://wa.me/971555828945?text=${msg}`, "_blank");
               }}
-              className="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1eb954] text-white font-brand font-semibold py-5 rounded-xl text-lg transition-all duration-300 hover:shadow-lg"
+              className="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1eb954] text-white font-semibold py-5 rounded-xl text-lg transition-all duration-300 hover:shadow-lg"
             >
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/>
               </svg>
               Send Booking Receipt via WhatsApp
             </button>
-
-            <p className="text-xs text-gray-400 mt-4 font-brand">
-              Share your booking details with us on WhatsApp for quick follow-up
-            </p>
+            <p className="text-xs text-gray-400 mt-4">Share your booking details with us on WhatsApp for quick follow-up</p>
           </div>
         </div>
       </div>
@@ -246,7 +247,7 @@ function BookingContent({ id }: Props) {
                   {(service.variants && service.variants.length > 0) || (service.discountPrice ?? service.actualPrice) != null ? (
                     <div className="mb-5"><label className="block text-sm font-medium text-gray-700 mb-2">Select Package</label>
                       <select value={selectedVariant?._id || "__base__"} onChange={(e) => { if (e.target.value === "__base__") { setSelectedVariant(null); } else { const v = service.variants?.find((v2) => v2._id === e.target.value); if (v) setSelectedVariant(v); } }} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null && <option value="__base__">1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}</option>}
+                        {(service.discountPrice ?? service.actualPrice) != null && <option value="__base__">1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}</option>}
                         {service.variants?.map((v) => <option key={v._id} value={v._id}>{v.name} — AED {v.price} ({v.sessions} sessions)</option>)}
                       </select>
                     </div>
@@ -279,7 +280,7 @@ function BookingContent({ id }: Props) {
                     <div className="mb-5">
                       <label className="block text-sm font-medium text-gray-700 mb-2">Select Package</label>
                       <select value={selectedVariant?._id || "__base__"} onChange={(e) => { if (e.target.value === "__base__") { setSelectedVariant(null); } else { const v = service.variants?.find((v2) => v2._id === e.target.value); if (v) setSelectedVariant(v); } }} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null && <option value="__base__">1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}</option>}
+                        {(service.discountPrice ?? service.actualPrice) != null && <option value="__base__">1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}</option>}
                         {service.variants?.map((v) => <option key={v._id} value={v._id}>{v.name} — AED {v.price} ({v.sessions} sessions)</option>)}
                       </select>
                     </div>
@@ -326,7 +327,7 @@ function BookingContent({ id }: Props) {
                 <div>
                   <p className="text-gray-500 text-sm mb-6">Review your booking, provide your information, and confirm payment.</p>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl"><div><p className="font-semibold text-gray-800">{service.title}</p>{selectedVariant ? <p className="text-sm text-gray-500">{selectedVariant.name} — {selectedVariant.sessions} sessions</p> : service.category === "IV Therapy" ? <p className="text-sm text-gray-500">1 Session</p> : null}{selectedDate && <p className="text-xs text-gray-400 mt-1">{new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{selectedTime && ` • ${(() => { const [h, m] = selectedTime.split(":"); const hour = parseInt(h); const ampm = hour >= 12 ? "PM" : "AM"; const h12 = hour % 12 || 12; return `${h12}:${m} ${ampm}`; })()}`}</p>}</div><span className="text-orange-600 font-bold text-lg">AED {basePrice.toFixed(2)}</span></div>
+                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl"><div><p className="font-semibold text-gray-800">{service.title}</p>{selectedVariant ? <p className="text-sm text-gray-500">{selectedVariant.name} — {selectedVariant.sessions} sessions</p> : !selectedVariant && (service.discountPrice ?? service.actualPrice) != null ? <p className="text-sm text-gray-500">1 Session</p> : null}{selectedDate && <p className="text-xs text-gray-400 mt-1">{new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{selectedTime && ` • ${(() => { const [h, m] = selectedTime.split(":"); const hour = parseInt(h); const ampm = hour >= 12 ? "PM" : "AM"; const h12 = hour % 12 || 12; return `${h12}:${m} ${ampm}`; })()}`}</p>}</div><span className="text-orange-600 font-bold text-lg">AED {basePrice.toFixed(2)}</span></div>
                     {cartItems.map((addon, i) => (
                       <div key={i} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                         <div className="flex items-center gap-3"><span className="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded">Add-on</span><p className="font-medium text-gray-800">{addon.title}</p></div>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import AddBannerModal from "./add-banner-modal";
 import { useAuth } from "@/app/_common/auth-context";
+import { authFetch } from "@/app/_common/auth-fetch";
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
@@ -30,7 +31,7 @@ export default function BannerPage() {
   const loadBanners = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/banners`, {
+      const res = await authFetch(`${API_BASE_URL}/admin/banners`, {
         headers: { Authorization: `Bearer ${token}` },
         cache: "no-store",
       });
@@ -69,7 +70,7 @@ export default function BannerPage() {
       ? `${API_BASE_URL}/admin/banners/${editBanner._id}`
       : `${API_BASE_URL}/admin/banners`;
 
-    const res = await fetch(url, {
+    const res = await authFetch(url, {
       method: editBanner ? "PUT" : "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: fd,
@@ -83,7 +84,7 @@ export default function BannerPage() {
   const deleteBanner = async (id: string) => {
     if (!confirm("Delete this banner?")) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/banners/${id}`, {
+      const res = await authFetch(`${API_BASE_URL}/admin/banners/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -108,7 +109,12 @@ export default function BannerPage() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">Loading banners...</p>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-[#593e30] border-t-transparent rounded-full animate-spin" />
+            <p className="text-gray-500 font-medium">Loading banners...</p>
+          </div>
+        </div>
       ) : banners.length === 0 ? (
         <div className="bg-white border rounded p-6 text-center text-gray-500">No banners found</div>
       ) : (

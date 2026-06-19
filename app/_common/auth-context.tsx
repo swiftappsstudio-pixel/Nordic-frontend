@@ -42,6 +42,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    const onAuthExpired = () => {
+      setToken(null);
+      setUser(null);
+    };
+    window.addEventListener("auth-expired", onAuthExpired);
+    return () => window.removeEventListener("auth-expired", onAuthExpired);
+  }, []);
+
   const login = (newToken: string, newUser: AuthUser) => {
     setToken(newToken);
     setUser(newUser);

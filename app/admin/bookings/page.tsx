@@ -394,7 +394,14 @@ export default function BookingsCalendarPage() {
         </button>
       </div>
 
-      {loading && <p className="text-gray-500 py-4">Loading bookings...</p>}
+      {loading && (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-[#593e30] border-t-transparent rounded-full animate-spin" />
+            <p className="text-gray-500 font-medium">Loading bookings...</p>
+          </div>
+        </div>
+      )}
       {!loading && error && <p className="text-red-500 py-4">{error}</p>}
 
       {!loading && !error && (

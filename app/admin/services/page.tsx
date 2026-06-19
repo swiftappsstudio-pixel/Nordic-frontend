@@ -5,6 +5,7 @@ import { Plus, Eye, Pencil, Trash2, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/app/_common/auth-context";
+import { authFetch } from "@/app/_common/auth-fetch";
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
@@ -44,7 +45,7 @@ export default function ServicesPage() {
     if (!confirm("Are you sure you want to delete this service?")) return;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/services/${id}`, {
+      const res = await authFetch(`${API_BASE_URL}/services/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -59,7 +60,7 @@ export default function ServicesPage() {
 
   const toggleFeatured = async (id: string) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/services/${id}/featured`, {
+      const res = await authFetch(`${API_BASE_URL}/services/${id}/featured`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -91,7 +92,12 @@ export default function ServicesPage() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">Loading services...</p>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-[#593e30] border-t-transparent rounded-full animate-spin" />
+            <p className="text-gray-500 font-medium">Loading services...</p>
+          </div>
+        </div>
       ) : services.length === 0 ? (
         <p className="text-gray-500">No services found</p>
       ) : (

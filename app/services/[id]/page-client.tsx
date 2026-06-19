@@ -93,15 +93,15 @@ export default function ServiceDetailPage({ id }: Props) {
           <div>
             {images.length > 0 ? (
               <>
-                <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-white shadow">
-                  <Image
-                    src={images[activeImage]}
-                    alt={service.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    unoptimized
-                  />
+                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-white shadow border border-gray-200">
+                    <Image
+                      src={images[activeImage]}
+                      alt={service.title}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      unoptimized
+                    />
                 </div>
                 {images.length > 1 && (
                   <div className="flex gap-3 mt-4">
@@ -119,7 +119,7 @@ export default function ServiceDetailPage({ id }: Props) {
                           src={img}
                           alt={`${service.title} ${i + 1}`}
                           fill
-                          className="object-cover"
+                          className="object-contain"
                           sizes="80px"
                           unoptimized
                         />
@@ -129,7 +129,7 @@ export default function ServiceDetailPage({ id }: Props) {
                 )}
               </>
             ) : (
-              <div className="aspect-[4/5] rounded-2xl bg-gray-200 flex items-center justify-center">
+              <div className="aspect-[4/3] rounded-2xl bg-gray-200 flex items-center justify-center">
                 <span className="text-gray-400">No image available</span>
               </div>
             )}
@@ -202,15 +202,15 @@ export default function ServiceDetailPage({ id }: Props) {
               </div>
             </div>
 
-            {(service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null) || service.variants?.length > 0 ? (
+            {(service.discountPrice ?? service.actualPrice) != null || service.variants?.length > 0 ? (
               <div>
                 <h3 className="font-semibold text-[#543826] mb-3">Select Package</h3>
                 <div className="grid gap-3">
-                  {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null && (
+                  {(service.discountPrice ?? service.actualPrice) != null && (
                     <button
                       onClick={() => { setUseBasePrice(true); setSelectedVariant(null); }}
                       className={`w-full text-left p-4 rounded-xl border-2 transition ${
-                        useBasePrice || (!selectedVariant && !service.variants?.length)
+                        useBasePrice || !selectedVariant
                           ? "border-orange-500 bg-orange-50"
                           : "border-gray-200 bg-white hover:border-gray-300"
                       }`}
@@ -260,20 +260,23 @@ export default function ServiceDetailPage({ id }: Props) {
                     </button>
                   ))}
                 </div>
-                <button
-                  onClick={() => {
-                    if (selectedVariant) {
-                      router.push(`/services/${id}/book?variant=${selectedVariant._id}`);
-                    } else {
-                      router.push(`/services/${id}/book`);
-                    }
-                  }}
-                  className="w-full mt-4 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-4 rounded-xl text-lg transition"
-                >
-                  Book Now
-                </button>
               </div>
             ) : null}
+
+            <button
+              onClick={() => {
+                if (selectedVariant) {
+                  router.push(`/services/${id}/book?variant=${selectedVariant._id}`);
+                } else if (subServices.length > 0) {
+                  router.push(`/services/${id}/book?sub=0`);
+                } else {
+                  router.push(`/services/${id}/book`);
+                }
+              }}
+              className="w-full mt-4 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-4 rounded-xl text-lg transition"
+            >
+              Book Now
+            </button>
 
             {subServices.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-100 p-5">

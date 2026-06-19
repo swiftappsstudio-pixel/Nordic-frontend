@@ -22,6 +22,7 @@ import { Pencil, Trash2, Plus, Star, ImageIcon, GripVertical } from "lucide-reac
 import toast from "react-hot-toast";
 import AddReviewModal from "./add-review-modal";
 import { useAuth } from "@/app/_common/auth-context";
+import { authFetch } from "@/app/_common/auth-fetch";
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
@@ -137,7 +138,7 @@ export default function ReviewsPage() {
   const loadReviews = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/reviews`, {
+      const res = await authFetch(`${API_BASE_URL}/admin/reviews`, {
         headers: { Authorization: `Bearer ${token}` },
         cache: "no-store",
       });
@@ -174,7 +175,7 @@ export default function ReviewsPage() {
       ? `${API_BASE_URL}/admin/reviews/${editReview._id}`
       : `${API_BASE_URL}/admin/reviews`;
 
-    const res = await fetch(url, {
+    const res = await authFetch(url, {
       method: editReview ? "PUT" : "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: fd,
@@ -188,7 +189,7 @@ export default function ReviewsPage() {
   const deleteReview = async (id: string) => {
     if (!confirm("Delete this review?")) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/reviews/${id}`, {
+      const res = await authFetch(`${API_BASE_URL}/admin/reviews/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -215,7 +216,7 @@ export default function ReviewsPage() {
     setReviews(reordered.map((r, i) => ({ ...r, sortOrder: i })));
 
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/reviews/reorder`, {
+      const res = await authFetch(`${API_BASE_URL}/admin/reviews/reorder`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -245,9 +246,11 @@ export default function ReviewsPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white rounded-xl shadow-md p-8 text-center">
-          <div className="border-4 border-orange-500 border-t-transparent rounded-full w-8 h-8 animate-spin mx-auto" />
-          <p className="text-gray-500 mt-3">Loading reviews...</p>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-[#593e30] border-t-transparent rounded-full animate-spin" />
+            <p className="text-gray-500 font-medium">Loading reviews...</p>
+          </div>
         </div>
       ) : reviews.length === 0 ? (
         <div className="bg-white rounded-xl shadow-md p-8 text-center text-gray-500">No reviews found. Click "Add Review" to create one.</div>

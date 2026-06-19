@@ -88,13 +88,12 @@ function BookingContent() {
       .then((data) => {
         setService(data);
         const variantId = searchParams.get("variant");
-        const found = data.variants?.find((v) => v._id === variantId);
-        setSelectedVariant(
-          found ||
-            data.variants?.find((v) => v.isDefault) ||
-            data.variants?.[0] ||
-            null
-        );
+        if (variantId) {
+          const found = data.variants?.find((v) => v._id === variantId);
+          setSelectedVariant(found || data.variants?.find((v) => v.isDefault) || data.variants?.[0] || null);
+        } else {
+          setSelectedVariant(null);
+        }
         if (!(data.addOns?.length && data.addOns.length > 0)) {
           setStep("datetime");
         }
@@ -551,8 +550,7 @@ function BookingContent() {
                             }}
                             className="w-full appearance-none border-2 border-[#543826]/20 rounded-3xl px-5 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
                           >
-                            {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) !=
-                              null && (
+                            {(service.discountPrice ?? service.actualPrice) != null && (
                               <option value="__base__">
                                 1 Session — AED{" "}
                                 {(
@@ -607,7 +605,7 @@ function BookingContent() {
                           }}
                           className="w-full appearance-none border-2 border-[#543826]/20 rounded-3xl px-5 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
                         >
-                          {service.category === "IV Therapy" && (service.discountPrice ?? service.actualPrice) != null && (
+                          {(service.discountPrice ?? service.actualPrice) != null && (
                             <option value="__base__">
                               1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}
                             </option>
@@ -826,7 +824,7 @@ function BookingContent() {
                             <p className="text-sm text-gray-500 mt-1">
                               {selectedVariant.name} — {selectedVariant.sessions} sessions
                             </p>
-                          ) : service.category === "IV Therapy" ? (
+                          ) : !selectedVariant && (service.discountPrice ?? service.actualPrice) != null ? (
                             <p className="text-sm text-gray-500 mt-1">1 Session</p>
                           ) : null}
                           {selectedDate && (
@@ -1084,7 +1082,7 @@ function BookingContent() {
                         {selectedVariant.sessions} sessions
                       </p>
                     </div>
-                  ) : service.category === "IV Therapy" ? (
+                  ) : !selectedVariant && (service.discountPrice ?? service.actualPrice) != null ? (
                     <div className="rounded-2xl bg-orange-50 p-3">
                       <p className="text-xs text-gray-600">Package</p>
                       <p className="mt-1 font-semibold text-gray-900">
