@@ -57,7 +57,7 @@ function ServiceCard({ svc }: { svc: Service }) {
             <span className="text-sm text-[#1a2e28] font-semibold">Contact for pricing</span>
           )}
         </div>
-        <span className="w-full bg-[#1a2e28] hover:bg-[#2D5B4F] text-white font-semibold py-2.5 rounded-xl transition text-sm text-center">
+        <span className="w-full bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-2.5 rounded-xl transition text-sm text-center">
           Book Now
         </span>
       </div>

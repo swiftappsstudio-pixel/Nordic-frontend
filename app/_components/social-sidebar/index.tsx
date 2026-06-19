@@ -17,13 +17,13 @@ const SOCIAL_LINKS = [
     color: "#E4405F",
   },
   {
-    href: "https://www.tiktok.com/@nordichomehealthcare",
+    href: "https://www.tiktok.com/@nordic_home_healthcare?_r=1&_t=ZS-97Kz7TLpPgi",
     icon: FaTiktok,
     label: "TikTok",
     color: "#000000",
   },
   {
-    href: "https://www.facebook.com/nordichomehealthcare",
+    href: "https://www.linkedin.com/company/nordic-home-healthcare-center/",
     icon: FaLinkedinIn,
     label: "LinkedIn",
     color: "#0A66C2",

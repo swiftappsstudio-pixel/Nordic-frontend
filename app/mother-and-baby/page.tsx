@@ -96,7 +96,7 @@ function ServiceCard({ svc }: { svc: Service }) {
           )}
         </div>
         <div className="mt-auto flex justify-center">
-          <span className="inline-flex items-center gap-1.5 bg-white text-[#1a2e28] text-xs font-semibold px-5 py-2.5 rounded-full group-hover:bg-[#F7F4EE] transition">
+          <span className="inline-flex items-center gap-1.5 bg-[#543826] text-white text-xs font-semibold px-5 py-2.5 rounded-full group-hover:bg-[#3e2a1c] transition">
             Book Now
           </span>
         </div>
@@ -902,7 +902,7 @@ export default function MotherAndBabyPage() {
         heading="Mother & Baby Services"
         subheading="All services delivered at home by DHA-licensed, NICU-trained professionals."
         label="Our Services"
-        accentColor="#2D5B4F"
+        accentColor="#543826"
         bgColor="bg-[#F7F4EE]"
       />
 

@@ -22,7 +22,7 @@ export default function ServicesSection({
   heading,
   subheading,
   label = "Our Services",
-  accentColor = "#2D5B4F",
+  accentColor = "#543826",
   bgColor = "bg-white",
 }: ServicesSectionProps) {
   const router = useRouter();

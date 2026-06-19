@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Search } from "lucide-react";
 import AddCategoryModal from "./add-category-modal";
 import { useAuth } from "@/app/_common/auth-context";
 import { authFetch } from "@/app/_common/auth-fetch";
@@ -24,6 +24,8 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
+  const [search, setSearch] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
   const { token } = useAuth();
 
   // Fetch categories
@@ -78,11 +80,10 @@ export default function CategoryPage() {
   };
 
   // Delete category
-  const deleteCategory = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this category?")) return;
-
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      const res = await authFetch(`${API_BASE_URL}/categories/${id}`, {
+      const res = await authFetch(`${API_BASE_URL}/categories/${deleteTarget._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -95,6 +96,8 @@ export default function CategoryPage() {
     } catch (err) {
       console.error(err);
       alert("Failed to delete category");
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -107,8 +110,20 @@ export default function CategoryPage() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-800">Categories</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <h1 className="text-2xl font-semibold text-gray-800">Categories</h1>
+          <div className="relative flex-1 max-w-xs">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm placeholder:text-black focus:outline-none focus:ring-2 focus:ring-[#593e30]/20 focus:border-[#593e30] transition-all"
+            />
+          </div>
+        </div>
         <button
           onClick={() => { setEditCategory(null); setShowModal(true); }}
           className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
@@ -160,7 +175,9 @@ export default function CategoryPage() {
             </thead>
 
             <tbody>
-              {categories.map((cat) => (
+              {categories
+                .filter((cat) => !search || cat.name.toLowerCase().includes(search.toLowerCase()))
+                .map((cat) => (
                 <tr
                   key={cat._id}
                   className="border-t hover:bg-gray-50 transition"
@@ -219,7 +236,7 @@ export default function CategoryPage() {
                       <button
                         className="text-red-600 hover:text-red-800"
                         title="Delete"
-                        onClick={() => deleteCategory(cat._id)}
+                        onClick={() => setDeleteTarget(cat)}
                       >
                         <Trash2 size={18} />
                       </button>
@@ -229,6 +246,31 @@ export default function CategoryPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4">
+            <h3 className="text-lg font-bold text-gray-800">Delete Category</h3>
+            <p className="text-sm text-gray-600">
+              Are you sure you want to delete <span className="font-semibold text-gray-800">{deleteTarget.name}</span>? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-4 py-2 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white text-sm hover:bg-red-600 transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

@@ -114,7 +114,7 @@ const ServiceDetailPage: React.FC<Props> = ({ id }) => {
                 <span className="font-medium text-black">{service.title}</span>
                 <span className="font-semibold text-black">AED {service.discountPrice || service.actualPrice}</span>
                 <div className="text-right">
-                  <button onClick={() => router.push(`/services/${id}`)} className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md">Book Now</button>
+                  <button onClick={() => router.push(`/services/${id}`)} className="bg-[#543826] hover:bg-[#3e2a1c] text-white px-6 py-2 rounded-md">Book Now</button>
                 </div>
               </div>
               {service.subServices && service.subServices.map((sub, index) => (
@@ -122,7 +122,7 @@ const ServiceDetailPage: React.FC<Props> = ({ id }) => {
                   <div><p className="font-medium text-black">{sub.name}</p>{sub.discountPercent && <p className="text-xs text-black">{sub.discountPercent}% OFF</p>}</div>
                   <span className="font-semibold text-black">AED {sub.price}</span>
                   <div className="text-right">
-                    <button onClick={() => router.push(`/services/${id}?sub=${index}`)} className="bg-[#593E30] hover:bg-[#593E30] text-white px-6 py-2 rounded-md">Book Now</button>
+                    <button onClick={() => router.push(`/services/${id}?sub=${index}`)} className="bg-[#543826] hover:bg-[#3e2a1c] text-white px-6 py-2 rounded-md">Book Now</button>
                   </div>
                 </div>
               ))}

@@ -65,13 +65,13 @@ export default function Footer() {
               <a href="https://www.facebook.com/nordichomehealthcare" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
                 <FaFacebookF className="text-sm text-white" />
               </a>
-              <a href="https://www.instagram.com/nordichomehealthcare?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
+              <a href="https://www.linkedin.com/company/nordic-home-healthcare-center/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
                 <FaLinkedinIn className="text-sm text-white" />
               </a>
               <a href="https://www.instagram.com/nordichomehealthcare?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
                 <FaInstagram className="text-sm text-white" />
               </a>
-              <a href="https://www.tiktok.com/@nordichomehealthcare" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
+              <a href="https://www.tiktok.com/@nordic_home_healthcare?_r=1&_t=ZS-97Kz7TLpPgi" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 hover:bg-[#3e2a1c] rounded-full flex items-center justify-center transition">
                 <FaTiktok className="text-sm text-white" />
               </a>
             </div>

@@ -39,7 +39,7 @@ function ServiceCard({ svc }: { svc: Service }) {
           )}
         </div>
         <div className="mt-auto flex justify-center">
-          <span className="inline-flex items-center gap-1.5 bg-white text-[#1a2e28] text-xs font-semibold px-5 py-2.5 rounded-full group-hover:bg-[#F7F4EE] transition">
+          <span className="inline-flex items-center gap-1.5 bg-[#543826] text-white text-xs font-semibold px-5 py-2.5 rounded-full group-hover:bg-[#3e2a1c] transition">
             Book Now
           </span>
         </div>
@@ -720,7 +720,7 @@ export default function ElderlyCarePage() {
         heading="Elderly Care Services"
         subheading="All services delivered at home by DHA-licensed, clinically trained caregivers."
         label="Our Services"
-        accentColor="#1F3C34"
+        accentColor="#543826"
         bgColor="bg-[#F6F2EB]"
       />
 
