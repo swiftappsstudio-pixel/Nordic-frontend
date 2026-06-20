@@ -129,6 +129,7 @@ function CategoryServicesSection() {
   }
 
   if (!categories.length) return null;
+  if (!categories.some(cat => cat.services?.length > 0)) return null;
 
   return (
     <section className="py-20 bg-white">

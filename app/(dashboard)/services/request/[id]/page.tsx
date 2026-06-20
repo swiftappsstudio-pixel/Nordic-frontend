@@ -63,6 +63,13 @@ const ServiceDetailPage: React.FC = () => {
   if (error) return <p className="text-center py-10 text-red-500">{error}</p>;
   if (!service) return <p className="text-center py-10">Service not found</p>;
 
+  const availableTabs = [
+    ...(service.keyBenefits?.length ? [{ key: TABS.BENEFITS, label: "Benefits" }] : []),
+    ...(service.keyIngredients?.length ? [{ key: TABS.INGREDIENTS, label: "Ingredients" }] : []),
+    ...(service.disclaimer ? [{ key: TABS.DISCLAIMER, label: "Disclaimer" }] : []),
+  ];
+  const hasTabContent = availableTabs.length > 0;
+
   return (
     <>
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -113,24 +120,25 @@ const ServiceDetailPage: React.FC = () => {
         <div className="lg:w-[60%] w-full">
 <h1 className="text-4xl font-bold text-[#593E30] mb-4">{service.title}</h1>
           <p className="text-black mb-6">{service.description}</p>
-{/* tabs */}
+ {/* tabs */}
+      {hasTabContent && (
       <div className="flex gap-8 border-b mb-6">
-
-        
-            {Object.values(TABS).map((tab) => (
+            {availableTabs.map((tab) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
                 className={`pb-3 font-medium text-[#593E30] capitalize ${
-                  activeTab === tab ? "border-b-2 border-black" : "text-black"
+                  activeTab === tab.key ? "border-b-2 border-black" : "text-black"
                 }`}
               >
-                {tab.replace("_", " ")}
+                {tab.label}
               </button>
             ))}
           </div>
+      )}
 
           {/* TAB CONTENT */}
+          {hasTabContent && (
           <div className="bg-white rounded-xl shadow p-6 mb-10">
             {activeTab === TABS.BENEFITS && (
               <ul className="list-disc pl-5 space-y-2 text-gray-700">
@@ -152,6 +160,7 @@ const ServiceDetailPage: React.FC = () => {
               <p className="text-gray-700">{service.disclaimer}</p>
             )}
           </div>
+          )}
 
           
 

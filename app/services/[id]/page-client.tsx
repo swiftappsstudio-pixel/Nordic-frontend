@@ -35,6 +35,9 @@ export default function ServiceDetailPage({ id }: Props) {
         } else {
           setUseBasePrice(true);
         }
+        if (data.keyBenefits?.length > 0) setActiveTab("benefits");
+        else if (data.keyIngredients?.length > 0) setActiveTab("ingredients");
+        else if (data.disclaimer) setActiveTab("disclaimer");
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -65,10 +68,12 @@ export default function ServiceDetailPage({ id }: Props) {
   const ingredients = service.keyIngredients || [];
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: "benefits", label: "Key Benefits" },
-    { key: "ingredients", label: "Key Ingredients" },
-    { key: "disclaimer", label: "Disclaimer" },
+    ...(benefits.length > 0 ? [{ key: "benefits" as Tab, label: "Key Benefits" }] : []),
+    ...(ingredients.length > 0 ? [{ key: "ingredients" as Tab, label: "Key Ingredients" }] : []),
+    ...(service.disclaimer ? [{ key: "disclaimer" as Tab, label: "Disclaimer" }] : []),
   ];
+
+  const hasAnyTabContent = benefits.length > 0 || ingredients.length > 0 || service.disclaimer;
 
   return (
     <div className="min-h-screen bg-gray-50 pt-28 ">
@@ -143,6 +148,7 @@ export default function ServiceDetailPage({ id }: Props) {
               </p>
             )}
 
+            {hasAnyTabContent && (
             <div>
               <div className="flex gap-6 border-b border-gray-200">
                 {tabs.map((tab) => (
@@ -162,43 +168,32 @@ export default function ServiceDetailPage({ id }: Props) {
                 {activeTab === "benefits" && (
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-3">Benefits:</h4>
-                    {benefits.length > 0 ? (
-                      <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
-                        {benefits.map((b, i) => (
-                          <li key={i}>{b}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-gray-400 text-sm">No benefits listed.</p>
-                    )}
+                    <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
+                      {benefits.map((b, i) => (
+                        <li key={i}>{b}</li>
+                      ))}
+                    </ul>
                   </div>
                 )}
                 {activeTab === "ingredients" && (
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-3">Key Ingredients:</h4>
-                    {ingredients.length > 0 ? (
-                      <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
-                        {ingredients.map((ing, i) => (
-                          <li key={i}>{ing}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-gray-400 text-sm">No ingredients listed.</p>
-                    )}
+                    <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
+                      {ingredients.map((ing, i) => (
+                        <li key={i}>{ing}</li>
+                      ))}
+                    </ul>
                   </div>
                 )}
                 {activeTab === "disclaimer" && (
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-3">Disclaimer:</h4>
-                    {service.disclaimer ? (
-                      <p className="text-gray-600 text-sm leading-relaxed">{service.disclaimer}</p>
-                    ) : (
-                      <p className="text-gray-400 text-sm">No disclaimer provided.</p>
-                    )}
+                    <p className="text-gray-600 text-sm leading-relaxed">{service.disclaimer}</p>
                   </div>
                 )}
               </div>
             </div>
+            )}
 
             {(service.discountPrice ?? service.actualPrice) != null || service.variants?.length > 0 ? (
               <div>

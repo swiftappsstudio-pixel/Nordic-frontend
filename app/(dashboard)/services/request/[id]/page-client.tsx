@@ -14,10 +14,6 @@ const TABS = {
   DISCLAIMER: "disclaimer",
 };
 
-interface Props {
-  id: string;
-}
-
 const ServiceDetailPage: React.FC<Props> = ({ id }) => {
   const router = useRouter();
   const [service, setService] = useState<Service | null>(null);
@@ -53,6 +49,13 @@ const ServiceDetailPage: React.FC<Props> = ({ id }) => {
   if (loading) return <p className="text-center py-10">Loading service...</p>;
   if (error) return <p className="text-center py-10 text-red-500">{error}</p>;
   if (!service) return <p className="text-center py-10">Service not found</p>;
+
+  const availableTabs = [
+    ...(service.keyBenefits?.length ? [{ key: TABS.BENEFITS, label: "Benefits" }] : []),
+    ...(service.keyIngredients?.length ? [{ key: TABS.INGREDIENTS, label: "Ingredients" }] : []),
+    ...(service.disclaimer ? [{ key: TABS.DISCLAIMER, label: "Disclaimer" }] : []),
+  ];
+  const hasTabContent = availableTabs.length > 0;
 
   return (
     <>
@@ -94,18 +97,23 @@ const ServiceDetailPage: React.FC<Props> = ({ id }) => {
           <div className="lg:w-[60%] w-full">
             <h1 className="text-4xl font-bold text-[#593E30] mb-4">{service.title}</h1>
             <p className="text-black mb-6">{service.description}</p>
+            {hasTabContent && (
             <div className="flex gap-8 border-b mb-6">
-              {Object.values(TABS).map((tab) => (
-                <button key={tab} onClick={() => setActiveTab(tab)} className={`pb-3 font-medium text-[#593E30] capitalize ${activeTab === tab ? "border-b-2 border-black" : "text-black"}`}>
-                  {tab.replace("_", " ")}
+              {availableTabs.map((tab) => (
+                <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`pb-3 font-medium text-[#593E30] capitalize ${activeTab === tab.key ? "border-b-2 border-black" : "text-black"}`}>
+                  {tab.label}
                 </button>
               ))}
             </div>
+            )}
+
+            {hasTabContent && (
             <div className="bg-white rounded-xl shadow p-6 mb-10">
               {activeTab === TABS.BENEFITS && (<ul className="list-disc pl-5 space-y-2 text-gray-700">{service.keyBenefits?.map((item, i) => <li key={i}>{item}</li>)}</ul>)}
               {activeTab === TABS.INGREDIENTS && (<ul className="list-disc pl-5 space-y-2 text-gray-700">{service.keyIngredients?.map((item, i) => <li key={i}>{item}</li>)}</ul>)}
               {activeTab === TABS.DISCLAIMER && <p className="text-gray-700">{service.disclaimer}</p>}
             </div>
+            )}
             <div className="border rounded-xl overflow-hidden shadow bg-white mb-10">
               <div className="grid grid-cols-3 bg-gray-200 text-[#593E30] px-6 py-3 text-sm font-semibold">
                 <span>Service</span><span>Price</span><span className="text-right">Action</span>
