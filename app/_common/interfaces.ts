@@ -377,6 +377,7 @@ export interface BookingResponse {
 export interface ServiceWithVariants extends Service {
   variants: Variant[];
   image?: string;
+  isProduct?: boolean;
 }
 
 // ============================================================================

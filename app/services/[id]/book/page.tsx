@@ -551,7 +551,8 @@ function BookingContent() {
                           >
                             {(service.discountPrice ?? service.actualPrice) != null && (
                               <option value="__base__">
-                                1 Session — AED{" "}
+                                {service?.isProduct === false ? "1 Session — " : ""}
+                                  AED{" "}
                                 {(
                                   service.discountPrice ??
                                   service.actualPrice ??
@@ -561,7 +562,7 @@ function BookingContent() {
                             )}
                             {service.variants?.map((v:any) => (
                               <option key={v._id} value={v._id}>
-                                {v.name} — AED {v.price} ({v.sessions} sessions)
+                                {v.name} — AED {v.price} {service?.isProduct === false ? `(${v.sessions} sessions)` : ""}
                               </option>
                             ))}
                           </select>
@@ -606,12 +607,12 @@ function BookingContent() {
                         >
                           {(service.discountPrice ?? service.actualPrice) != null && (
                             <option value="__base__">
-                              1 Session — AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}
+                             {service?.isProduct === false ? "1 Session — " : ""} AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}
                             </option>
                           )}
                           {service.variants?.map((v: any) => (
                             <option key={v._id} value={v._id}>
-                              {v.name} — AED {v.price} ({v.sessions} sessions)
+                              {v.name} — AED {v.price} {service?.isProduct === false ? `(${v.sessions} sessions)` : ""}
                             </option>
                           ))}
                         </select>

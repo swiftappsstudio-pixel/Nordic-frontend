@@ -223,7 +223,7 @@ export default function ServiceDetailPage({ id }: Props) {
                           </p>
                           {variant.description && <p className="text-gray-500 text-sm mt-1">{variant.description}</p>}
                           <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                            {variant.isProduct === false ? <>{variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
+                            {service?.isProduct === false ? <>{variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
                               {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}</> : ""}
 
                             {variant?.discountPercent > 0 && (
