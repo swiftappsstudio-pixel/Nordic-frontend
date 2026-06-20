@@ -35,8 +35,8 @@ export default function ServiceDetailPage({ id }: Props) {
         } else {
           setUseBasePrice(true);
         }
-        if (data.keyBenefits?.length > 0) setActiveTab("benefits");
-        else if (data.keyIngredients?.length > 0) setActiveTab("ingredients");
+        if ((data.keyBenefits?.length ?? 0) > 0) setActiveTab("benefits");
+        else if ((data.keyIngredients?.length ?? 0) > 0) setActiveTab("ingredients");
         else if (data.disclaimer) setActiveTab("disclaimer");
       })
       .catch(console.error)

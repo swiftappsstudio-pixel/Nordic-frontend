@@ -14,6 +14,10 @@ const TABS = {
   DISCLAIMER: "disclaimer",
 };
 
+interface Props {
+  id: string;
+}
+
 const ServiceDetailPage: React.FC<Props> = ({ id }) => {
   const router = useRouter();
   const [service, setService] = useState<Service | null>(null);
