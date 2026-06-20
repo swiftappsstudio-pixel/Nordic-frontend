@@ -66,9 +66,10 @@ const optionalNumber = (min: number) =>
 const variantSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
   price: requiredNumber(0),
+  discountPercent: optionalNumber(0),
   sessions: optionalNumber(0),
   freeSessions: optionalNumber(0),
-  validityInDays: requiredNumber(1, "Required (≥ 1)"),
+  validityInDays: optionalNumber(1),
   isDefault: z.boolean(),
 });
 
@@ -90,6 +91,7 @@ const wizardSchema = z
     keyBenefits: z.string().optional(),
     keyIngredients: z.string().optional(),
     disclaimer: z.string().optional(),
+    isProduct: z.boolean(),
 
     // Step 2 — SEO
     slug: z
@@ -128,6 +130,15 @@ const wizardSchema = z
       message: "Only one variant can be marked as default",
       path: ["variants"],
     }
+  )
+  .refine(
+    (d) =>
+      d.isProduct ||
+      d.variants.every((v) => v.validityInDays && Number(v.validityInDays) >= 1),
+    {
+      message: "Validity (days) is required for service variants",
+      path: ["variants"],
+    }
   );
 
 type WizardForm = z.infer<typeof wizardSchema>;
@@ -143,6 +154,7 @@ const STEP_FIELDS: Record<number, FieldPath<WizardForm>[]> = {
     "keyBenefits",
     "keyIngredients",
     "disclaimer",
+    "isProduct",
   ],
   2: ["slug", "metaTitle", "metaDescription", "metaKeywords"],
   3: ["variants"],
@@ -181,6 +193,7 @@ export function ServiceWizard() {
       keyBenefits: "",
       keyIngredients: "",
       disclaimer: "",
+      isProduct: false,
       slug: "",
       metaTitle: "",
       metaDescription: "",
@@ -208,6 +221,7 @@ export function ServiceWizard() {
 
   const watchedTitle = watch("title");
   const watchedCategory = watch("category");
+  const watchedIsProduct = watch("isProduct");
 
   /* ================= LOAD CATEGORIES ================= */
 
@@ -285,6 +299,7 @@ export function ServiceWizard() {
         ? v.keyIngredients.split(",").map((s) => s.trim()).filter(Boolean)
         : [],
       disclaimer: v.disclaimer,
+      isProduct: v.isProduct,
       images: allImageUrls,
       isActive: false,
     };
@@ -353,31 +368,36 @@ export function ServiceWizard() {
   const saveStep3 = async () => {
     if (!serviceId) throw new Error("Service has not been created yet");
     const { variants } = getValues();
+    const isProduct = getValues("isProduct");
 
     for (const v of variants) {
+      const payload: Record<string, any> = {
+        serviceId,
+        name: v.name,
+        price: Number(v.price),
+        discountPercent: v.discountPercent ? Number(v.discountPercent) : undefined,
+        isDefault: v.isDefault,
+      };
+
+      if (!isProduct) {
+        payload.sessions = v.sessions ? Number(v.sessions) : undefined;
+        payload.freeSessions = Number(v.freeSessions || 0);
+        payload.validityInDays = Number(v.validityInDays);
+      }
+
       const res = await authFetch(`${API_BASE_URL}/admin/variants`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          serviceId,
-          name: v.name,
-          price: Number(v.price),
-          sessions: v.sessions ? Number(v.sessions) : undefined,
-          freeSessions: Number(v.freeSessions || 0),
-          validityInDays: Number(v.validityInDays),
-          isDefault: v.isDefault,
-        }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.message || `Failed to save variant "${v.name}"`);
       }
     }
-    // Reset the field array so re-clicking Next doesn't double-post
-    variantArray.replace([]);
   };
 
   const saveStep4 = async () => {
@@ -601,6 +621,20 @@ export function ServiceWizard() {
               <Err message={errors.description?.message} />
             </div>
 
+            <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-orange-300 transition">
+              <input
+                type="checkbox"
+                {...register("isProduct")}
+                className="mt-1"
+              />
+              <div>
+                <p className="font-medium text-gray-900">Is Product</p>
+                <p className="text-sm text-gray-500">
+                  Mark this as a product (not a service like Blood Test). Session-related fields in variants will be hidden.
+                </p>
+              </div>
+            </label>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -807,7 +841,9 @@ export function ServiceWizard() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <p className="text-sm text-gray-500">
-                Session packs (e.g. Pack of 3, Pack of 5). Skip if single-session.
+                {watchedIsProduct
+                  ? "Product variants (e.g. Pack of 3, Pack of 5)."
+                  : "Session packs (e.g. Pack of 3, Pack of 5). Skip if single-session."}
               </p>
               <button
                 type="button"
@@ -815,9 +851,10 @@ export function ServiceWizard() {
                   variantArray.append({
                     name: "",
                     price: "",
+                    discountPercent: "",
                     sessions: "",
                     freeSessions: "",
-                    validityInDays: "90",
+                    validityInDays: watchedIsProduct ? "" : "90",
                     isDefault: false,
                   })
                 }
@@ -852,7 +889,7 @@ export function ServiceWizard() {
                     <div className="flex-1">
                       <input
                         {...register(`variants.${i}.name`)}
-                        placeholder='Name (e.g. "Buy Pack of 3 & Get 1 Free")'
+                        placeholder={watchedIsProduct ? 'Name (e.g. "Pack of 3")' : 'Name (e.g. "Buy Pack of 3 & Get 1 Free")'}
                         className={inputClass(!!e?.name)}
                       />
                       <Err message={e?.name?.message} />
@@ -866,7 +903,7 @@ export function ServiceWizard() {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className={`grid ${watchedIsProduct ? 'grid-cols-2' : 'grid-cols-5'} gap-3`}>
                     <div>
                       <input
                         type="number"
@@ -879,32 +916,47 @@ export function ServiceWizard() {
                     <div>
                       <input
                         type="number"
-                        {...register(`variants.${i}.sessions`)}
+                        {...register(`variants.${i}.discountPercent`)}
                         min={0}
-                        placeholder="Sessions"
-                        className={inputClass(!!e?.sessions)}
+                        max={100}
+                        placeholder="Discount %"
+                        className={inputClass(!!e?.discountPercent)}
                       />
-                      <Err message={e?.sessions?.message} />
+                      <Err message={e?.discountPercent?.message} />
                     </div>
-                    <div>
-                      <input
-                        type="number"
-                        {...register(`variants.${i}.freeSessions`)}
-                        min={0}
-                        placeholder="Free Sessions"
-                        className={inputClass(!!e?.freeSessions)}
-                      />
-                      <Err message={e?.freeSessions?.message} />
-                    </div>
-                    <div>
-                      <input
-                        type="number"
-                        {...register(`variants.${i}.validityInDays`)}
-                        placeholder="Validity (days)"
-                        className={inputClass(!!e?.validityInDays)}
-                      />
-                      <Err message={e?.validityInDays?.message} />
-                    </div>
+                    {!watchedIsProduct && (
+                      <>
+                        <div>
+                          <input
+                            type="number"
+                            {...register(`variants.${i}.sessions`)}
+                            min={0}
+                            placeholder="Sessions"
+                            className={inputClass(!!e?.sessions)}
+                          />
+                          <Err message={e?.sessions?.message} />
+                        </div>
+                        <div>
+                          <input
+                            type="number"
+                            {...register(`variants.${i}.freeSessions`)}
+                            min={0}
+                            placeholder="Free Sessions"
+                            className={inputClass(!!e?.freeSessions)}
+                          />
+                          <Err message={e?.freeSessions?.message} />
+                        </div>
+                        <div>
+                          <input
+                            type="number"
+                            {...register(`variants.${i}.validityInDays`)}
+                            placeholder="Validity (days)"
+                            className={inputClass(!!e?.validityInDays)}
+                          />
+                          <Err message={e?.validityInDays?.message} />
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   <label className="flex items-center gap-2 text-sm text-gray-700">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense } from "react";
+import React, { useEffect, useState, useRef, Suspense } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -401,45 +401,44 @@ function BookingContent() {
               </div>
 
               <div className="mt-6">
-                <div className="relative h-2 rounded-full bg-gray-200 overflow-hidden">
-                  <div
-                    className="absolute inset-y-0 left-0 bg-linear-to-r from-green-500 to-[#543826] transition-all duration-500 ease-out"
-                    style={{ width: `${(currentStepIndex / (activeSteps.length - 1)) * 100}%` }}
-                  />
-                </div>
-                <div className="mt-4 grid grid-cols-{activeSteps.length} gap-3">
+                <div className="flex items-center">
                   {activeSteps.map((s, i) => {
                     const isCompleted = i < currentStepIndex;
                     const isActive = i === currentStepIndex;
                     return (
-                      <button
-                        key={s.key}
-                        type="button"
-                        disabled={i > currentStepIndex}
-                        onClick={() => {
-                          if (i <= currentStepIndex) setStep(s.key);
-                        }}
-                        className="group flex flex-col items-center justify-center rounded-2xl border bg-white px-3 py-4 text-center transition duration-300 hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-70"
-                      >
-                        <span
-                          className={`flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                            isCompleted
-                              ? "bg-green-500 border-green-500 text-white shadow-lg"
-                              : isActive
-                                ? "bg-white border-[#543826] text-[#543826] shadow-sm scale-105"
-                                : "bg-white border-gray-200 text-gray-400"
-                          }`}
+                      <React.Fragment key={s.key}>
+                        <button
+                          type="button"
+                          disabled={i > currentStepIndex}
+                          onClick={() => {
+                            if (i <= currentStepIndex) setStep(s.key);
+                          }}
+                          className="group flex flex-col items-center gap-2 focus:outline-none disabled:cursor-not-allowed"
                         >
-                          {isCompleted ? "✓" : s.icon}
-                        </span>
-                        <span className={`mt-3 text-[11px] font-semibold ${isCompleted ? "text-green-700" : isActive ? "text-[#543826]" : "text-gray-400"}`}>
-                          {s.label}
-                        </span>
-                      </button>
+                          <span
+                            className={`flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm transition-all duration-300 ${
+                              isCompleted
+                                ? "bg-green-500 border-green-500 text-white shadow-lg"
+                                : isActive
+                                  ? "bg-[#543826] border-[#543826] text-white shadow-sm scale-110"
+                                  : "bg-white border-gray-200 text-gray-400"
+                            }`}
+                          >
+                            {isCompleted ? "✓" : s.icon}
+                          </span>
+                          <span className={`text-[11px] font-semibold whitespace-nowrap ${isCompleted ? "text-green-700" : isActive ? "text-[#543826]" : "text-gray-400"}`}>
+                            {s.label}
+                          </span>
+                        </button>
+                        {i < activeSteps.length - 1 && (
+                          <div className={`flex-1 h-[2px] mx-1 rounded-full transition-all duration-500 ${i < currentStepIndex ? "bg-green-500" : "bg-gray-200"}`} />
+                        )}
+                      </React.Fragment>
                     );
                   })}
                 </div>
               </div>
+            
             </div>
 
             {/* Main Content Card */}

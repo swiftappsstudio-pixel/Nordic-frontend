@@ -93,15 +93,15 @@ export default function ServiceDetailPage({ id }: Props) {
           <div>
             {images.length > 0 ? (
               <>
-                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-white shadow border border-gray-200">
-                    <Image
-                      src={images[activeImage]}
-                      alt={service.title}
-                      fill
-                      className="object-contain"
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      unoptimized
-                    />
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-white shadow border border-gray-200">
+                  <Image
+                    src={images[activeImage]}
+                    alt={service.title}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    unoptimized
+                  />
                 </div>
                 {images.length > 1 && (
                   <div className="flex gap-3 mt-4">
@@ -109,11 +109,10 @@ export default function ServiceDetailPage({ id }: Props) {
                       <button
                         key={i}
                         onClick={() => setActiveImage(i)}
-                        className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 transition ${
-                          activeImage === i
-                            ? "border-orange-500"
-                            : "border-transparent opacity-70 hover:opacity-100"
-                        }`}
+                        className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 transition ${activeImage === i
+                          ? "border-orange-500"
+                          : "border-transparent opacity-70 hover:opacity-100"
+                          }`}
                       >
                         <Image
                           src={img}
@@ -150,11 +149,10 @@ export default function ServiceDetailPage({ id }: Props) {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`pb-2 text-sm font-medium transition ${
-                      activeTab === tab.key
-                        ? "text-[#543826] border-b-2 border-[#543826]"
-                        : "text-gray-400 hover:text-gray-600"
-                    }`}
+                    className={`pb-2 text-sm font-medium transition ${activeTab === tab.key
+                      ? "text-[#543826] border-b-2 border-[#543826]"
+                      : "text-gray-400 hover:text-gray-600"
+                      }`}
                   >
                     {tab.label}
                   </button>
@@ -206,43 +204,18 @@ export default function ServiceDetailPage({ id }: Props) {
               <div>
                 <h3 className="font-semibold text-[#543826] mb-3">Select Package</h3>
                 <div className="grid gap-3">
-                  {(service.discountPrice ?? service.actualPrice) != null && (
-                    <button
-                      onClick={() => { setUseBasePrice(true); setSelectedVariant(null); }}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition ${
-                        useBasePrice || !selectedVariant
-                          ? "border-orange-500 bg-orange-50"
-                          : "border-gray-200 bg-white hover:border-gray-300"
-                      }`}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-semibold text-[#543826]">1 Session</p>
-                          <p className="text-gray-500 text-sm mt-1">Single session — pay per visit</p>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-orange-600 font-bold text-lg block">
-                            AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}
-                          </span>
-                          {service.actualPrice && service.discountPrice && service.discountPrice < service.actualPrice && (
-                            <span className="text-gray-400 line-through text-sm">AED {service.actualPrice.toFixed(2)}</span>
-                          )}
-                        </div>
-                      </div>
-                    </button>
-                  )}
-                  {service.variants?.map((variant) => (
+
+                  {service.variants?.map((variant: any) => (
                     <button
                       key={variant._id}
                       onClick={() => { setSelectedVariant(variant); setUseBasePrice(false); }}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition ${
-                        selectedVariant?._id === variant._id ? "border-orange-500 bg-orange-50" : "border-gray-200 bg-white hover:border-gray-300"
-                      }`}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition ${selectedVariant?._id === variant._id ? "border-orange-500 bg-orange-50" : "border-gray-200 bg-white hover:border-gray-300"
+                        }`}
                     >
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-semibold text-[#543826]">
-                            {variant.name.split(/(Get \d+ Free)/i).map((part, i) =>
+                            {variant.name.split(/(Get \d+ Free)/i).map((part: any, i: any) =>
                               /Get \d+ Free/i.test(part)
                                 ? <span key={i} className="font-bold underline text-[#543826]">{part}</span>
                                 : part
@@ -250,10 +223,14 @@ export default function ServiceDetailPage({ id }: Props) {
                           </p>
                           {variant.description && <p className="text-gray-500 text-sm mt-1">{variant.description}</p>}
                           <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                            {variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
-                            {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}
-                            {variant.validityInDays > 0 && <span>Valid {variant.validityInDays} days</span>}
-                          </div>
+                            {variant.isProduct === false ? <>{variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
+                              {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}</> : ""}
+
+                            {variant?.discountPercent > 0 && (
+                              <span className="text-green-600 font-semibold">
+                                {variant.discountPercent}% OFF
+                              </span>
+                            )}                          </div>
                         </div>
                         <span className="text-orange-600 font-bold text-lg">AED {variant.price}</span>
                       </div>
