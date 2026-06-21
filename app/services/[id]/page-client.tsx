@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { getServiceDetail } from "@/app/_common/api";
 import { ServiceWithVariants, Variant } from "@/app/_common/interfaces";
 import { CTASection } from "@/app/_components/cta-section";
@@ -37,7 +38,7 @@ export default function ServiceDetailPage({ id }: Props) {
         }
         if ((data.keyBenefits?.length ?? 0) > 0) setActiveTab("benefits");
         else if ((data.keyIngredients?.length ?? 0) > 0) setActiveTab("ingredients");
-        else if (data.disclaimer) setActiveTab("disclaimer");
+        else if (data.disclaimer?.trim()) setActiveTab("disclaimer");
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -64,16 +65,16 @@ export default function ServiceDetailPage({ id }: Props) {
 
   const images = service.images || [];
   const subServices = service.subServices || [];
-  const benefits = service.keyBenefits || [];
-  const ingredients = service.keyIngredients || [];
+  const benefits = (service.keyBenefits || []).filter((b: string) => b.trim().length > 0);
+  const ingredients = (service.keyIngredients || []).filter((ing: string) => ing.trim().length > 0);
 
   const tabs: { key: Tab; label: string }[] = [
     ...(benefits.length > 0 ? [{ key: "benefits" as Tab, label: "Key Benefits" }] : []),
     ...(ingredients.length > 0 ? [{ key: "ingredients" as Tab, label: "Key Ingredients" }] : []),
-    ...(service.disclaimer ? [{ key: "disclaimer" as Tab, label: "Disclaimer" }] : []),
+    ...(service.disclaimer?.trim() ? [{ key: "disclaimer" as Tab, label: "Disclaimer" }] : []),
   ];
 
-  const hasAnyTabContent = benefits.length > 0 || ingredients.length > 0 || service.disclaimer;
+  const hasAnyTabContent = tabs.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50 pt-28 ">
@@ -148,92 +149,130 @@ export default function ServiceDetailPage({ id }: Props) {
               </p>
             )}
 
-            {hasAnyTabContent && (
-            <div>
-              <div className="flex gap-6 border-b border-gray-200">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key)}
-                    className={`pb-2 text-sm font-medium transition ${activeTab === tab.key
-                      ? "text-[#543826] border-b-2 border-[#543826]"
-                      : "text-gray-400 hover:text-gray-600"
-                      }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-              <div className="mt-4 bg-white rounded-xl border border-gray-100 p-5 min-h-[160px]">
-                {activeTab === "benefits" && (
-                  <div>
-                    <h4 className="font-semibold text-gray-800 mb-3">Benefits:</h4>
-                    <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
-                      {benefits.map((b, i) => (
-                        <li key={i}>{b}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {activeTab === "ingredients" && (
-                  <div>
-                    <h4 className="font-semibold text-gray-800 mb-3">Key Ingredients:</h4>
-                    <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
-                      {ingredients.map((ing, i) => (
-                        <li key={i}>{ing}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {activeTab === "disclaimer" && (
-                  <div>
-                    <h4 className="font-semibold text-gray-800 mb-3">Disclaimer:</h4>
-                    <p className="text-gray-600 text-sm leading-relaxed">{service.disclaimer}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-            )}
+             {hasAnyTabContent && (
+             <div>
+               <div className="flex gap-6 border-b border-gray-200">
+                 {tabs.map((tab) => (
+                   <button
+                     key={tab.key}
+                     onClick={() => setActiveTab(tab.key)}
+                     className={`pb-2 text-sm font-medium transition ${activeTab === tab.key
+                       ? "text-[#543826] border-b-2 border-[#543826]"
+                       : "text-gray-400 hover:text-gray-600"
+                       }`}
+                   >
+                     {tab.label}
+                   </button>
+                 ))}
+               </div>
+               <div className="mt-4 bg-white rounded-xl border border-gray-100 p-5 min-h-[160px]">
+                 <AnimatePresence mode="wait">
+                   {activeTab === "benefits" && (
+                     <motion.div
+                       key="benefits"
+                       initial={{ opacity: 0, y: 12 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       exit={{ opacity: 0, y: -12 }}
+                       transition={{ duration: 0.25, ease: "easeInOut" }}
+                     >
+                       <h4 className="font-semibold text-gray-800 mb-3">Benefits:</h4>
+                       <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
+                         {benefits.map((b, i) => (
+                           <li key={i}>{b}</li>
+                         ))}
+                       </ul>
+                     </motion.div>
+                   )}
+                   {activeTab === "ingredients" && (
+                     <motion.div
+                       key="ingredients"
+                       initial={{ opacity: 0, y: 12 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       exit={{ opacity: 0, y: -12 }}
+                       transition={{ duration: 0.25, ease: "easeInOut" }}
+                     >
+                       <h4 className="font-semibold text-gray-800 mb-3">Key Ingredients:</h4>
+                       <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
+                         {ingredients.map((ing, i) => (
+                           <li key={i}>{ing}</li>
+                         ))}
+                       </ul>
+                     </motion.div>
+                   )}
+                   {activeTab === "disclaimer" && (
+                     <motion.div
+                       key="disclaimer"
+                       initial={{ opacity: 0, y: 12 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       exit={{ opacity: 0, y: -12 }}
+                       transition={{ duration: 0.25, ease: "easeInOut" }}
+                     >
+                       <h4 className="font-semibold text-gray-800 mb-3">Disclaimer:</h4>
+                       <p className="text-gray-600 text-sm leading-relaxed">{service.disclaimer}</p>
+                     </motion.div>
+                   )}
+                 </AnimatePresence>
+               </div>
+             </div>
+             )}
 
-            {(service.discountPrice ?? service.actualPrice) != null || service.variants?.length > 0 ? (
-              <div>
-                <h3 className="font-semibold text-[#543826] mb-3">Select Package</h3>
-                <div className="grid gap-3">
+             {(service.discountPrice ?? service.actualPrice) != null || service.variants?.length > 0 ? (
+               <div>
+                 <h3 className="font-semibold text-[#543826] mb-3">Select Package</h3>
+                 <div className="grid gap-3">
 
-                  {service.variants?.map((variant: any) => (
-                    <button
-                      key={variant._id}
-                      onClick={() => { setSelectedVariant(variant); setUseBasePrice(false); }}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition ${selectedVariant?._id === variant._id ? "border-orange-500 bg-orange-50" : "border-gray-200 bg-white hover:border-gray-300"
-                        }`}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-semibold text-[#543826]">
-                            {variant.name.split(/(Get \d+ Free)/i).map((part: any, i: any) =>
-                              /Get \d+ Free/i.test(part)
-                                ? <span key={i} className="font-bold underline text-[#543826]">{part}</span>
-                                : part
-                            )}
-                          </p>
-                          {variant.description && <p className="text-gray-500 text-sm mt-1">{variant.description}</p>}
-                          <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                            {service?.isProduct === false ? <>{variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
-                              {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}</> : ""}
+                   {(service.discountPrice ?? service.actualPrice) != null && (
+                     <button
+                       onClick={() => { setSelectedVariant(null); setUseBasePrice(true); }}
+                       className={`w-full text-left p-4 rounded-xl border-2 transition ${useBasePrice && !selectedVariant ? "border-orange-500 bg-orange-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
+                     >
+                       <div className="flex justify-between items-start">
+                         <div>
+                           <p className="font-semibold text-[#543826]">
+                             {service?.isProduct === false ? "1 Session" : service.title}
+                           </p>
+                         </div>
+                         <span className="text-orange-600 font-bold text-lg">
+                           AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}
+                         </span>
+                       </div>
+                     </button>
+                   )}
 
-                            {variant?.discountPercent > 0 && (
-                              <span className="text-green-600 font-semibold">
-                                {variant.discountPercent}% OFF
-                              </span>
-                            )}                          </div>
-                        </div>
-                        <span className="text-orange-600 font-bold text-lg">AED {variant.price}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+                   {service.variants?.map((variant: any) => (
+                     <button
+                       key={variant._id}
+                       onClick={() => { setSelectedVariant(variant); setUseBasePrice(false); }}
+                       className={`w-full text-left p-4 rounded-xl border-2 transition ${selectedVariant?._id === variant._id ? "border-orange-500 bg-orange-50" : "border-gray-200 bg-white hover:border-gray-300"
+                         }`}
+                     >
+                       <div className="flex justify-between items-start">
+                         <div>
+                           <p className="font-semibold text-[#543826]">
+                             {variant.name.split(/(Get \d+ Free)/i).map((part: any, i: any) =>
+                               /Get \d+ Free/i.test(part)
+                                 ? <span key={i} className="font-bold underline text-[#543826]">{part}</span>
+                                 : part
+                             )}
+                           </p>
+                           {variant.description && <p className="text-gray-500 text-sm mt-1">{variant.description}</p>}
+                           <div className="flex gap-4 mt-2 text-xs text-gray-500">
+                             {service?.isProduct === false ? <>{variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
+                               {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}</> : ""}
+
+                             {variant?.discountPercent > 0 && (
+                               <span className="text-green-600 font-semibold">
+                                 {variant.discountPercent}% OFF
+                               </span>
+                             )}                          </div>
+                         </div>
+                         <span className="text-orange-600 font-bold text-lg">AED {variant.price}</span>
+                       </div>
+                     </button>
+                   ))}
+                 </div>
+               </div>
+             ) : null}
 
             <button
               onClick={() => {

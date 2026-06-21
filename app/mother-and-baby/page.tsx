@@ -558,7 +558,7 @@ const STACK_CARDS = [
     h1: "Full profile.",
     h2: "Total confidence.",
     body: "Review her qualifications, experience, and training. Speak with her directly if you wish — no surprises when she walks through your door.",
-    cta: "View profiles",
+    cta: "Contact us",
     img: "/images/health.png",
     bg: "#E8EAE4",
     accent: "#2D5B4F",

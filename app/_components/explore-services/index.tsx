@@ -16,25 +16,20 @@ function slugify(name: string): string {
 export default function ExploreOurServices() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [offset, setOffset] = useState(0);
-  const [maxOffset, setMaxOffset] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const [canGoLeft, setCanGoLeft] = useState(false);
+  const [canGoRight, setCanGoRight] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeftStart = useRef(0);
+  const hasMoved = useRef(0);
 
-  const recalculate = useCallback(() => {
-    const container = containerRef.current;
-    const track = trackRef.current;
-    if (!container || !track || categories.length === 0) return;
-
-    const containerWidth = container.clientWidth;
-    const cardWidth = window.innerWidth >= 768 ? 340 + 20 : 260 + 12;
-    const visibleCards = Math.floor(containerWidth / cardWidth);
-    const totalTrackWidth = categories.length * cardWidth;
-    const newMax = Math.max(0, totalTrackWidth - containerWidth);
-
-    setMaxOffset(newMax);
-    setOffset((prev) => Math.min(prev, newMax));
-  }, [categories]);
+  const updateArrows = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanGoLeft(el.scrollLeft > 2);
+    setCanGoRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+  }, []);
 
   useEffect(() => {
     getCategories(true)
@@ -44,27 +39,69 @@ export default function ExploreOurServices() {
   }, []);
 
   useEffect(() => {
-    recalculate();
-    window.addEventListener("resize", recalculate);
-    return () => window.removeEventListener("resize", recalculate);
-  }, [recalculate]);
+    const el = scrollRef.current;
+    if (!el) return;
+    updateArrows();
+    el.addEventListener("scroll", updateArrows);
+    window.addEventListener("resize", updateArrows);
+    return () => {
+      el.removeEventListener("scroll", updateArrows);
+      window.removeEventListener("resize", updateArrows);
+    };
+  }, [updateArrows, categories]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onMouseDown = (e: MouseEvent) => {
+      isDragging.current = true;
+      startX.current = e.clientX;
+      scrollLeftStart.current = el.scrollLeft;
+      hasMoved.current = 0;
+      el.style.cursor = "grabbing";
+      el.style.scrollSnapType = "none";
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      e.preventDefault();
+      const dx = e.clientX - startX.current;
+      hasMoved.current = Math.abs(dx);
+      el.scrollLeft = scrollLeftStart.current - dx;
+    };
+
+    const onMouseUp = () => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      el.style.cursor = "grab";
+      el.style.scrollSnapType = "x mandatory";
+      updateArrows();
+    };
+
+    el.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+
+    return () => {
+      el.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [updateArrows]);
 
   const slide = (dir: "left" | "right") => {
-    const container = containerRef.current;
-    if (!container) return;
-    const cardWidth = window.innerWidth >= 768 ? 340 + 20 : 260 + 12;
-    const visibleCards = Math.floor(container.clientWidth / cardWidth);
-    const slideAmount = cardWidth * Math.max(visibleCards, 1);
-
-    if (dir === "left") {
-      setOffset((prev) => Math.max(0, prev - slideAmount));
-    } else {
-      setOffset((prev) => Math.min(maxOffset, prev + slideAmount));
-    }
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = window.innerWidth >= 768 ? 360 : 272;
+    el.style.scrollSnapType = "none";
+    el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+    setTimeout(() => {
+      if (el) el.style.scrollSnapType = "x mandatory";
+    }, 600);
   };
 
-  const canGoLeft = offset > 0;
-  const canGoRight = offset < maxOffset;
+  const wasDragged = () => hasMoved.current > 5;
 
   if (loading) {
     return (
@@ -101,38 +138,38 @@ export default function ExploreOurServices() {
         </div>
       </div>
 
-      <div ref={containerRef} className="relative max-w-7xl mx-auto overflow-hidden pl-4 md:pl-6 pr-4 md:pr-6">
-        {canGoLeft && (
-          <button
-            onClick={() => slide("left")}
-            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 shadow-lg border border-[#543826]/20 flex items-center justify-center text-[#543826] transition-all duration-300 hover:bg-[#543826] hover:text-white hover:border-[#543826] hover:shadow-xl"
-          >
-            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        )}
-        {canGoRight && (
-          <button
-            onClick={() => slide("right")}
-            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 shadow-lg border border-[#543826]/20 flex items-center justify-center text-[#543826] transition-all duration-300 hover:bg-[#543826] hover:text-white hover:border-[#543826] hover:shadow-xl"
-          >
-            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        )}
+      <div className="relative max-w-7xl mx-auto pl-4 md:pl-6 pr-4 md:pr-6">
+        <button
+          onClick={() => slide("left")}
+          disabled={!canGoLeft}
+          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 shadow-lg border border-[#543826]/20 flex items-center justify-center text-[#543826] transition-all duration-300 hover:bg-[#543826] hover:text-white hover:border-[#543826] hover:shadow-xl disabled:opacity-30 disabled:pointer-events-none"
+        >
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <button
+          onClick={() => slide("right")}
+          disabled={!canGoRight}
+          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 shadow-lg border border-[#543826]/20 flex items-center justify-center text-[#543826] transition-all duration-300 hover:bg-[#543826] hover:text-white hover:border-[#543826] hover:shadow-xl disabled:opacity-30 disabled:pointer-events-none"
+        >
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
 
         <div
-          ref={trackRef}
-          className="flex gap-3 md:gap-5 pb-4"
-          style={{ transform: `translateX(-${offset}px)`, transition: "transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)" }}
+          ref={scrollRef}
+          className="flex gap-3 md:gap-5 pb-4 overflow-x-auto cursor-grab select-none scrollbar-hide"
+          style={{ scrollSnapType: "x mandatory", scrollbarWidth: "none" }}
         >
           {categories.map((category) => (
             <Link
               key={category._id}
               href={category.link || `/${slugify(category.name)}`}
-              className="group shrink-0 w-[260px] md:w-[340px]"
+              className="group shrink-0 w-[260px] md:w-[340px] snap-start"
+              onClick={(e) => { if (wasDragged()) e.preventDefault(); }}
             >
               <div className="relative w-[260px] md:w-[340px] h-[200px] md:h-[260px] rounded-xl overflow-hidden">
                 <Image

@@ -72,6 +72,26 @@ function BookingContent() {
     phone: "",
   });
 
+  const [touched, setTouched] = useState<{ fullName: boolean; email: boolean; phone: boolean }>({
+    fullName: false,
+    email: false,
+    phone: false,
+  });
+
+  const getFieldError = (field: keyof typeof touched) => {
+    if (!touched[field]) return null;
+    if (field === "fullName" && !guestInfo.fullName.trim()) return "Full name is required";
+    if (field === "email") {
+      if (!guestInfo.email.trim()) return "Email is required";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestInfo.email)) return "Enter a valid email";
+    }
+    if (field === "phone") {
+      if (!guestInfo.phone.trim()) return "Phone number is required";
+      if (!/^\+?\d{7,15}$/.test(guestInfo.phone.replace(/[\s\-]/g, ""))) return "Enter a valid phone number";
+    }
+    return null;
+  };
+
   // Booking results
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [bookingError, setBookingError] = useState("");
@@ -116,18 +136,29 @@ function BookingContent() {
       .finally(() => setLoading(false));
   }, [id, searchParams]);
 
-// Pre-fill user info
-   useEffect(() => {
-     if (user) {
-       setGuestInfo({
-         fullName: user.name || "",
-         email: user.email || "",
-         phone: user.phone || "",
-       });
-     }
-   }, [user]);
+  useEffect(() => {
+    if (user) {
+      setGuestInfo({
+        fullName: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+      });
+    } else {
+      setGuestInfo({
+        fullName: "",
+        email: "",
+        phone: "",
+      });
+    }
+  }, [user]);
 
- // Dynamic steps based on addOns - skip addons step when no addOns
+  // Dynamic steps based on addOns - skip addons step when no addOns
+
+  useEffect(() => {
+    if (showSuccess) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [showSuccess]);
 
   useEffect(() => {
     if (stepRef.current) {
@@ -208,7 +239,13 @@ function BookingContent() {
     if (step === "datetime") return !!(selectedDate && selectedTime);
     if (step === "summary") {
       if (user) return true;
-      return !!(guestInfo.fullName && guestInfo.email && guestInfo.phone);
+      return !!(
+        guestInfo.fullName.trim() &&
+        guestInfo.email.trim() &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestInfo.email) &&
+        guestInfo.phone.trim() &&
+        /^\+?\d{7,15}$/.test(guestInfo.phone.replace(/[\s\-]/g, ""))
+      );
     }
     return true;
   };
@@ -242,7 +279,7 @@ function BookingContent() {
         ...(selectedAddOnNames.size > 0
           ? { addOnNames: Array.from(selectedAddOnNames) }
           : {}),
-        ...(user ? {} : { guestInfo }),
+        ...(user ? { guestInfo } : { guestInfo }),
       };
       const result = await createBooking(payload, token || undefined);
       setBookings([result]);
@@ -278,34 +315,34 @@ function BookingContent() {
   // Success modal
   const booking = bookings[0] ?? null;
 
-  if (showSuccess && booking) {
-    return (
-      <div className="min-h-screen bg-gray-50 pt-28 pb-16">
-        <div className="max-w-lg mx-auto px-5">
-          <div className="bg-white rounded-2xl shadow-md p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-green-600 text-3xl">&#10003;</span>
+   if (showSuccess && booking) {
+     return (
+       <div className="min-h-screen bg-gray-50 pt-20 sm:pt-28 pb-10 sm:pb-16">
+        <div className="max-w-lg mx-auto px-3 sm:px-5">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-md p-4 sm:p-8 text-center">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+              <span className="text-green-600 text-2xl sm:text-3xl">&#10003;</span>
             </div>
-            <h2 className="text-2xl font-bold text-[#543826] mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#543826] mb-1 sm:mb-2">
               Booking Confirmed!
             </h2>
-            <p className="text-gray-500 mb-6">
+            <p className="text-sm sm:text-base text-gray-500 mb-4 sm:mb-6">
               Your booking has been successfully created.
             </p>
 
-            <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left space-y-2">
-              <div className="flex justify-between text-sm">
+            <div className="bg-gray-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 text-left space-y-2 sm:space-y-3">
+              <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm gap-0.5 sm:gap-0">
                 <span className="text-gray-500">Booking ID</span>
-                <span className="font-mono text-[#543826]">{booking._id}</span>
+                <span className="font-mono text-[#543826] break-all">{booking._id}</span>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm gap-0.5 sm:gap-0">
                 <span className="text-gray-500">Service</span>
-                <span className="text-[#543826]">
+                <span className="text-[#543826] break-words">
                   {booking.serviceSnapshot?.title}
                 </span>
               </div>
               {booking.variantSnapshot && (
-                <div className="flex justify-between text-sm">
+                <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm gap-0.5 sm:gap-0">
                   <span className="text-gray-500">Package</span>
                   <span className="text-[#543826]">
                     {booking.variantSnapshot.name}
@@ -313,7 +350,7 @@ function BookingContent() {
                 </div>
               )}
               {booking.subServiceSnapshot && (
-                <div className="flex justify-between text-sm">
+                <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm gap-0.5 sm:gap-0">
                   <span className="text-gray-500">Sub-service</span>
                   <span className="text-[#543826]">
                     {booking.subServiceSnapshot.name} — AED {booking.subServiceSnapshot.price}
@@ -321,20 +358,20 @@ function BookingContent() {
                 </div>
               )}
               {booking.addOnsSnapshot && booking.addOnsSnapshot.length > 0 && (
-                <div className="flex justify-between text-sm">
+                <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm gap-0.5 sm:gap-0">
                   <span className="text-gray-500">Add-ons</span>
-                  <span className="text-[#543826]">
+                  <span className="text-[#543826] break-words">
                     {booking.addOnsSnapshot.map((a) => a.name).join(", ")}
                   </span>
                 </div>
               )}
-              <div className="flex justify-between text-sm">
+              <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm gap-0.5 sm:gap-0">
                 <span className="text-gray-500">Amount</span>
                 <span className="font-bold text-orange-600">
                   AED {booking.totalAmount}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm gap-0.5 sm:gap-0">
                 <span className="text-gray-500">Status</span>
                 <span className="text-green-600 font-medium capitalize">
                   {booking.status}
@@ -349,15 +386,15 @@ function BookingContent() {
                 );
                 window.open(`https://wa.me/971555828945?text=${msg}`, "_blank");
               }}
-              className="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1eb954] text-white font-brand font-semibold py-5 rounded-xl text-lg transition-all duration-300 hover:shadow-lg"
+              className="w-full inline-flex items-center justify-center gap-2 sm:gap-3 bg-[#25D366] hover:bg-[#1eb954] text-white font-brand font-semibold py-4 sm:py-5 rounded-xl sm:rounded-2xl text-sm sm:text-lg transition-all duration-300 hover:shadow-lg"
             >
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/>
               </svg>
               Send Booking Receipt via WhatsApp
             </button>
 
-            <p className="text-xs text-gray-400 mt-4 font-brand">
+            <p className="text-xs text-gray-400 mt-3 sm:mt-4 font-brand">
               Share your booking details with us on WhatsApp for quick follow-up
             </p>
           </div>
@@ -375,18 +412,41 @@ function BookingContent() {
 
   return (
     <>
-      <div className="min-h-screen bg-linear-to-br from-orange-50 via-white to-blue-50 pt-24 pb-16">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Two-column layout: Main content + Sticky sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
-          {/* LEFT: Main Content */}
-          <div className="flex flex-col gap-6">
+      <div className="min-h-screen bg-linear-to-br from-orange-50 via-white to-blue-50 pt-16 sm:pt-20 lg:pt-24 pb-8 sm:pb-10 lg:pb-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 sm:gap-6 lg:gap-8">
+           {/* LEFT: Main Content */}
+          {/* Mobile Service Summary Bar */}
+          {service && (
+            <div className="flex items-center gap-3 lg:hidden rounded-2xl bg-white border border-gray-200 shadow-sm p-3">
+              {service.image && (
+                <div className="w-10 h-10 bg-orange-100 rounded-xl overflow-hidden shrink-0">
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-900 truncate">{service.title}</p>
+                <p className="text-xs text-orange-600 font-bold">AED {totalPrice.toFixed(2)}</p>
+              </div>
+              {selectedDate && (
+                <div className="text-xs text-gray-500 shrink-0">
+                  {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  {selectedTime && ` • ${(() => { const [h, m] = selectedTime.split(":"); const hr = parseInt(h); return `${hr % 12 || 12}:${m} ${hr >= 12 ? "PM" : "AM"}`; })()}`}
+                </div>
+              )}
+            </div>
+          )}
+           <div className="flex flex-col gap-4 sm:gap-6">
             {/* Header/Stepper Section */}
-            <div className="rounded-3xl bg-white/95 border border-gray-200 shadow-sm p-6">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="rounded-2xl sm:rounded-3xl bg-white/95 border border-gray-200 shadow-sm p-4 sm:p-6">
+              <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">Streamlined booking in three clear steps</p>
-                  <h1 className="text-2xl md:text-3xl font-semibold text-[#1f2937]">
+                  <p className="text-xs sm:text-sm text-gray-500">Streamlined booking in three clear steps</p>
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#1f2937]">
                     Book your service with confidence
                   </h1>
                 </div>
@@ -400,8 +460,8 @@ function BookingContent() {
                 </div>
               </div>
 
-              <div className="mt-6">
-                <div className="flex items-center">
+              <div className="mt-4 sm:mt-6">
+                <div className="flex items-center gap-0 sm:gap-0">
                   {activeSteps.map((s, i) => {
                     const isCompleted = i < currentStepIndex;
                     const isActive = i === currentStepIndex;
@@ -413,10 +473,10 @@ function BookingContent() {
                           onClick={() => {
                             if (i <= currentStepIndex) setStep(s.key);
                           }}
-                          className="group flex flex-col items-center gap-2 focus:outline-none disabled:cursor-not-allowed"
+                          className="group flex flex-col items-center gap-1 sm:gap-2 focus:outline-none disabled:cursor-not-allowed"
                         >
                           <span
-                            className={`flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm transition-all duration-300 ${
+                            className={`flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-full border-2 text-xs sm:text-sm transition-all duration-300 ${
                               isCompleted
                                 ? "bg-green-500 border-green-500 text-white shadow-lg"
                                 : isActive
@@ -426,12 +486,12 @@ function BookingContent() {
                           >
                             {isCompleted ? "✓" : s.icon}
                           </span>
-                          <span className={`text-[11px] font-semibold whitespace-nowrap ${isCompleted ? "text-green-700" : isActive ? "text-[#543826]" : "text-gray-400"}`}>
+                          <span className={`text-[10px] sm:text-[11px] font-semibold whitespace-nowrap ${isCompleted ? "text-green-700" : isActive ? "text-[#543826]" : "text-gray-400"}`}>
                             {s.label}
                           </span>
                         </button>
                         {i < activeSteps.length - 1 && (
-                          <div className={`flex-1 h-[2px] mx-1 rounded-full transition-all duration-500 ${i < currentStepIndex ? "bg-green-500" : "bg-gray-200"}`} />
+                          <div className={`flex-1 h-[2px] mx-0.5 sm:mx-1 rounded-full transition-all duration-500 ${i < currentStepIndex ? "bg-green-500" : "bg-gray-200"}`} />
                         )}
                       </React.Fragment>
                     );
@@ -442,25 +502,24 @@ function BookingContent() {
             </div>
 
             {/* Main Content Card */}
-            <div ref={stepRef} className="bg-white rounded-3xl shadow-md p-8 flex flex-col">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
+            <div ref={stepRef} className="bg-white rounded-2xl sm:rounded-3xl shadow-md p-4 sm:p-6 md:p-8 flex flex-col">
+              <div className="flex items-center justify-between mb-4 sm:mb-6 md:mb-8">
+                <div className="flex items-center gap-2 sm:gap-3">
                   {currentStepIndex > 0 && (
                     <button
                       onClick={goBack}
-                      className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 text-gray-500"
+                      className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 text-gray-500"
                     >
                       &#8249;
                     </button>
                   )}
-                  <h2 className="text-xl font-semibold text-gray-400">
+                  <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-400">
                     {activeSteps[currentStepIndex]?.label}
                   </h2>
                 </div>
                 <button
                   onClick={() => router.push(`/services/${id}`)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl"
+                  className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-lg sm:text-xl"
                 >
                   &times;
                 </button>
@@ -488,7 +547,7 @@ function BookingContent() {
                               }
                               e.target.value = "__placeholder__";
                             }}
-                            className="w-full appearance-none border-2 border-[#543826]/20 rounded-3xl px-5 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
+                            className="w-full appearance-none border-2 border-[#543826]/20 rounded-xl sm:rounded-3xl px-4 sm:px-5 py-3 sm:py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
                           >
                             <option value="__placeholder__" disabled>Select an add-on to include…</option>
                             {addOns.map((a, i) => (
@@ -507,7 +566,7 @@ function BookingContent() {
                               <button
                                 key={i}
                                 onClick={() => toggleAddOn(a.name, a.isRequired || false)}
-                                className="group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#543826]/10 border border-[#543826]/30 text-sm text-[#543826] font-medium hover:bg-orange-100 hover:border-[#543826] transition"
+                                className="group inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#543826]/10 border border-[#543826]/30 text-xs sm:text-sm text-[#543826] font-medium hover:bg-orange-100 hover:border-[#543826] transition"
                               >
                                 {a.name}
                                 <span className="text-orange-600 font-bold">AED {a.price.toFixed(2)}</span>
@@ -547,10 +606,10 @@ function BookingContent() {
                                 if (v) setSelectedVariant(v);
                               }
                             }}
-                            className="w-full appearance-none border-2 border-[#543826]/20 rounded-3xl px-5 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
-                          >
-                            {(service.discountPrice ?? service.actualPrice) != null && (
-                              <option value="__base__">
+                             className="w-full appearance-none border-2 border-[#543826]/20 rounded-xl sm:rounded-3xl px-4 sm:px-5 py-3 sm:py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
+                           >
+                             {(service.discountPrice ?? service.actualPrice) != null && (
+                               <option value="__base__">
                                 {service?.isProduct === false ? "1 Session — " : ""}
                                   AED{" "}
                                 {(
@@ -584,26 +643,26 @@ function BookingContent() {
 
               {/* ========== STEP: DATE & TIME ========== */}
               {step === "datetime" && (
-                <div className="space-y-6">
+                 <div className="space-y-4 sm:space-y-6">
                   {!hasAddOns && !selectedSubService && ((service.variants && service.variants.length > 0) || (service.discountPrice ?? service.actualPrice) != null) && (
-                    <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                      <label className="block text-sm font-semibold text-[#543826] uppercase tracking-wider mb-2">
-                        Select Package
-                      </label>
-                      <div className="relative">
-                        <select
-                          value={selectedVariant?._id || "__base__"}
-                          onChange={(e) => {
-                            if (e.target.value === "__base__") {
-                              setSelectedVariant(null);
-                            } else {
-                              const v = service.variants?.find(
-                                (v2: any) => v2._id === e.target.value
-                              );
-                              if (v) setSelectedVariant(v);
-                            }
-                          }}
-                          className="w-full appearance-none border-2 border-[#543826]/20 rounded-3xl px-5 py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
+                     <div className="rounded-xl sm:rounded-3xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
+                       <label className="block text-xs sm:text-sm font-semibold text-[#543826] uppercase tracking-wider mb-2">
+                         Select Package
+                       </label>
+                       <div className="relative">
+                         <select
+                           value={selectedVariant?._id || "__base__"}
+                           onChange={(e) => {
+                             if (e.target.value === "__base__") {
+                               setSelectedVariant(null);
+                             } else {
+                               const v = service.variants?.find(
+                                 (v2: any) => v2._id === e.target.value
+                               );
+                               if (v) setSelectedVariant(v);
+                             }
+                           }}
+                           className="w-full appearance-none border-2 border-[#543826]/20 rounded-xl sm:rounded-3xl px-4 sm:px-5 py-3 sm:py-4 text-sm text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-[#faf9f6] cursor-pointer transition hover:border-[#543826]/40"
                         >
                           {(service.discountPrice ?? service.actualPrice) != null && (
                             <option value="__base__">
@@ -622,16 +681,16 @@ function BookingContent() {
                       </div>
                     </div>
                   )}
-                  <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="rounded-2xl sm:rounded-3xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
+                    <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#543826]">
                           {hasAddOns ? "Step 2" : "Step 1"}
                         </p>
-                        <h3 className="mt-3 text-2xl font-semibold text-gray-900">
+                        <h3 className="mt-1 sm:mt-3 text-xl sm:text-2xl font-semibold text-gray-900">
                           Pick your date and time
                         </h3>
-                        <p className="mt-2 text-sm text-gray-500">
+                        <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500">
                           Select a convenient slot for your appointment.
                         </p>
                       </div>
@@ -694,17 +753,17 @@ function BookingContent() {
                     </div>
                   </div>
 
-                  <div className="rounded-3xl border border-gray-200 bg-[#f8f5f0] p-4 shadow-sm">
-                    <div className="grid grid-cols-7 gap-2 text-center text-sm font-semibold text-gray-500">
+                  <div className="rounded-2xl sm:rounded-3xl border border-gray-200 bg-[#f8f5f0] p-3 sm:p-4 shadow-sm">
+                    <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs sm:text-sm font-semibold text-gray-500">
                       {DAYS.map((d) => (
-                        <div key={d} className="py-2">
+                        <div key={d} className="py-1.5 sm:py-2">
                           {d}
                         </div>
                       ))}
                     </div>
-                    <div className="grid grid-cols-7 gap-2 text-center mt-2">
+                    <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center mt-1 sm:mt-2">
                       {Array.from({ length: firstDay }).map((_, i) => (
-                        <div key={`prev-${i}`} className="py-3 text-sm text-gray-300">
+                        <div key={`prev-${i}`} className="py-2 sm:py-3 text-xs sm:text-sm text-gray-300">
                           {prevMonthDays - firstDay + 1 + i}
                         </div>
                       ))}
@@ -720,7 +779,7 @@ function BookingContent() {
                             key={day}
                             disabled={disabled}
                             onClick={() => setSelectedDate(dateStr)}
-                            className={`rounded-3xl py-3 transition relative ${
+                            className={`rounded-xl sm:rounded-3xl py-2 sm:py-3 text-xs sm:text-sm transition relative ${
                               isSelected
                                 ? "bg-[#543826] text-white font-semibold"
                                 : disabled
@@ -730,7 +789,7 @@ function BookingContent() {
                           >
                             {day}
                             {isToday && !isSelected && (
-                              <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#543826]" />
+                              <span className="absolute top-1 right-1 sm:top-2 sm:right-2 h-1 sm:h-1.5 w-1 sm:w-1.5 rounded-full bg-[#543826]" />
                             )}
                           </button>
                         );
@@ -738,7 +797,7 @@ function BookingContent() {
                       {Array.from({
                         length: (7 - ((firstDay + daysInMonth) % 7)) % 7,
                       }).map((_, i) => (
-                        <div key={`next-${i}`} className="py-3 text-sm text-gray-300">
+                        <div key={`next-${i}`} className="py-2 sm:py-3 text-xs sm:text-sm text-gray-300">
                           {i + 1}
                         </div>
                       ))}
@@ -746,13 +805,13 @@ function BookingContent() {
                   </div>
 
                   {selectedDate && (
-                    <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="rounded-2xl sm:rounded-3xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
+                      <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                          <h4 className="text-xl font-semibold text-gray-900">
+                          <h4 className="text-lg sm:text-xl font-semibold text-gray-900">
                             Choose a time slot
                           </h4>
-                          <p className="mt-2 text-sm text-gray-500">
+                          <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500">
                             Select the best time for your appointment on the chosen date.
                           </p>
                         </div>
@@ -764,7 +823,7 @@ function BookingContent() {
                         </div>
                       </div>
 
-                      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      <div className="mt-4 sm:mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
                         {["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00"].map((t) => {
                           const [h, m] = t.split(":");
                           const hour = parseInt(h);
@@ -775,7 +834,7 @@ function BookingContent() {
                             <button
                               key={t}
                               onClick={() => setSelectedTime(t)}
-                              className={`rounded-3xl border px-3 py-3 text-sm font-medium transition ${
+                              className={`rounded-xl sm:rounded-3xl border px-2 sm:px-3 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition ${
                                 selectedTime === t
                                   ? "border-[#543826] bg-[#543826] text-white"
                                   : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
@@ -793,17 +852,17 @@ function BookingContent() {
 
               {/* ========== STEP: SUMMARY ========== */}
               {step === "summary" && (
-                <div className="space-y-6">
-                  <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="rounded-2xl sm:rounded-3xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
+                    <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#543826]">
                           {hasAddOns ? "Step 3" : "Step 2"}
                         </p>
-                        <h3 className="mt-3 text-2xl font-semibold text-gray-900">
+                        <h3 className="mt-1 sm:mt-3 text-xl sm:text-2xl font-semibold text-gray-900">
                           Summary
                         </h3>
-                        <p className="mt-2 text-sm text-gray-500">
+                        <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500">
                           Review your booking, provide your information, and confirm payment.
                         </p>
                       </div>
@@ -814,10 +873,10 @@ function BookingContent() {
                   </div>
 
                   {/* Booking Review */}
-                  <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
-                    <h4 className="text-lg font-semibold text-gray-900">Your Booking</h4>
+                  <div className="rounded-2xl sm:rounded-3xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm space-y-3 sm:space-y-4">
+                    <h4 className="text-base sm:text-lg font-semibold text-gray-900">Your Booking</h4>
                     {!selectedSubService && (
-                      <div className="grid gap-4 lg:grid-cols-[1fr_auto] items-center rounded-3xl border border-gray-100 bg-[#faf9f6] p-5">
+                      <div className="grid gap-3 sm:gap-4 items-center rounded-2xl sm:rounded-3xl border border-gray-100 bg-[#faf9f6] p-4 sm:p-5">
                         <div>
                           <p className="font-semibold text-gray-900">{service.title}</p>
                           {selectedVariant ? (
@@ -848,14 +907,14 @@ function BookingContent() {
                             </p>
                           )}
                         </div>
-                        <span className="text-orange-600 font-bold text-2xl">
+                        <span className="text-orange-600 font-bold text-xl sm:text-2xl">
                           AED {basePrice.toFixed(2)}
                         </span>
                       </div>
                     )}
 
                     {selectedSubService && (
-                      <div className="flex flex-col gap-3 rounded-3xl border border-gray-100 bg-[#fbfaf7] p-4 sm:flex-row sm:items-center sm:justify-between">
+                       <div className="flex flex-col gap-3 rounded-2xl sm:rounded-3xl border border-gray-100 bg-[#fbfaf7] p-3 sm:p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                           <span className="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded mb-2">Sub-service</span>
                           <p className="font-semibold text-gray-900">{selectedSubService.name}</p>
@@ -890,7 +949,7 @@ function BookingContent() {
                         {selectedAddOns.map((addon, i) => (
                           <div
                             key={i}
-                            className="flex flex-col gap-3 rounded-3xl border border-gray-100 bg-[#fbfaf7] p-4 sm:flex-row sm:items-center sm:justify-between"
+                             className="flex flex-col gap-3 rounded-2xl sm:rounded-3xl border border-gray-100 bg-[#fbfaf7] p-3 sm:p-4 sm:flex-row sm:items-center sm:justify-between"
                           >
                             <div>
                               <p className="font-semibold text-gray-900">
@@ -924,10 +983,10 @@ function BookingContent() {
                       </div>
                     )}
 
-                    <div className="flex flex-col gap-3 rounded-3xl bg-orange-50 p-5 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-2 sm:gap-3 rounded-2xl sm:rounded-3xl bg-orange-50 p-4 sm:p-5 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <p className="text-sm text-[#543826]">Total payable</p>
-                        <p className="mt-1 text-2xl font-bold text-[#543826]">
+                        <p className="text-xs sm:text-sm text-[#543826]">Total payable</p>
+                        <p className="mt-0.5 sm:mt-1 text-xl sm:text-2xl font-bold text-[#543826]">
                           AED {totalPrice.toFixed(2)}
                         </p>
                       </div>
@@ -939,20 +998,20 @@ function BookingContent() {
                   </div>
 
                   {/* Your Information */}
-                  <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
+                  <div className="rounded-2xl sm:rounded-3xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm space-y-4 sm:space-y-6">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#543826]">
                           Your Information
                         </p>
-                        <h4 className="mt-3 text-lg font-semibold text-gray-900">
+                        <h4 className="mt-1 sm:mt-3 text-base sm:text-lg font-semibold text-gray-900">
                           Contact details
                         </h4>
-                        <p className="mt-2 text-sm text-gray-500">
+                        <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500">
                           Provide the details we need to confirm your booking quickly.
                         </p>
                       </div>
 
-                      <div className="grid gap-4 md:grid-cols-2">
+                      <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
                         <div className="space-y-2">
                           <label className="block text-sm font-medium text-gray-700">
                             Full Name *
@@ -966,9 +1025,15 @@ function BookingContent() {
                                 fullName: e.target.value,
                               })
                             }
-                            className="w-full border border-gray-300 rounded-3xl px-4 py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            onBlur={() => setTouched({ ...touched, fullName: true })}
+                            className={`w-full border rounded-xl sm:rounded-3xl px-3 sm:px-4 py-3 sm:py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                              getFieldError("fullName") ? "border-red-400 bg-red-50/30" : "border-gray-300"
+                            }`}
                             placeholder="Enter your full name"
                           />
+                          {getFieldError("fullName") && (
+                            <p className="text-xs text-red-500 mt-1">{getFieldError("fullName")}</p>
+                          )}
                         </div>
 
                         <div className="space-y-2">
@@ -981,9 +1046,15 @@ function BookingContent() {
                             onChange={(e) =>
                               setGuestInfo({ ...guestInfo, email: e.target.value })
                             }
-                            className="w-full border border-gray-300 rounded-3xl px-4 py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            onBlur={() => setTouched({ ...touched, email: true })}
+                            className={`w-full border rounded-xl sm:rounded-3xl px-3 sm:px-4 py-3 sm:py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                              getFieldError("email") ? "border-red-400 bg-red-50/30" : "border-gray-300"
+                            }`}
                             placeholder="Enter your email"
                           />
+                          {getFieldError("email") && (
+                            <p className="text-xs text-red-500 mt-1">{getFieldError("email")}</p>
+                          )}
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
@@ -996,53 +1067,55 @@ function BookingContent() {
                             onChange={(e) =>
                               setGuestInfo({ ...guestInfo, phone: e.target.value })
                             }
-                            className="w-full border border-gray-300 rounded-3xl px-4 py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            onBlur={() => setTouched({ ...touched, phone: true })}
+                            className={`w-full border rounded-xl sm:rounded-3xl px-3 sm:px-4 py-3 sm:py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                              getFieldError("phone") ? "border-red-400 bg-red-50/30" : "border-gray-300"
+                            }`}
                             placeholder="+971 XX XXX XXXX"
                           />
+                          {getFieldError("phone") && (
+                            <p className="text-xs text-red-500 mt-1">{getFieldError("phone")}</p>
+                          )}
                         </div>
                        </div>
                      </div>
 
-                   {bookingError && (
-                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg p-3">
-                      {bookingError}
-                    </div>
-                  )}
+                   
                 </div>
               )}
 
-            {/* ====== BOTTOM: Continue / Confirm ====== */}
-            <div className="flex justify-end pt-8 border-t border-gray-200 mt-8">
-              {step === "summary" ? (
-                <button
-                  disabled={submitting}
-                  onClick={handleConfirmBooking}
-                  className="bg-[#543826] hover:bg-[#3e2a1c] disabled:opacity-50 text-white font-semibold px-10 py-4 rounded-3xl transition text-lg"
-                >
-                  {submitting ? "Booking..." : "Confirm Booking"}
-                </button>
-              ) : (
-                <button
-                  disabled={!canProceed()}
-                  onClick={goNext}
-                  className="border border-gray-300 text-gray-700 font-semibold px-10 py-4 rounded-3xl hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition text-lg"
-                >
-                  Continue
-                </button>
-              )}
-            </div>
+             {/* ====== BOTTOM: Continue / Confirm ====== */}
+             <div className="flex flex-col sm:flex-row sm:justify-end pt-4 sm:pt-6 md:pt-8 border-t border-gray-200 mt-4 sm:mt-6 md:mt-8 gap-3 sm:gap-0">
+               {step === "summary" ? (
+                 <button
+                   disabled={submitting}
+                   onClick={handleConfirmBooking}
+                   className="w-full sm:w-auto bg-[#543826] hover:bg-[#3e2a1c] disabled:opacity-50 text-white font-semibold px-6 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-3xl transition text-base sm:text-lg"
+                 >
+                   {submitting ? "Booking..." : "Confirm Booking"}
+                 </button>
+               ) : (
+                 <button
+                   disabled={!canProceed()}
+                   onClick={goNext}
+                   className="w-full sm:w-auto border border-gray-300 text-gray-700 font-semibold px-6 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-3xl hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition text-base sm:text-lg"
+                 >
+                   Continue
+                 </button>
+               )}
+             </div>
             </div>
           </div>
           {/* END LEFT COLUMN */}
 
-          {/* RIGHT COLUMN: Sticky Service Card */}
+          {/* RIGHT COLUMN: Service Card */}
           {service && (
-            <div className="hidden lg:block">
-              <div className="sticky top-28 rounded-3xl border border-gray-200 bg-white shadow-md p-6 transition-all duration-300 ease-out transform hover:shadow-lg">
-                <div className="space-y-4">
+            <div className="block lg:block">
+              <div className="lg:sticky lg:top-28 rounded-2xl sm:rounded-3xl border border-gray-200 bg-white shadow-md p-4 sm:p-6 transition-all duration-300 ease-out transform hover:shadow-lg">
+                <div className="space-y-3 sm:space-y-4">
                   {/* Service Image */}
                   {service.image && (
-                    <div className="w-full h-40 bg-orange-100 rounded-2xl overflow-hidden">
+                    <div className="w-full h-32 sm:h-40 bg-orange-100 rounded-xl sm:rounded-2xl overflow-hidden">
                       <img
                         src={service.image}
                         alt={service.title}
@@ -1056,16 +1129,16 @@ function BookingContent() {
                     <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#543826]">
                       Selected Service
                     </p>
-                    <h3 className="mt-2 text-lg font-bold text-gray-900 line-clamp-2">
+                    <h3 className="mt-1 sm:mt-2 text-sm sm:text-lg font-bold text-gray-900 line-clamp-2">
                       {service.title}
                     </h3>
                   </div>
 
                   {/* Package Info */}
                   {selectedSubService ? (
-                    <div className="rounded-2xl bg-orange-50 p-3">
+                    <div className="rounded-xl sm:rounded-2xl bg-orange-50 p-3">
                       <p className="text-xs text-gray-600">Sub-service</p>
-                      <p className="mt-1 font-semibold text-gray-900">
+                      <p className="mt-1 text-sm font-semibold text-gray-900">
                         {selectedSubService.name}
                       </p>
                       <p className="text-xs text-orange-600 font-semibold mt-1">
@@ -1073,9 +1146,9 @@ function BookingContent() {
                       </p>
                     </div>
                   ) : selectedVariant ? (
-                    <div className="rounded-2xl bg-orange-50 p-3">
+                    <div className="rounded-xl sm:rounded-2xl bg-orange-50 p-3">
                       <p className="text-xs text-gray-600">Package</p>
-                      <p className="mt-1 font-semibold text-gray-900">
+                      <p className="mt-1 text-sm font-semibold text-gray-900">
                         {selectedVariant.name}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
@@ -1083,9 +1156,9 @@ function BookingContent() {
                       </p>
                     </div>
                   ) : !selectedVariant && (service.discountPrice ?? service.actualPrice) != null ? (
-                    <div className="rounded-2xl bg-orange-50 p-3">
+                    <div className="rounded-xl sm:rounded-2xl bg-orange-50 p-3">
                       <p className="text-xs text-gray-600">Package</p>
-                      <p className="mt-1 font-semibold text-gray-900">
+                      <p className="mt-1 text-sm font-semibold text-gray-900">
                         Single Session
                       </p>
                     </div>
@@ -1093,9 +1166,9 @@ function BookingContent() {
 
                   {/* Selected Add-ons Counter */}
                   {selectedAddOns.length > 0 && (
-                    <div className="rounded-2xl bg-blue-50 p-3">
+                    <div className="rounded-xl sm:rounded-2xl bg-blue-50 p-3">
                       <p className="text-xs text-gray-600">Add-ons</p>
-                      <p className="mt-1 font-semibold text-gray-900">
+                      <p className="mt-1 text-sm font-semibold text-gray-900">
                         {selectedAddOns.length} selected
                       </p>
                     </div>
@@ -1103,9 +1176,9 @@ function BookingContent() {
 
                   {/* Date & Time Display */}
                   {selectedDate && (
-                    <div className="rounded-2xl bg-green-50 p-3">
+                    <div className="rounded-xl sm:rounded-2xl bg-green-50 p-3">
                       <p className="text-xs text-gray-600">Date & Time</p>
-                      <p className="mt-1 font-semibold text-gray-900 text-sm">
+                      <p className="mt-1 font-semibold text-gray-900 text-xs sm:text-sm">
                         {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
                           weekday: "short",
                           month: "short",
@@ -1117,19 +1190,19 @@ function BookingContent() {
                   )}
 
                   {/* Price Summary */}
-                  <div className="rounded-2xl bg-linear-to-br from-orange-100 to-orange-50 p-4 border border-orange-200">
+                  <div className="rounded-xl sm:rounded-2xl bg-linear-to-br from-orange-100 to-orange-50 p-3 sm:p-4 border border-orange-200">
                     <p className="text-xs text-gray-600 uppercase tracking-wider">Total Price</p>
-                    <p className="mt-2 text-3xl font-bold text-orange-600">
+                    <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-bold text-orange-600">
                       AED {totalPrice.toFixed(2)}
                     </p>
-<p className="mt-1 text-xs text-gray-600">
+                    <p className="mt-0.5 sm:mt-1 text-xs text-gray-600">
                         {selectedSubService ? `Sub-service: AED ${subServicePrice.toFixed(2)}` : `Base: AED ${basePrice.toFixed(2)}`}
                         {addOnsTotal > 0 && ` + Add-ons: AED ${addOnsTotal.toFixed(2)}`}
-                      </p>
+                    </p>
                   </div>
 
                   {/* Step Indicator */}
-                  <div className="rounded-2xl bg-gray-50 p-3 border border-gray-200">
+                  <div className="rounded-xl sm:rounded-2xl bg-gray-50 p-3 border border-gray-200">
                     <p className="text-xs text-gray-600 uppercase tracking-wider">Progress</p>
                     <div className="mt-2 flex gap-1">
                       {activeSteps.map((_, i) => (
