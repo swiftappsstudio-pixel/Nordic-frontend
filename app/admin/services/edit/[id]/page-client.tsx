@@ -1,6 +1,6 @@
 "use client";
 
-import { ServiceForm } from "@/app/_components/service-form";
+import { ServiceWizard } from "@/app/_components/service-wizard";
 
 interface Props {
   id: string;
@@ -9,7 +9,7 @@ interface Props {
 export default function EditServicePage({ id }: Props) {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <ServiceForm mode="edit" serviceId={id} />
+      <ServiceWizard serviceId={id} />
     </div>
   );
 }

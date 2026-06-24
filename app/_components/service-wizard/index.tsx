@@ -164,12 +164,12 @@ const STEP_FIELDS: Record<number, FieldPath<WizardForm>[]> = {
 
 /* ================= COMPONENT ================= */
 
-export function ServiceWizard() {
+export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string } = {}) {
   const router = useRouter();
   const { token } = useAuth();
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5>(1);
-  const [serviceId, setServiceId] = useState<string | null>(null);
+  const [serviceId, setServiceId] = useState<string | null>(editServiceId || null);
   const [busy, setBusy] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -180,6 +180,7 @@ export function ServiceWizard() {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [slugTouched, setSlugTouched] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(!!editServiceId);
 
   const form = useForm<WizardForm>({
     resolver: zodResolver(wizardSchema),
@@ -239,6 +240,50 @@ export function ServiceWizard() {
       setValue("slug", parts.join("-"));
     }
   }, [watchedTitle, watchedCategory, slugTouched, setValue]);
+
+  // Load existing service data in edit mode
+  useEffect(() => {
+    if (!editServiceId) return;
+    fetch(`${API_BASE_URL}/services/${editServiceId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const s = data.data;
+        setImageUrls(s.images || []);
+        setPreviews(s.images || []);
+        setValue("title", s.title || "");
+        setValue("description", s.description || "");
+        setValue("actualPrice", s.actualPrice?.toString() || "");
+        setValue("discountPrice", s.discountPrice?.toString() || "");
+        setValue("category", s.category?._id || s.category || "");
+        setValue("keyBenefits", (s.keyBenefits || []).join(", "));
+        setValue("keyIngredients", (s.keyIngredients || []).join(", "));
+        setValue("disclaimer", s.disclaimer || "");
+        setValue("isProduct", s.isProduct ?? false);
+        setValue("slug", s.slug || "");
+        setValue("metaTitle", s.metaTitle || "");
+        setValue("metaDescription", s.metaDescription || "");
+        setValue("metaKeywords", (s.metaKeywords || []).join(", "));
+        setValue("variants", (s.variants || []).map((v: any) => ({
+          name: v.name || "",
+          price: v.price?.toString() || "",
+          discountPercent: v.discountPercent?.toString() || "",
+          sessions: v.sessions?.toString() || "",
+          freeSessions: v.freeSessions?.toString() || "",
+          validityInDays: v.validityInDays?.toString() || "",
+          isDefault: v.isDefault || false,
+        })));
+        setValue("addons", (s.addOns || []).map((a: any) => ({
+          name: a.name || "",
+          description: a.description || "",
+          price: a.price?.toString() || "",
+          isRequired: a.isRequired || false,
+        })));
+        setValue("isActive", s.isActive ?? true);
+        setValue("isFeatured", s.isFeatured ?? false);
+      })
+      .catch((err) => console.error("Failed to load service", err))
+      .finally(() => setInitialLoading(false));
+  }, [editServiceId, setValue]);
 
   /* ================= IMAGE HELPERS ================= */
 
@@ -369,6 +414,14 @@ export function ServiceWizard() {
     if (!serviceId) throw new Error("Service has not been created yet");
     const { variants } = getValues();
     const isProduct = getValues("isProduct");
+
+    // In edit mode, delete existing variants first
+    if (editServiceId) {
+      await authFetch(`${API_BASE_URL}/admin/variants/service/${serviceId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }).catch(() => {});
+    }
 
     for (const v of variants) {
       const payload: Record<string, any> = {
@@ -520,6 +573,14 @@ export function ServiceWizard() {
     }`;
 
   /* ================= RENDER ================= */
+
+  if (initialLoading) {
+    return (
+      <div className="max-w-5xl mx-auto flex items-center justify-center min-h-[400px]">
+        <div className="w-10 h-10 border-4 border-[#543826] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto">

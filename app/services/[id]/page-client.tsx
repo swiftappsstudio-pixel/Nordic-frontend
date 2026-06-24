@@ -22,6 +22,9 @@ export default function ServiceDetailPage({ id }: Props) {
   const [useBasePrice, setUseBasePrice] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>("benefits");
+  const [showAllBenefits, setShowAllBenefits] = useState(false);
+  const [showAllIngredients, setShowAllIngredients] = useState(false);
+  const [showFullDisclaimer, setShowFullDisclaimer] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -66,7 +69,19 @@ export default function ServiceDetailPage({ id }: Props) {
   const images = service.images || [];
   const subServices = service.subServices || [];
   const benefits = (service.keyBenefits || []).filter((b: string) => b.trim().length > 0);
+  const BENEFITS_LIMIT = 4;
+  const displayedBenefits = showAllBenefits ? benefits : benefits.slice(0, BENEFITS_LIMIT);
+  const hasMoreBenefits = benefits.length > BENEFITS_LIMIT;
   const ingredients = (service.keyIngredients || []).filter((ing: string) => ing.trim().length > 0);
+  const INGREDIENTS_LIMIT = 4;
+  const displayedIngredients = showAllIngredients ? ingredients : ingredients.slice(0, INGREDIENTS_LIMIT);
+  const hasMoreIngredients = ingredients.length > INGREDIENTS_LIMIT;
+
+  const DISCLAIMER_LIMIT = 150;
+  const disclaimerText = service.disclaimer || "";
+  const truncatedDisclaimer = disclaimerText.length > DISCLAIMER_LIMIT
+    ? disclaimerText.slice(0, DISCLAIMER_LIMIT) + "..."
+    : disclaimerText;
 
   const tabs: { key: Tab; label: string }[] = [
     ...(benefits.length > 0 ? [{ key: "benefits" as Tab, label: "Key Benefits" }] : []),
@@ -77,10 +92,10 @@ export default function ServiceDetailPage({ id }: Props) {
   const hasAnyTabContent = tabs.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-28 ">
+    <div className="min-h-screen bg-gray-50 pt-24 sm:pt-28">
       <div className="max-w-6xl mx-auto px-5">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+        <nav className="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-gray-500 mb-6">
           <Link href="/" className="hover:text-[#543826]">
             Home
           </Link>
@@ -110,7 +125,7 @@ export default function ServiceDetailPage({ id }: Props) {
                   />
                 </div>
                 {images.length > 1 && (
-                  <div className="flex gap-3 mt-4">
+                  <div className="flex gap-3 mt-4 overflow-x-auto pb-1">
                     {images.map((img, i) => (
                       <button
                         key={i}
@@ -142,7 +157,7 @@ export default function ServiceDetailPage({ id }: Props) {
 
           {/* ====== Right — Info ====== */}
           <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-[#543826]">{service.title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#543826]">{service.title}</h1>
             {service.description && (
               <p className="text-gray-700 leading-relaxed text-[15px]">
                 {service.description}
@@ -151,7 +166,7 @@ export default function ServiceDetailPage({ id }: Props) {
 
              {hasAnyTabContent && (
              <div>
-               <div className="flex gap-6 border-b border-gray-200">
+               <div className="flex gap-4 sm:gap-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
                  {tabs.map((tab) => (
                    <button
                      key={tab.key}
@@ -175,12 +190,28 @@ export default function ServiceDetailPage({ id }: Props) {
                        exit={{ opacity: 0, y: -12 }}
                        transition={{ duration: 0.25, ease: "easeInOut" }}
                      >
-                       <h4 className="font-semibold text-gray-800 mb-3">Benefits:</h4>
-                       <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
-                         {benefits.map((b, i) => (
-                           <li key={i}>{b}</li>
-                         ))}
-                       </ul>
+                        <h4 className="font-semibold text-gray-800 mb-3">Benefits:</h4>
+                        <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
+                          {displayedBenefits.map((b, i) => (
+                            <li key={i}>{b}</li>
+                          ))}
+                        </ul>
+                        {hasMoreBenefits && !showAllBenefits && (
+                          <button
+                            onClick={() => setShowAllBenefits(true)}
+                            className="mt-3 text-[#543826] font-medium text-sm hover:underline"
+                          >
+                            +{benefits.length - BENEFITS_LIMIT} more — Learn More
+                          </button>
+                        )}
+                        {showAllBenefits && (
+                          <button
+                            onClick={() => setShowAllBenefits(false)}
+                            className="mt-3 text-[#543826] font-medium text-sm hover:underline"
+                          >
+                            Show less
+                          </button>
+                        )}
                      </motion.div>
                    )}
                    {activeTab === "ingredients" && (
@@ -192,11 +223,27 @@ export default function ServiceDetailPage({ id }: Props) {
                        transition={{ duration: 0.25, ease: "easeInOut" }}
                      >
                        <h4 className="font-semibold text-gray-800 mb-3">Key Ingredients:</h4>
-                       <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
-                         {ingredients.map((ing, i) => (
-                           <li key={i}>{ing}</li>
-                         ))}
-                       </ul>
+                        <ul className="list-disc list-inside space-y-1.5 text-gray-600 text-sm">
+                          {displayedIngredients.map((ing, i) => (
+                            <li key={i}>{ing}</li>
+                          ))}
+                        </ul>
+                        {hasMoreIngredients && !showAllIngredients && (
+                          <button
+                            onClick={() => setShowAllIngredients(true)}
+                            className="mt-3 text-[#543826] font-medium text-sm hover:underline"
+                          >
+                            +{ingredients.length - INGREDIENTS_LIMIT} more — Learn More
+                          </button>
+                        )}
+                        {showAllIngredients && (
+                          <button
+                            onClick={() => setShowAllIngredients(false)}
+                            className="mt-3 text-[#543826] font-medium text-sm hover:underline"
+                          >
+                            Show less
+                          </button>
+                        )}
                      </motion.div>
                    )}
                    {activeTab === "disclaimer" && (
@@ -207,8 +254,26 @@ export default function ServiceDetailPage({ id }: Props) {
                        exit={{ opacity: 0, y: -12 }}
                        transition={{ duration: 0.25, ease: "easeInOut" }}
                      >
-                       <h4 className="font-semibold text-gray-800 mb-3">Disclaimer:</h4>
-                       <p className="text-gray-600 text-sm leading-relaxed">{service.disclaimer}</p>
+                        <h4 className="font-semibold text-gray-800 mb-3">Disclaimer:</h4>
+                        <p className="text-gray-600 text-sm leading-relaxed">
+                          {showFullDisclaimer ? disclaimerText : truncatedDisclaimer}
+                        </p>
+                        {disclaimerText.length > DISCLAIMER_LIMIT && !showFullDisclaimer && (
+                          <button
+                            onClick={() => setShowFullDisclaimer(true)}
+                            className="mt-3 text-[#543826] font-medium text-sm hover:underline"
+                          >
+                            Learn More
+                          </button>
+                        )}
+                        {showFullDisclaimer && (
+                          <button
+                            onClick={() => setShowFullDisclaimer(false)}
+                            className="mt-3 text-[#543826] font-medium text-sm hover:underline"
+                          >
+                            Show less
+                          </button>
+                        )}
                      </motion.div>
                    )}
                  </AnimatePresence>
@@ -226,16 +291,16 @@ export default function ServiceDetailPage({ id }: Props) {
                        onClick={() => { setSelectedVariant(null); setUseBasePrice(true); }}
                        className={`w-full text-left p-4 rounded-xl border-2 transition ${useBasePrice && !selectedVariant ? "border-orange-500 bg-orange-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
                      >
-                       <div className="flex justify-between items-start">
-                         <div>
-                           <p className="font-semibold text-[#543826]">
-                             {service?.isProduct === false ? "1 Session" : service.title}
-                           </p>
-                         </div>
-                         <span className="text-orange-600 font-bold text-lg">
-                           AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}
-                         </span>
-                       </div>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-0">
+                          <div>
+                             <p className="font-semibold text-[#543826] text-sm sm:text-base">
+                              {service.title}
+                            </p>
+                          </div>
+                          <span className="text-orange-600 font-bold text-base sm:text-lg">
+                            AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}
+                          </span>
+                        </div>
                      </button>
                    )}
 
@@ -246,28 +311,28 @@ export default function ServiceDetailPage({ id }: Props) {
                        className={`w-full text-left p-4 rounded-xl border-2 transition ${selectedVariant?._id === variant._id ? "border-orange-500 bg-orange-50" : "border-gray-200 bg-white hover:border-gray-300"
                          }`}
                      >
-                       <div className="flex justify-between items-start">
-                         <div>
-                           <p className="font-semibold text-[#543826]">
-                             {variant.name.split(/(Get \d+ Free)/i).map((part: any, i: any) =>
-                               /Get \d+ Free/i.test(part)
-                                 ? <span key={i} className="font-bold underline text-[#543826]">{part}</span>
-                                 : part
-                             )}
-                           </p>
-                           {variant.description && <p className="text-gray-500 text-sm mt-1">{variant.description}</p>}
-                           <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                             {service?.isProduct === false ? <>{variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
-                               {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}</> : ""}
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                          <div>
+                            <p className="font-semibold text-[#543826] text-sm sm:text-base">
+                              {variant.name.split(/(Get \d+ Free)/i).map((part: any, i: any) =>
+                                /Get \d+ Free/i.test(part)
+                                  ? <span key={i} className="font-bold underline text-[#543826]">{part}</span>
+                                  : part
+                              )}
+                            </p>
+                            {variant.description && <p className="text-gray-500 text-sm mt-1">{variant.description}</p>}
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-gray-500">
+                              {service?.isProduct === false ? <>{variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
+                                {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}</> : ""}
 
-                             {variant?.discountPercent > 0 && (
-                               <span className="text-green-600 font-semibold">
-                                 {variant.discountPercent}% OFF
-                               </span>
-                             )}                          </div>
-                         </div>
-                         <span className="text-orange-600 font-bold text-lg">AED {variant.price}</span>
-                       </div>
+                              {variant?.discountPercent > 0 && (
+                                <span className="text-green-600 font-semibold">
+                                  {variant.discountPercent}% OFF
+                                </span>
+                              )}                          </div>
+                          </div>
+                          <span className="text-orange-600 font-bold text-lg sm:text-xl whitespace-nowrap">AED {variant.price}</span>
+                        </div>
                      </button>
                    ))}
                  </div>
@@ -284,7 +349,7 @@ export default function ServiceDetailPage({ id }: Props) {
                   router.push(`/services/${id}/book`);
                 }
               }}
-              className="w-full mt-4 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-4 rounded-xl text-lg transition"
+              className="w-full mt-4 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold py-3.5 sm:py-4 rounded-xl text-base sm:text-lg transition"
             >
               Book Now
             </button>
@@ -295,17 +360,17 @@ export default function ServiceDetailPage({ id }: Props) {
                 <div className="space-y-4">
                   {subServices.map((sub, i) => (
                     <div key={i} className="border border-gray-100 rounded-xl p-4">
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div>
                           <span className="inline-block text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded mb-2">Service</span>
-                          <p className="text-gray-800 font-medium">{sub.name}</p>
+                          <p className="text-gray-800 font-medium text-sm sm:text-base">{sub.name}</p>
                         </div>
-                        <span className="text-orange-600 font-bold whitespace-nowrap">AED {sub.price.toFixed(2)}</span>
+                        <span className="text-orange-600 font-bold whitespace-nowrap text-base sm:text-lg">AED {sub.price.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-end mt-3">
                         <button
                           onClick={() => router.push(`/services/${id}/book?sub=${i}`)}
-                          className="bg-[#543826] hover:bg-[#3e2a1c] text-white text-sm font-medium px-5 py-2 rounded-lg transition"
+                          className="w-full sm:w-auto bg-[#543826] hover:bg-[#3e2a1c] text-white text-sm font-medium px-5 py-2 rounded-lg transition"
                         >
                           Continue
                         </button>
