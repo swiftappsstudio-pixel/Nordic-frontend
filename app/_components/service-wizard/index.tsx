@@ -67,6 +67,7 @@ const variantSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
   price: requiredNumber(0),
   discountPercent: optionalNumber(0),
+  discountPrice: optionalNumber(0),
   sessions: optionalNumber(0),
   freeSessions: optionalNumber(0),
   validityInDays: optionalNumber(1),
@@ -263,16 +264,17 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
         setValue("metaTitle", s.metaTitle || "");
         setValue("metaDescription", s.metaDescription || "");
         setValue("metaKeywords", (s.metaKeywords || []).join(", "));
-        setValue("variants", (s.variants || []).map((v: any) => ({
+        variantArray.replace((s.variants || []).map((v: any) => ({
           name: v.name || "",
           price: v.price?.toString() || "",
           discountPercent: v.discountPercent?.toString() || "",
+          discountPrice: v.discountPrice?.toString() || "",
           sessions: v.sessions?.toString() || "",
           freeSessions: v.freeSessions?.toString() || "",
           validityInDays: v.validityInDays?.toString() || "",
           isDefault: v.isDefault || false,
         })));
-        setValue("addons", (s.addOns || []).map((a: any) => ({
+        addonArray.replace((s.addOns || []).map((a: any) => ({
           name: a.name || "",
           description: a.description || "",
           price: a.price?.toString() || "",
@@ -417,10 +419,14 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
 
     // In edit mode, delete existing variants first
     if (editServiceId) {
-      await authFetch(`${API_BASE_URL}/admin/variants/service/${serviceId}`, {
+      const delRes = await authFetch(`${API_BASE_URL}/admin/variants/service/${serviceId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
-      }).catch(() => {});
+      });
+      if (!delRes.ok) {
+        const err = await delRes.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to delete existing variants");
+      }
     }
 
     for (const v of variants) {
@@ -429,6 +435,7 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
         name: v.name,
         price: Number(v.price),
         discountPercent: v.discountPercent ? Number(v.discountPercent) : undefined,
+        discountPrice: v.discountPrice ? Number(v.discountPrice) : undefined,
         isDefault: v.isDefault,
       };
 
@@ -913,6 +920,7 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
                     name: "",
                     price: "",
                     discountPercent: "",
+                    discountPrice: "",
                     sessions: "",
                     freeSessions: "",
                     validityInDays: watchedIsProduct ? "" : "90",
@@ -964,7 +972,7 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
                     </button>
                   </div>
 
-                  <div className={`grid ${watchedIsProduct ? 'grid-cols-2' : 'grid-cols-5'} gap-3`}>
+                  <div className={`grid ${watchedIsProduct ? 'grid-cols-3' : 'grid-cols-3'} gap-3`}>
                     <div>
                       <input
                         type="number"
@@ -984,6 +992,16 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
                         className={inputClass(!!e?.discountPercent)}
                       />
                       <Err message={e?.discountPercent?.message} />
+                    </div>
+                    <div>
+                      <input
+                        type="number"
+                        {...register(`variants.${i}.discountPrice`)}
+                        min={0}
+                        placeholder="Discounted Amount"
+                        className={inputClass(!!e?.discountPrice)}
+                      />
+                      <Err message={e?.discountPrice?.message} />
                     </div>
                     {!watchedIsProduct && (
                       <>

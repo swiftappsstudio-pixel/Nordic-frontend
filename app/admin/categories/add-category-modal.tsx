@@ -4,9 +4,9 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 
 interface AddCategoryModalProps {
-  onSubmit: (data: { name: string; description: string; link: string; viewHome: boolean; imageFile?: File }) => Promise<void>;
+  onSubmit: (data: { name: string; description: string; link: string; viewHome: boolean; imageFile?: File; existingSliderUrls?: string[]; sliderFiles?: File[] }) => Promise<void>;
   onCancel: () => void;
-  editData?: { name: string; description: string; link?: string; viewHome?: boolean; image?: string } | null;
+  editData?: { name: string; description: string; link?: string; viewHome?: boolean; image?: string; slider?: string[] } | null;
 }
 
 export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCategoryModalProps) {
@@ -16,15 +16,40 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
   const [viewHome, setViewHome] = useState(editData?.viewHome ?? false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(editData?.image ?? null);
+  const [existingSliderUrls, setExistingSliderUrls] = useState<string[]>(editData?.slider ?? []);
+  const [newSliderFiles, setNewSliderFiles] = useState<File[]>([]);
+  const [newSliderPreviews, setNewSliderPreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const sliderInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files?.length) return;
+    const newFiles = Array.from(files);
+    setNewSliderFiles((prev) => [...prev, ...newFiles]);
+    const newPreviews = newFiles.map((f) => URL.createObjectURL(f));
+    setNewSliderPreviews((prev) => [...prev, ...newPreviews]);
+  };
+
+  const removeExistingSlider = (index: number) => {
+    setExistingSliderUrls((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNewSlider = (index: number) => {
+    setNewSliderFiles((prev) => prev.filter((_, i) => i !== index));
+    setNewSliderPreviews((prev) => {
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,6 +70,8 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
         link: link.trim(),
         viewHome,
         ...(imageFile && { imageFile }),
+        existingSliderUrls,
+        ...(newSliderFiles.length > 0 && { sliderFiles: newSliderFiles }),
       });
       onCancel();
     } catch (err: unknown) {
@@ -177,6 +204,61 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
                 Remove image
               </button>
             )}
+          </div>
+
+          {/* Slider Images Upload */}
+          <div>
+            <label className="block text-sm font-medium text-black mb-1">
+              Slider Images <span className="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <div
+              className="border-2 border-dashed border-gray-300 rounded-md p-3 flex flex-col items-center gap-2 cursor-pointer hover:border-orange-400 transition"
+              onClick={() => sliderInputRef.current?.click()}
+            >
+              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
+              </svg>
+              <span className="text-xs text-gray-400">Click to upload slider images</span>
+              <span className="text-[10px] text-gray-400">PNG, JPG — you can select multiple</span>
+            </div>
+            <input
+              ref={sliderInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleSliderChange}
+              disabled={loading}
+            />
+            {(existingSliderUrls.length > 0 || newSliderPreviews.length > 0) && (
+              <div className="mt-3 grid grid-cols-4 gap-2">
+                {existingSliderUrls.map((src, i) => (
+                  <div key={`existing-${i}`} className="relative aspect-square rounded-md overflow-hidden border border-gray-200 group">
+                    <Image src={src} alt={`Slider ${i + 1}`} fill className="object-cover" unoptimized />
+                    <button
+                      type="button"
+                      onClick={() => removeExistingSlider(i)}
+                      className="absolute top-0.5 right-0.5 w-4 h-4 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition hover:bg-red-600"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                {newSliderPreviews.map((src, i) => (
+                  <div key={`new-${i}`} className="relative aspect-square rounded-md overflow-hidden border border-green-300 group">
+                    <Image src={src} alt={`New slider ${i + 1}`} fill className="object-cover" unoptimized />
+                    <button
+                      type="button"
+                      onClick={() => removeNewSlider(i)}
+                      className="absolute top-0.5 right-0.5 w-4 h-4 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition hover:bg-red-600"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <p className="text-[10px] text-gray-400 mt-1">You can upload multiple slider images for banners or carousels.</p>
           </div>
 
           {error && <p className="text-red-600 text-sm">{error}</p>}

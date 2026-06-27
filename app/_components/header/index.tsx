@@ -8,6 +8,7 @@ import { useAuth } from "@/app/_common/auth-context";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
+   { label: "IV Glutathione", href: "/iv-glutathione" },
   { label: "Mother & Baby", href: "/mother-and-baby" },
   { label: "Elderly Care", href: "/elderly-care" },
   { label: "Blood Test", href: "/blood-test" },

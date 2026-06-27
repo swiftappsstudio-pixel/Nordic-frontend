@@ -250,6 +250,7 @@ export interface Category {
   description?: string;
   link?: string;
   image?: string;
+  slider?: string[];
   isActive: boolean;
   sortOrder: number;
   viewHome?: boolean;
@@ -269,6 +270,8 @@ export interface Variant {
   name: string;
   description?: string;
   price: number;
+  discountPercent?: number;
+  discountPrice?: number;
   sessions: number;
   freeSessions: number;
   validityInDays: number;

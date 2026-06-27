@@ -16,6 +16,7 @@ interface Category {
   link?: string;
   viewHome?: boolean;
   image?: string;
+  slider?: string[];
   createdAt?: string;
 }
 
@@ -50,13 +51,19 @@ export default function CategoryPage() {
   }, []);
 
   // Add or Update category
-  const saveCategory = async (data: { name: string; description: string; link: string; viewHome: boolean; imageFile?: File }) => {
+  const saveCategory = async (data: { name: string; description: string; link: string; viewHome: boolean; imageFile?: File; existingSliderUrls?: string[]; sliderFiles?: File[] }) => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("link", data.link);
     formData.append("viewHome", String(data.viewHome));
     if (data.imageFile) formData.append("image", data.imageFile);
+    if (data.existingSliderUrls?.length) {
+      formData.append("existingSlider", JSON.stringify(data.existingSliderUrls));
+    }
+    if (data.sliderFiles?.length) {
+      data.sliderFiles.forEach((f) => formData.append("slider", f));
+    }
 
     if (editCategory) {
       const res = await authFetch(`${API_BASE_URL}/categories/${editCategory._id}`, {
@@ -154,6 +161,9 @@ export default function CategoryPage() {
                   Image
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                  Slider
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Name
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
@@ -196,6 +206,33 @@ export default function CategoryPage() {
                       <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
                         No img
                       </div>
+                    )}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    {cat.slider && cat.slider.length > 0 ? (
+                      <div className="flex -space-x-2">
+                        {cat.slider.slice(0, 3).map((src, i) => (
+                          <div
+                            key={i}
+                            className="relative w-8 h-8 rounded-full border-2 border-white overflow-hidden ring-1 ring-gray-200"
+                          >
+                            <Image
+                              src={src}
+                              alt={`Slider ${i + 1}`}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ))}
+                        {cat.slider.length > 3 && (
+                          <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-semibold text-gray-500 ring-1 ring-gray-200">
+                            +{cat.slider.length - 3}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-400">-</span>
                     )}
                   </td>
 
@@ -279,7 +316,7 @@ export default function CategoryPage() {
         <AddCategoryModal
           onSubmit={saveCategory}
           onCancel={() => { setShowModal(false); setEditCategory(null); }}
-          editData={editCategory ? { name: editCategory.name, description: editCategory.description, link: editCategory.link, viewHome: editCategory.viewHome, image: editCategory.image } : null}
+          editData={editCategory ? { name: editCategory.name, description: editCategory.description, link: editCategory.link, viewHome: editCategory.viewHome, image: editCategory.image, slider: editCategory.slider } : null}
         />
       )}
     </div>
