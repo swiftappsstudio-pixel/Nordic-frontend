@@ -51,7 +51,7 @@ export default function Footer() {
           <div className="flex flex-col items-center md:items-end">
             <h4 className="font-brand font-semibold text-sm mb-3 text-white/80">Contact Us</h4>
             <div className="space-y-2 text-sm text-white/50">
-              <a href="https://wa.me/971555828945" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition">
+              <a href="https://wa.me/971581649910" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition">
                 <FaWhatsapp className="text-base" />
                 +971 55 582 8945
               </a>

@@ -9,9 +9,9 @@ import { CategoryWithServices, Service } from "@/app/_common/interfaces";
 import ServicesSection from "@/app/_components/services-section";
 
 // ─── Config ───────────────────────────────────────────────────────────────
-const WA_NUM = "971555828945";
+const WA_NUM = "971581649910";
 const WA_MSG = encodeURIComponent("Hi Nordic! I'd like to learn more about Elderly Care services.");
-const CALL_NUM = "tel:+971555828945";
+const CALL_NUM = "tel:+971581649910";
 
 const HERO_SLIDES = [
   { src: "/images/elder_patient_2.png", alt: "Elderly patient care at home" },

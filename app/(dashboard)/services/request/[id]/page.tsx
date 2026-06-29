@@ -237,7 +237,7 @@ className="bg-[#543826] hover:bg-[#3e2a1c] text-white px-6 py-2 rounded-md"
       </div>
       <CTASection
         title="Ready to get started?"
-        phoneNumber="+971555828945"
+        phoneNumber="+971581649910"
         message="Hello! I'm interested in booking a service. Can you provide more details?"
         imageUrl="images/hero banner 4.png"
         buttonText="Book Now"

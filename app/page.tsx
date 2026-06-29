@@ -143,7 +143,7 @@
 //       </section>
 //       <CTASection
 //         title="Ready to get started?"
-//         phoneNumber="+971555828945"
+//         phoneNumber="+971581649910"
 //         message="Hello! I'm interested in booking a service. Can you provide more details?"
 //         imageUrl="/images/CTA!.jpg"
 //         buttonText="Book Now"
@@ -232,7 +232,7 @@ function WhyNordicSection() {
             Healthcare that comes<br /><span className="text-[#C9C3B3]">to you.</span>
           </h2>
           <a
-            href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
+            href={`https://wa.me/971581649910?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
             target="_blank" rel="noopener noreferrer"
             className="shrink-0 inline-flex items-center gap-2 border border-white/20 text-white/80 hover:text-white hover:border-white/50 text-sm font-semibold px-6 py-3 rounded-full transition-all"
           >
@@ -407,7 +407,7 @@ export default function Home() {
                         </p>
                       )}
                       <a
-                          href={`https://wa.me/971555828945?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
+                          href={`https://wa.me/971581649910?text=${encodeURIComponent("Hi Nordic! I'd like to book a home healthcare service.")}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-all duration-300 hover:gap-4"
@@ -489,7 +489,7 @@ export default function Home() {
 
       <CTASection
         title="Ready to get started?"
-        phoneNumber="+971555828945"
+        phoneNumber="+971581649910"
         message="Hello! I'm interested in booking a service. Can you provide more details?"
         imageUrl="/images/CTA!.jpg"
         buttonText="Book Now"

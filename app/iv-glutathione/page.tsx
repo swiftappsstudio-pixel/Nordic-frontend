@@ -7,9 +7,9 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { getCategoryByLink } from "@/app/_common/api";
 import { CategoryWithServices, Service } from "@/app/_common/interfaces";
 
-const WA_NUM = "971555828945";
+const WA_NUM = "971581649910";
 const WA_MSG = encodeURIComponent("Hi Nordic! I'd like to book an IV Glutathione session at home in Dubai.");
-const CALL_NUM = "tel:+971555828945";
+const CALL_NUM = "tel:+971581649910";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -182,7 +182,11 @@ export default function IVGlutathionePage() {
   useEffect(() => {
     getCategoryByLink("iv-glutathione")
       .then((data) => {
-        if (data?.length) setHeroData(data[0]);
+        if (data?.length) {
+          const cat = data[0];
+         
+          setHeroData(cat);
+        }
       })
       .catch(() => {});
   }, []);
@@ -210,7 +214,7 @@ export default function IVGlutathionePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/70 to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pt-16 pb-10">
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pt-28 pb-10">
           <div className="lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 items-center">
             {/* ── LEFT: Slider ── */}
             <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="hidden lg:flex items-center gap-5 justify-center">
@@ -223,18 +227,18 @@ export default function IVGlutathionePage() {
                       onClick={() => setSliderIndex(i)}
                       className={`rounded-full overflow-hidden shrink-0 border-2 transition-all duration-300 ${
                         i === sliderIndex
-                          ? "w-12 h-12 border-white shadow-[0_0_10px_rgba(255,255,255,0.5)]"
-                          : "w-10 h-10 border-white/30 hover:border-white/60"
+                          ? "w-10 h-10 border-white shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                          : "w-8 h-8 border-white/30 hover:border-white/60"
                       }`}
                     >
-                      <Image src={src} alt="" width={48} height={48} className="w-full h-full object-cover" unoptimized />
+                      <Image src={src} alt="" width={40} height={40} className="w-full h-full object-cover" unoptimized />
                     </button>
                   ))}
                 </div>
               )}
 
               {/* Slider image rectangle */}
-              <div className="relative w-[520px] aspect-[4/5] rounded-[40px] overflow-hidden">
+              <div className="rounded-[32px] p-[1.5px] bg-gradient-to-b from-white/30 to-white/5 inline-block">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={sliderIndex}
@@ -242,15 +246,14 @@ export default function IVGlutathionePage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.05 }}
                     transition={{ duration: 0.35 }}
-                      className="absolute inset-0 flex items-center justify-center"
-                    >
-                      <Image
-                        src={sliderImages[sliderIndex]}
-                        alt={`Glutathione slider ${sliderIndex + 1}`}
-                        fill
-                        className="object-contain p-2"
-                        unoptimized
-                      />
+                  >
+                    <Image
+                      src={sliderImages[sliderIndex]}
+                      alt={`Glutathione slider ${sliderIndex + 1}`}
+                      width={0} height={0} sizes="100vw"
+                      className="w-auto h-auto max-h-[50vh] rounded-[30px]"
+                      unoptimized
+                    />
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -258,8 +261,8 @@ export default function IVGlutathionePage() {
 
             {/* Mobile slider */}
             {sliderImages.length > 0 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="lg:hidden mt-8">
-                <div className="relative w-full max-w-[380px] mx-auto aspect-[4/5] rounded-[40px] overflow-hidden">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="lg:hidden mt-8 flex justify-center">
+                <div className="rounded-[28px] p-[1.5px] bg-gradient-to-b from-white/30 to-white/5 inline-block">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={sliderIndex}
@@ -267,9 +270,8 @@ export default function IVGlutathionePage() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute inset-0 flex items-center justify-center"
                     >
-                      <Image src={sliderImages[sliderIndex]} alt={`Slider ${sliderIndex + 1}`} fill className="object-contain p-2" unoptimized />
+                      <Image src={sliderImages[sliderIndex]} alt={`Slider ${sliderIndex + 1}`} width={0} height={0} sizes="100vw" className="w-auto h-auto max-h-[45vh] rounded-[26px]" unoptimized />
                     </motion.div>
                   </AnimatePresence>
                 </div>
@@ -289,18 +291,38 @@ export default function IVGlutathionePage() {
                 <span className="inline-flex items-center gap-1.5 bg-[#F4F2EF] text-[#1a2e28] text-sm font-medium px-4 py-1.5 rounded-full">Session time: <span className="text-red-500 font-semibold">45 mins - 60 mins</span></span>
               </motion.div>
 
-              {description && (
-                <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.22 }} className="text-white/60 text-sm leading-relaxed mb-8 max-w-lg">
-                  {description}
-                </motion.p>
-              )}
-
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-3 mb-8">
-                <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-white hover:bg-white/90 text-black font-semibold px-7 py-3.5 rounded-full text-sm transition-all duration-300">
-                  <svg className="w-4 h-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
-                  Book Your Glutathione Drip
-                </a>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.22 }} className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 mb-6 border border-white/10 max-w-md">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Flash Sale</span>
+                  <span className="text-white/50 text-xs">Summer Glow</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-white">
+                    <span className="text-sm">1 Session</span>
+                    <span className="font-bold">479 <span className="text-xs font-normal text-white/60">AED</span></span>
+                  </div>
+                  <div className="flex items-center justify-between text-white">
+                    <span className="text-sm">Buy 2, Get <span className="text-amber-400 font-semibold">1 FREE</span></span>
+                    <span className="font-bold">959 <span className="text-xs font-normal text-white/60">AED</span></span>
+                  </div>
+                  <div className="flex items-center justify-between text-white">
+                    <span className="text-sm">Buy 3, Get <span className="text-amber-400 font-semibold">2 FREE</span></span>
+                    <span className="font-bold">1,437 <span className="text-xs font-normal text-white/60">AED</span></span>
+                  </div>
+                  <div className="flex items-center justify-between text-white">
+                    <span className="text-sm">Buy 4, Get <span className="text-amber-400 font-semibold">3 FREE</span></span>
+                    <span className="font-bold">1,975 <span className="text-xs font-normal text-white/60">AED</span></span>
+                  </div>
+                </div>
               </motion.div>
+
+              {heroData?.services?.[0]?._id && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
+                  <Link href={`/services/${heroData.services[0]._id}`} className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full text-sm transition-all duration-300 shadow-md">
+                    Book Now
+                  </Link>
+                </motion.div>
+              )}
             </div>
           </div>
         </div>
@@ -387,7 +409,7 @@ export default function IVGlutathionePage() {
 
 
 
-    
+     
 
       {/* FAQ */}
       <section className="bg-[#F7F4EE] py-16 px-6">

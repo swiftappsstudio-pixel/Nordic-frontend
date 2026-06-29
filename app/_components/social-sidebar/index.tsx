@@ -30,7 +30,7 @@ const SOCIAL_LINKS = [
   },
 ];
 
-const WHATSAPP_NUMBER = "971555828945";
+const WHATSAPP_NUMBER = "971581649910";
 const WHATSAPP_MESSAGE = "Hello! I'm interested in booking a service. Can you help?";
 
 export const SocialSidebar = () => {

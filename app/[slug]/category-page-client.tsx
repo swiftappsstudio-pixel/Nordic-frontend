@@ -7,8 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Category, CategoryWithServices, Service } from "@/app/_common/interfaces";
 import { getCategories } from "@/app/_common/api";
 
-const WA_NUM = "971555828945";
-const CALL_NUM = "tel:+971555828945";
+const WA_NUM = "971581649910";
+const CALL_NUM = "tel:+971581649910";
 
 const FAQS_DEFAULT = [
   { q: "How do I book a service?", a: "Simply click 'Book Now' on any service, or reach out to us via WhatsApp. Our team responds within minutes and guides you through the booking process." },

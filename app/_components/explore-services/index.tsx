@@ -93,7 +93,7 @@ export default function ExploreOurServices() {
   const slide = (dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
-    const cardWidth = window.innerWidth >= 768 ? 360 : 272;
+    const cardWidth = window.innerWidth >= 1024 ? 313 : 272;
     el.style.scrollSnapType = "none";
     el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
     setTimeout(() => {
@@ -168,10 +168,10 @@ export default function ExploreOurServices() {
             <Link
               key={category._id}
               href={category.link || `/${slugify(category.name)}`}
-              className="group shrink-0 w-[260px] md:w-[340px] snap-start"
+              className="group shrink-0 w-[260px] lg:w-[293px] snap-start"
               onClick={(e) => { if (wasDragged()) e.preventDefault(); }}
             >
-              <div className="relative w-[260px] md:w-[340px] h-[200px] md:h-[260px] rounded-xl overflow-hidden">
+              <div className="relative w-[260px] lg:w-[293px] h-[200px] lg:h-[220px] rounded-xl overflow-hidden">
                 <Image
                   src={category.image || "/images/placeholder.png"}
                   alt={category.name}

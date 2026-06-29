@@ -191,7 +191,8 @@ export interface MessageResponse {
 }
 
 export interface LoginRequest {
-  email: string;
+  email?: string;
+  phone?: string;
   password: string;
 }
 

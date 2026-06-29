@@ -7,9 +7,9 @@ import { motion, useInView } from "framer-motion";
 import { getCategoryByLink } from "@/app/_common/api";
 import { CategoryWithServices, Service } from "@/app/_common/interfaces";
 
-const WA_NUM = "971555828945";
+const WA_NUM = "971581649910";
 const WA_MSG = encodeURIComponent("Hi Nordic! I'd like to learn more about Peptide Therapy.");
-const CALL_NUM = "tel:+971555828945";
+const CALL_NUM = "tel:+971581649910";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);

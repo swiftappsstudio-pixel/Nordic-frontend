@@ -9,9 +9,9 @@ import { CategoryWithServices, Service } from "@/app/_common/interfaces";
 import ServicesSection from "@/app/_components/services-section";
 
 // ─── Config ───────────────────────────────────────────────────────────────
-const WA_NUM = "971555828945";
+const WA_NUM = "971581649910";
 const WA_MSG = encodeURIComponent("Hi Nordic! I'd like to learn more about Mother & Baby care services.");
-const CALL_NUM = "tel:+971555828945";
+const CALL_NUM = "tel:+971581649910";
 
 // ─── Colors (matching design spec) ───────────────────────────────────────
 // Primary: #2D5B4F  Dark Green: #23463D  Cream: #F7F4EE
@@ -341,7 +341,7 @@ function ScrollStickySection() {
               {/* WA button */}
               <div className="absolute bottom-20 left-1/2 -translate-x-1/2 pointer-events-auto">
                 <a
-                  href="https://wa.me/971555828945"
+                  href="https://wa.me/971581649910"
                   target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-1.5 bg-[#25D366] text-white text-[11px] font-semibold px-4 py-2 rounded-full shadow-lg whitespace-nowrap"
                 >

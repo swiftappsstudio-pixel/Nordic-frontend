@@ -385,7 +385,7 @@ export default function ServiceDetailPage({ id }: Props) {
       </div>
       <CTASection
         title="Ready to get started?"
-        phoneNumber="+971555828945"
+        phoneNumber="+971581649910"
         message="Hello! I'm interested in booking a service. Can you provide more details?"
         imageUrl="/images/CTA!.jpg"
         buttonText="Book Now"
