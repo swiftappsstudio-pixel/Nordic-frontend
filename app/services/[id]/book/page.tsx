@@ -394,6 +394,13 @@ function BookingContent() {
               Send Booking Receipt via WhatsApp
             </button>
 
+            <Link href="/" className="mt-3 inline-flex items-center justify-center gap-2 w-full border border-gray-200 hover:border-[#543826] text-gray-500 hover:text-[#543826] font-medium py-3 rounded-xl text-sm transition-all duration-300">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Home
+            </Link>
+
             <p className="text-xs text-gray-400 mt-3 sm:mt-4 font-brand">
               Share your booking details with us on WhatsApp for quick follow-up
             </p>
@@ -414,6 +421,12 @@ function BookingContent() {
     <>
       <div className="min-h-screen bg-linear-to-br from-orange-50 via-white to-blue-50 pt-16 sm:pt-20 lg:pt-24 pb-8 sm:pb-10 lg:pb-16">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <Link href="/" className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-gray-400 hover:text-[#543826] transition mb-3 sm:mb-4">
+          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Home
+        </Link>
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 sm:gap-6 lg:gap-8">
            {/* LEFT: Main Content */}
           {/* Mobile Service Summary Bar */}

@@ -208,15 +208,15 @@ export default function IVGlutathionePage() {
     <div className="bg-[#F7F4EE] min-h-screen font-sans">
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden bg-[#1a2e28]">
+      <section className="relative min-h-[60vh] lg:min-h-[70vh] flex items-center overflow-hidden bg-[#1a2e28]">
         <div className="absolute inset-0">
           <Image src={bgImage} alt="IV Glutathione Therapy at Home Dubai" fill className="object-cover object-center" priority unoptimized />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#1a2e28]/95 via-[#1a2e28]/80 to-[#1a2e28]/95 lg:bg-gradient-to-r lg:from-[#1a2e28]/95 lg:via-[#1a2e28]/70 lg:to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pt-28 pb-10">
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 w-full pt-20 lg:pt-28 pb-10">
           <div className="lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 items-center">
-            {/* ── LEFT: Slider ── */}
+            {/* ── LEFT: Slider (desktop only) ── */}
             <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="hidden lg:flex items-center gap-5 justify-center">
               {/* Vertical thumbnail circles */}
               {sliderImages.length > 0 && (
@@ -246,12 +246,14 @@ export default function IVGlutathionePage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.05 }}
                     transition={{ duration: 0.35 }}
+                    className="flex items-center justify-center"
+                    style={{ height: "50vh" }}
                   >
                     <Image
                       src={sliderImages[sliderIndex]}
                       alt={`Glutathione slider ${sliderIndex + 1}`}
                       width={0} height={0} sizes="100vw"
-                      className="w-auto h-auto max-h-[50vh] rounded-[30px]"
+                      className="w-auto max-h-full rounded-[30px]"
                       unoptimized
                     />
                   </motion.div>
@@ -261,19 +263,49 @@ export default function IVGlutathionePage() {
 
             {/* Mobile slider */}
             {sliderImages.length > 0 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="lg:hidden mt-8 flex justify-center">
-                <div className="rounded-[28px] p-[1.5px] bg-gradient-to-b from-white/30 to-white/5 inline-block">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={sliderIndex}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Image src={sliderImages[sliderIndex]} alt={`Slider ${sliderIndex + 1}`} width={0} height={0} sizes="100vw" className="w-auto h-auto max-h-[45vh] rounded-[26px]" unoptimized />
-                    </motion.div>
-                  </AnimatePresence>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="lg:hidden mb-6">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="rounded-[28px] p-[1.5px] bg-gradient-to-b from-white/30 to-white/5 inline-block overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={sliderIndex}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex items-center justify-center"
+                        style={{ height: "35vh" }}
+                        drag="x"
+                        dragConstraints={{ left: 0, right: 0 }}
+                        dragElastic={0.2}
+                        onDragEnd={(_, info) => {
+                          if (info.offset.x < -50) {
+                            setSliderIndex((p) => (p + 1) % sliderImages.length);
+                          } else if (info.offset.x > 50) {
+                            setSliderIndex((p) => (p - 1 + sliderImages.length) % sliderImages.length);
+                          }
+                        }}
+                      >
+                        <Image src={sliderImages[sliderIndex]} alt={`Slider ${sliderIndex + 1}`} width={0} height={0} sizes="100vw" className="w-auto max-h-full rounded-[26px] pointer-events-none" unoptimized />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                  {/* Dot indicators */}
+                  {sliderImages.length > 1 && (
+                    <div className="flex items-center gap-2">
+                      {sliderImages.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setSliderIndex(i)}
+                          className={`rounded-full transition-all duration-300 ${
+                            i === sliderIndex
+                              ? "w-2.5 h-2.5 bg-white shadow-[0_0_6px_rgba(255,255,255,0.5)]"
+                              : "w-2 h-2 bg-white/40 hover:bg-white/60"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -286,12 +318,12 @@ export default function IVGlutathionePage() {
                 {title}
               </motion.h1>
 
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.18 }} className="flex items-center gap-2 mb-5">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.18 }} className="flex items-center gap-2 mb-4 lg:mb-5">
               
                 <span className="inline-flex items-center gap-1.5 bg-[#F4F2EF] text-[#1a2e28] text-sm font-medium px-4 py-1.5 rounded-full">Session time: <span className="text-red-500 font-semibold">45 mins - 60 mins</span></span>
               </motion.div>
 
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.22 }} className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 mb-6 border border-white/10 max-w-md">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.22 }} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 lg:p-5 mb-5 lg:mb-6 border border-white/10 max-w-md lg:max-w-md">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Flash Sale</span>
                   <span className="text-white/50 text-xs">Summer Glow</span>
