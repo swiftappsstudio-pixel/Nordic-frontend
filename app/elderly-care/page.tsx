@@ -700,9 +700,8 @@ export default function ElderlyCarePage() {
           </FadeIn>
           <div className="space-y-2">
             {[
-              { q: "What types of elderly care do you provide?", a: "We provide companionship, post-hospital recovery, overnight care, dementia support, daily personal care, mobility assistance, and medication management — all by DHA-licensed caregivers at home." },
+              { q: "What types of elderly care do you provide?", a: "We provide companionship, post-hospital recovery, overnight care, dementia support, daily personal care, mobility assistance, and medication management — all by trained caregivers at home." },
               { q: "How much does elderly home care cost?", a: "Services start from AED 33/hr. Use our pricing calculator or contact us for a personalised quote based on your specific needs." },
-              { q: "Are caregivers DHA licensed?", a: "Yes. All Nordic caregivers are DHA licensed, clinically trained, and undergo rigorous background checks before placement." },
               { q: "Can I always have the same caregiver?", a: "Yes. With a monthly subscription plan you keep the exact same caregiver for every visit — consistency matters for elderly care." },
               { q: "What Dubai areas do you cover?", a: "We cover all Dubai areas — Marina, Downtown, JBR, Palm Jumeirah, DIFC, Business Bay, JLT and more." },
               { q: "Do you provide dementia or Alzheimer's care?", a: "Yes. We have specialist caregivers trained in dementia and Alzheimer's care, providing safe, compassionate, and structured support at home." },
@@ -719,7 +718,7 @@ export default function ElderlyCarePage() {
       <ServicesSection
         categoryFilter="elderly"
         heading="Elderly Care Services"
-        subheading="All services delivered at home by DHA-licensed, clinically trained caregivers."
+        subheading="All services delivered at home by clinically trained caregivers."
         label="Our Services"
         accentColor="#543826"
         bgColor="bg-[#F6F2EB]"

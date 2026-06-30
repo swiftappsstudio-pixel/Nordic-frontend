@@ -216,7 +216,7 @@ export default function CategoryPageClient({ categories }: CategoryPageClientPro
             {[
               { num: "01", title: "Book in Seconds", desc: "Select your service, choose a date and time that works for you — online or via WhatsApp." },
               { num: "02", title: "Quick Assessment", desc: "Our team does a brief health check to ensure the right service for your needs." },
-              { num: "03", title: "Caregiver Arrives", desc: "A DHA-licensed nurse or caregiver comes to your home within 30–60 minutes." },
+              { num: "03", title: "Caregiver Arrives", desc: "A DHA-licensed nurse or trained caregiver comes to your home within 30–60 minutes." },
               { num: "04", title: "Feel the Difference", desc: "Sit back and let our professional team care for you. Most clients feel results quickly." },
             ].map((s) => (
               <div key={s.num} className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-md transition-shadow h-full">
@@ -294,7 +294,7 @@ export default function CategoryPageClient({ categories }: CategoryPageClientPro
               Book your first<br />IV Therapy visit today.
             </h2>
             <p className="text-[#6B7280] text-sm leading-relaxed mb-8 max-w-sm mx-auto">
-              DHA-licensed nurses and caregivers, Nordic-employed and never freelance. Flexible plans from AED 33/hr.
+              DHA-licensed nurses and trained caregivers, Nordic-employed and never freelance. Flexible plans from AED 33/hr.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a href={`https://wa.me/${WA_NUM}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-[#1a2e28] text-white font-semibold px-7 py-3.5 rounded-full text-sm hover:bg-[#23463D] transition-all">

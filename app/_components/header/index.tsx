@@ -8,7 +8,7 @@ import { useAuth } from "@/app/_common/auth-context";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
-   { label: "IV Glutathione", href: "/iv-glutathione" },
+  { label: "IV Glutathione", href: "/iv-glutathione" },
   { label: "Mother & Baby", href: "/mother-and-baby" },
   { label: "Elderly Care", href: "/elderly-care" },
   { label: "Blood Test", href: "/blood-test" },
@@ -59,16 +59,14 @@ export default function Navbar() {
     <nav
       onMouseEnter={() => setHoverExpand(true)}
       onMouseLeave={() => setHoverExpand(false)}
-      className={`fixed z-50 bg-white/75 backdrop-blur-xl border border-white/30 shadow-sm transition-all duration-500 ease-in-out ${
-        expanded
+      className={`fixed z-50 bg-white/75 backdrop-blur-xl border border-white/30 shadow-sm transition-all duration-500 ease-in-out ${expanded
           ? "top-3 left-3 right-3 rounded-[22px] py-2.5"
           : "top-3 left-1/2 -translate-x-1/2 w-auto max-w-xs rounded-2xl py-2"
-      }`}
+        }`}
     >
       <div
-        className={`flex items-center justify-between px-4 lg:px-6 transition-all duration-500 ${
-          expanded ? "max-w-7xl mx-auto" : "gap-3"
-        }`}
+        className={`flex items-center justify-between px-4 lg:px-6 transition-all duration-500 ${expanded ? "max-w-7xl mx-auto" : "gap-3"
+          }`}
       >
         {/* Logo */}
         <Link href="/" className="shrink-0">
@@ -85,20 +83,18 @@ export default function Navbar() {
 
         {/* Desktop nav links */}
         <div
-          className={`hidden lg:flex items-center gap-1 transition-all duration-500 ${
-            expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
-          }`}
+          className={`hidden lg:flex items-center gap-1 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
+            }`}
         >
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.label}
               href={item.href}
               onClick={(e) => handleAnchorClick(e, item.href)}
-              className={`relative whitespace-nowrap text-sm font-medium px-3.5 py-1.5 rounded-full transition-all duration-200 flex items-center gap-1.5 ${
-                isActive(item.href)
+              className={`relative whitespace-nowrap text-sm font-medium px-3.5 py-1.5 rounded-full transition-all duration-200 flex items-center gap-1.5 ${isActive(item.href)
                   ? "bg-[#C9C3B3]/60 text-[#543826] font-semibold"
                   : "text-[#543826]/80 hover:bg-[#C9C3B3]/30 hover:text-[#543826]"
-              }`}
+                }`}
             >
               {item.label}
               {item.label === "Services" && (
@@ -122,9 +118,8 @@ export default function Navbar() {
 
         {/* Desktop auth */}
         <div
-          className={`hidden lg:flex items-center gap-2 shrink-0 transition-all duration-500 ${
-            expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
-          }`}
+          className={`hidden lg:flex items-center gap-2 shrink-0 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
+            }`}
         >
           {!isLoading &&
             (user ? (
@@ -193,11 +188,10 @@ export default function Navbar() {
                 <Link
                   href={item.href}
                   onClick={(e) => handleAnchorClick(e, item.href)}
-                  className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                    isActive(item.href)
+                  className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive(item.href)
                       ? "bg-[#C9C3B3]/50 text-[#543826] font-semibold"
                       : "text-[#543826]/80 hover:bg-[#C9C3B3]/20"
-                  }`}
+                    }`}
                 >
                   <span>{item.label}</span>
                   <div className="flex items-center gap-1.5">
