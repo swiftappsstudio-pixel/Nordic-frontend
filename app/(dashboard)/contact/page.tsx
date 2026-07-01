@@ -166,7 +166,7 @@ export default function ContactUsPage() {
                   </div>
                   <div>
                     <p className="font-brand text-sm text-white/60">Phone</p>
-                    <p className="font-brand font-semibold">+971-800-DARDOCTOR</p>
+                    <p className="font-brand font-semibold">+971 58 164 9910</p>
                     <p className="font-brand text-xs text-white/50">Toll-Free</p>
                   </div>
                 </div>

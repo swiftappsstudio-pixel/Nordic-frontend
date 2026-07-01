@@ -20,9 +20,9 @@ export default function FooterInfoSection() {
         <div>
           <h3 className="font-brand text-xl font-semibold mb-4">Contact Us</h3>
           <div className="space-y-3 text-white/60 font-brand">
-            <p>+971-800-DARDOCTOR</p>
+            <p>+971 58 164 9910</p>
             <p className="text-sm">Toll-Free</p>
-            <p>wecare@dardoc.com</p>
+            <p>wecare@nordichc.ae</p>
           </div>
         </div>
 
