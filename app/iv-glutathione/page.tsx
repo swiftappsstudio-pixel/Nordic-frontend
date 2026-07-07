@@ -335,15 +335,15 @@ export default function IVGlutathionePage() {
                   </div>
                   <div className="flex items-center justify-between text-white">
                     <span className="text-sm">Buy 2, Get <span className="text-amber-400 font-semibold">1 FREE</span></span>
-                    <span className="font-bold">959 <span className="text-xs font-normal text-white/60">AED</span></span>
+                    <span className="font-bold">1198 <span className="text-xs font-normal text-white/60">AED</span></span>
                   </div>
                   <div className="flex items-center justify-between text-white">
-                    <span className="text-sm">Buy 3, Get <span className="text-amber-400 font-semibold">2 FREE</span></span>
-                    <span className="font-bold">1,437 <span className="text-xs font-normal text-white/60">AED</span></span>
+                    <span className="text-sm">Buy 4, Get <span className="text-amber-400 font-semibold">2 FREE</span></span>
+                    <span className="font-bold">2339 <span className="text-xs font-normal text-white/60">AED</span></span>
                   </div>
                   <div className="flex items-center justify-between text-white">
-                    <span className="text-sm">Buy 4, Get <span className="text-amber-400 font-semibold">3 FREE</span></span>
-                    <span className="font-bold">1,975 <span className="text-xs font-normal text-white/60">AED</span></span>
+                    <span className="text-sm">Buy 6, Get <span className="text-amber-400 font-semibold">3 FREE</span></span>
+                    <span className="font-bold">3419 <span className="text-xs font-normal text-white/60">AED</span></span>
                   </div>
                 </div>
               </motion.div>
