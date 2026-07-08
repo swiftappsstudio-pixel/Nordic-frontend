@@ -348,13 +348,11 @@ export default function IVGlutathionePage() {
                 </div>
               </motion.div>
 
-              {heroData?.services?.[0]?._id && (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
-                  <Link href={`/services/${heroData.services[0]._id}`} className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full text-sm transition-all duration-300 shadow-md">
-                    Book Now
-                  </Link>
-                </motion.div>
-              )}
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
+                <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full text-sm transition-all duration-300 shadow-md">
+                  Book Now
+                </a>
+              </motion.div>
             </div>
           </div>
         </div>
