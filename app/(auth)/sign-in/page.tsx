@@ -352,13 +352,7 @@ export default function SignInPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-4">
-            <Link
-              href="/"
-              className="text-xs text-gray-400 hover:text-gray-600 transition"
-            >
-              Skip for now
-            </Link>
+          <div className="flex items-center justify-end mt-4">
             <Link
               href="/forgot-password"
               className="text-xs text-[#543826] font-medium hover:underline"
@@ -380,6 +374,13 @@ export default function SignInPage() {
             ) : (
               <span className="text-sm font-semibold">Sign In</span>
             )}
+          </button>
+
+          <button
+            onClick={() => router.push("/")}
+            className="w-full mt-3 border border-gray-200 hover:bg-gray-50 text-gray-600 py-3 rounded-xl font-medium text-sm transition-colors"
+          >
+            Skip for now
           </button>
 
           <p className="text-center text-sm text-gray-400 mt-6">
