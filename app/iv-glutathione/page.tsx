@@ -22,12 +22,12 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 }
 
 const BENEFITS = [
-  { title: "Skin Lightening & Brightening", desc: "Reduces melanin production for a radiant, even-toned complexion." },
-  { title: "Powerful Antioxidant", desc: "Neutralizes free radicals, slows aging, and protects cells from damage." },
-  { title: "Liver Detoxification", desc: "Supports the liver's natural detox pathways for whole-body wellness." },
-  { title: "Immune System Boost", desc: "Strengthens immune response and helps the body fight oxidative stress." },
-  { title: "Energy & Vitality", desc: "Improves cellular energy production, reduces fatigue and brain fog." },
-  { title: "Better Sleep Quality", desc: "Promotes deeper, more restorative sleep by reducing oxidative load." },
+  { title: "Skin Lightening & Brightening", desc: "Reduces melanin production for a radiant, even-toned complexion.", icon: "M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" },
+  { title: "Powerful Antioxidant", desc: "Neutralizes free radicals, slows aging, and protects cells from damage.", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
+  { title: "Liver Detoxification", desc: "Supports the liver's natural detox pathways for whole-body wellness.", icon: "M12 21.75c4.97 0 9-3.694 9-8.25 0-4.556-9-13.5-9-13.5S3 8.944 3 13.5c0 4.556 4.03 8.25 9 8.25z" },
+  { title: "Immune System Boost", desc: "Strengthens immune response and helps the body fight oxidative stress.", icon: "M9 12.75l2.25 2.25L15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
+  { title: "Energy & Vitality", desc: "Improves cellular energy production, reduces fatigue and brain fog.", icon: "M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" },
+  { title: "Better Sleep Quality", desc: "Promotes deeper, more restorative sleep by reducing oxidative load.", icon: "M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" },
 ];
 
 const HOW_IT_WORKS = [
@@ -42,19 +42,9 @@ const FAQS = [
   { q: "What are the key ingredients in IV Glutathione + Vitamin C ?", a: "The key ingredients in IV Glutathione + Vitamin C are Glutathione 1200mg and Ascorbic Acid 2500 mg known as Vitamin C." },
   { q: "Who can benefit from the IV Glutathione + Vitamin C ?", a: "This therapy may benefit individuals looking to support detoxification, improve skin radiance, boost immunity, combat fatigue, reduce oxidative stress, or maintain overall wellness." },
   { q: "How do I schedule an at-home IV Glutathione + Vitamin C session in Dubai?", a: "Scheduling is simple. You can book through Nordic’s website, WhatsApp, or by calling us. Select your preferred date and time, and our team will confirm your booking." },
-  { q: "Is a prior medical consultation required before booking?", a: "In most cases, no consultation is required. However, if you have underlying health conditions or specific medical concerns, our team will recommend a free doctor consultation before the session." },
-  { q: "Can I choose the same nurse for future sessions?", a: "Yes, you can request the same nurse when booking, subject to availability. We'll always do our best to accommodate your preference." },
   { q: "How often is it recommended to take the IV Glutathione + Vitamin C ?", a: "We recommend a gap of 3-5 days after each session." },
-  { q: "Can I book my sessions in advance?", a: "Absolutely. You can schedule your Glutathione IV Drip + Vitamin C sessions days or weeks in advance, making it easy to plan around your routine, travel, or special events." },
-  { q: "Are blood tests required before taking the IV Glutathione + Vitamin C ?", a: "Blood tests are not always required. However, if you have pre-existing medical conditions or specific health concerns, your doctor or our team may recommend certain tests before starting IV therapy." },
-  { q: "Can I eat or drink before or after the session?", a: "Yes, you should eat and drink normally before and after your IV drip. Staying well-hydrated can even make the session more comfortable." },
   { q: "Is it safe during pregnancy or breastfeeding?", a: "IV Glutathione + Vitamin C therapy is not recommended during pregnancy or breastfeeding." },
-  { q: "What should I do if I feel unwell during or after the session?", a: "If you feel any discomfort during the session, notify your nurse immediately so they can take appropriate steps. If you experience any unusual symptoms after the session, contact Nordic support or seek medical attention." },
   { q: "What safety measures are followed during administration?", a: "Our team follows strict DHA protocols, including verifying medical history, using sterile equipment, monitoring you during the drip, and following post-care guidelines to ensure a safe experience." },
-  { q: "Are nurses vaccinated and medically cleared?", a: "Yes. All our nurses undergo routine medical checks, vaccinations, and clearances to ensure they are fit to provide home healthcare." },
-  { q: "Is the session held at-home?", a: "Yes, they are administered at-home by DHA-licensed nurses." },
-  { q: "Is IV Glutathione + Vitamin C safe to take?", a: "Yes, IV Glutathione + Vitamin C is absolutely safe to take. However, if you feel dizziness or nausea, report it to the nurse immediately." },
-  { q: "Is it possible to reschedule if I book a pack of 3?", a: "Yes, you can easily reschedule your appointment. However, please note: changes made less than 4 hours before your session may incur a cancellation fee." },
   { q: "Are there any side effects?", a: "Most people tolerate this IV very well. In some cases, you may experience mild nausea, slight pain, or temporary discomfort at the injection site — but these effects typically resolve quickly." },
 ];
 
@@ -358,62 +348,139 @@ export default function IVGlutathionePage() {
         </div>
       </section>
 
+      {/* FORMULA / DOSAGE + BENEFITS */}
+      <section className="py-16 px-6 lg:px-8 bg-[#F7F4EE]">
+        <div className="max-w-[1100px] mx-auto">
+          <FadeIn className="text-center mb-10">
+            <p className="text-[#2D5B4F] text-xs font-semibold uppercase tracking-widest mb-3">The Formula</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#1a2e28] leading-tight mb-4">
+              IV Glutathione 1200mg + Vitamin C 2500mg
+            </h2>
+            <p className="text-[#6B7280] text-base max-w-2xl mx-auto leading-relaxed">
+              A clinically dosed antioxidant infusion pairing high-dose Glutathione with Vitamin C to detoxify, brighten, and energize — delivered straight into your bloodstream for maximum absorption.
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={0.05} className="flex flex-nowrap items-center justify-center gap-2 sm:gap-4 mb-14">
+            <div className="flex items-center gap-2 sm:gap-3 bg-white border border-[#543826]/10 rounded-xl sm:rounded-2xl px-3 py-2 sm:px-6 sm:py-4 shadow-sm">
+              <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-[#543826]/10 flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#543826]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                </svg>
+              </div>
+              <div>
+                <div className="text-base sm:text-2xl font-bold text-[#1a2e28] leading-none whitespace-nowrap">1200<span className="text-[10px] sm:text-sm font-medium text-[#6B7280] ml-1">mg</span></div>
+                <div className="text-[10px] sm:text-xs text-[#6B7280] font-medium mt-1 whitespace-nowrap">Glutathione</div>
+              </div>
+            </div>
+
+            <div className="text-base sm:text-2xl text-[#543826]/30 font-light">+</div>
+
+            <div className="flex items-center gap-2 sm:gap-3 bg-white border border-[#543826]/10 rounded-xl sm:rounded-2xl px-3 py-2 sm:px-6 sm:py-4 shadow-sm">
+              <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-[#543826]/10 flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#543826]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21.75c4.97 0 9-3.694 9-8.25 0-4.556-9-13.5-9-13.5S3 8.944 3 13.5c0 4.556 4.03 8.25 9 8.25z" />
+                </svg>
+              </div>
+              <div>
+                <div className="text-base sm:text-2xl font-bold text-[#1a2e28] leading-none whitespace-nowrap">2500<span className="text-[10px] sm:text-sm font-medium text-[#6B7280] ml-1">mg</span></div>
+                <div className="text-[10px] sm:text-xs text-[#6B7280] font-medium mt-1 whitespace-nowrap">Vitamin C</div>
+              </div>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {BENEFITS.map((b, i) => (
+              <FadeIn key={b.title} delay={0.05 * i}>
+                <div className="flex flex-col items-center text-center sm:items-start sm:text-left bg-white rounded-2xl p-6 h-full border border-[#543826]/10 hover:shadow-lg hover:border-[#543826]/20 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-xl bg-[#543826] flex items-center justify-center mb-4">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d={b.icon} />
+                    </svg>
+                  </div>
+                  <h3 className="font-bold text-[#1a2e28] text-base mb-1.5">{b.title}</h3>
+                  <p className="text-[#6B7280] text-sm leading-relaxed">{b.desc}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          <FadeIn delay={0.3} className="flex justify-center mt-10">
+            <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full text-sm transition-all duration-300 shadow-md">
+              Book Now
+            </a>
+          </FadeIn>
+        </div>
+      </section>
+
       {/* FEATURES */}
-      <section className="py-16 px-6 lg:px-8 bg-[white]">
-        <div className="max-w-[800px] mx-auto bg-[#F7F4EE] rounded-2xl p-8 lg:p-10 shadow-sm border border-[#543826]/10">
+      <section className="relative py-12 sm:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <Image src="/images/nurse2.png" alt="" fill className="object-cover object-top" unoptimized />
+        </div>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1a2e28]/95 via-[#1a2e28]/90 to-[#543826]/90" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#D4A373]/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#543826]/30 rounded-full blur-3xl" />
+
+        <div className="relative max-w-[800px] mx-auto bg-white/5 backdrop-blur-xl rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl border border-white/10">
           <FadeIn className="flex justify-center mb-10">
-            <Image src="/images/logo.jpeg" alt="Nordic Logo" width={110} height={44} className="object-contain rounded-full" unoptimized />
+            <div className="bg-white rounded-full p-1.5 shadow-lg">
+              <Image src="/images/logo.jpeg" alt="Nordic Logo" width={110} height={44} className="object-contain rounded-full" unoptimized />
+            </div>
           </FadeIn>
 
           <FadeIn className="text-center mb-8">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#1a2e28] leading-tight">At-Home IV Infusions</h2>
+            <p className="text-[#D4A373] text-xs font-semibold uppercase tracking-widest mb-3">Why Choose Nordic</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight">At-Home IV Infusions</h2>
           </FadeIn>
 
           <div className="flex flex-col">
             <FadeIn delay={0.05}>
-              <div className="flex items-start gap-5 pb-5 border-b border-[#543826]/10">
-                <div className="w-16 h-16 rounded-full bg-[#543826] flex items-center justify-center shrink-0 mt-0.5">
+              <div className="flex items-start gap-5 pb-5 border-b border-white/10">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#D4A373] to-[#543826] flex items-center justify-center shrink-0 mt-0.5 shadow-lg">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-7-7v14" /></svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1a2e28] text-lg">Professional IV Therapy</h3>
-                  <p className="text-[#6B7280] text-base mt-1 leading-relaxed">Your treatment in the comfort of your own home — no clinic visits needed.</p>
+                  <h3 className="font-bold text-white text-lg">Professional IV Therapy</h3>
+                  <p className="text-white/60 text-base mt-1 leading-relaxed">Your treatment in the comfort of your own home — no clinic visits needed.</p>
                 </div>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.1}>
-              <div className="flex items-start gap-5 py-5 border-b border-[#543826]/10">
-                <div className="w-16 h-16 rounded-full bg-[#543826] flex items-center justify-center shrink-0 mt-0.5">
+              <div className="flex items-start gap-5 py-5 border-b border-white/10">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#D4A373] to-[#543826] flex items-center justify-center shrink-0 mt-0.5 shadow-lg">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" /></svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1a2e28] text-lg">Highly specialised & focused techniques</h3>
-                  <p className="text-[#6B7280] text-base mt-1 leading-relaxed">Advanced protocols tailored to your unique wellness goals.</p>
+                  <h3 className="font-bold text-white text-lg">Highly specialised & focused techniques</h3>
+                  <p className="text-white/60 text-base mt-1 leading-relaxed">Advanced protocols tailored to your unique wellness goals.</p>
                 </div>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.15}>
-              <div className="flex items-start gap-5 py-5 border-b border-[#543826]/10">
-                <div className="w-16 h-16 rounded-full bg-[#543826] flex items-center justify-center shrink-0 mt-0.5">
+              <div className="flex items-start gap-5 py-5 border-b border-white/10">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#D4A373] to-[#543826] flex items-center justify-center shrink-0 mt-0.5 shadow-lg">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1a2e28] text-lg">Personalised care by DHA-certified professionals</h3>
-                  <p className="text-[#6B7280] text-base mt-1 leading-relaxed">Every treatment is guided by licensed experts who put your safety first.</p>
+                  <h3 className="font-bold text-white text-lg">Personalised care by DHA-certified professionals</h3>
+                  <p className="text-white/60 text-base mt-1 leading-relaxed">Every treatment is guided by licensed experts who put your safety first.</p>
                 </div>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.2}>
               <div className="flex items-start gap-5 pt-5">
-                <div className="w-16 h-16 rounded-full bg-[#543826] flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#D4A373] to-[#543826] flex items-center justify-center shrink-0 mt-0.5 shadow-lg">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1a2e28] text-lg">Comfort driven experience with proven results</h3>
-                  <p className="text-[#6B7280] text-base mt-1 leading-relaxed">Relaxing sessions designed for your comfort with visible, lasting outcomes.</p>
+                  <h3 className="font-bold text-white text-lg">Comfort driven experience with proven results</h3>
+                  <p className="text-white/60 text-base mt-1 leading-relaxed">Relaxing sessions designed for your comfort with visible, lasting outcomes.</p>
                 </div>
               </div>
             </FadeIn>
@@ -422,7 +489,7 @@ export default function IVGlutathionePage() {
           <FadeIn delay={0.25} className="flex flex-col items-center mt-8">
             <div className="flex flex-wrap items-center justify-center gap-4">
               {heroData?.services?.[0]?._id && (
-                <Link href={`/services/${heroData.services[0]._id}`} className="inline-flex items-center gap-2 bg-[#543826] hover:bg-[#3e2a1c] text-white font-semibold px-8 py-3.5 rounded-full text-sm transition-all duration-300 shadow-md">
+                <Link href={`/services/${heroData.services[0]._id}`} className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4A373] to-[#543826] hover:brightness-110 text-white font-semibold px-8 py-3.5 rounded-full text-sm transition-all duration-300 shadow-md">
                   Book Now
                 </Link>
               )}
@@ -455,24 +522,59 @@ export default function IVGlutathionePage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#F7F4EE] py-12 px-6 pb-24">
-        <div className="max-w-[860px] mx-auto">
+      <section className="bg-[#F7F4EE] py-12 px-4 sm:px-6 pb-20 sm:pb-24">
+        <div className="max-w-[1000px] mx-auto">
           <FadeIn>
-            <div className="bg-white rounded-3xl px-8 sm:px-16 py-14 text-center shadow-sm border border-black/5">
-              <div className="inline-flex items-center gap-2 mb-5">
-                <svg className="w-4 h-4 text-[#543826]" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span className="text-[#543826] text-xs font-semibold">DHA-licensed nurses · All Dubai · At your doorstep</span>
-              </div>
-              <h2 className="font-bold text-[#1a2e28] mb-4" style={{ fontSize: "clamp(22px, 3vw, 38px)" }}>Book your IV Glutathione at home today.</h2>
-              <p className="text-[#6B7280] text-sm mb-7 max-w-sm mx-auto">No clinic. No waiting. A DHA-licensed nurse arrives at your door with everything needed for your Glutathione infusion.</p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-[#543826] text-white font-semibold px-7 py-3.5 rounded-full text-sm hover:bg-[#3e2a1c] transition">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
-                  Book on WhatsApp
-                </a>
-                <a href={CALL_NUM} className="inline-flex items-center justify-center gap-2 border border-[#1a2e28]/20 text-[#1a2e28] font-semibold px-7 py-3.5 rounded-full text-sm hover:border-[#1a2e28]/50 transition">Call us, toll-free</a>
+            <div className="relative overflow-hidden rounded-3xl px-5 sm:px-10 lg:px-16 py-12 sm:py-16 text-center shadow-2xl">
+              {/* Gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1a2e28] via-[#20362f] to-[#543826]" />
+              <div className="absolute -top-32 -left-20 w-80 h-80 bg-[#D4A373]/20 rounded-full blur-3xl" />
+              <div className="absolute -bottom-32 -right-20 w-96 h-96 bg-[#543826]/40 rounded-full blur-3xl" />
+              <div
+                className="absolute inset-0 opacity-[0.07]"
+                style={{ backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)", backgroundSize: "22px 22px" }}
+              />
+
+              <div className="relative">
+                <div className="inline-flex items-center gap-2 mb-6 bg-white/10 border border-white/15 rounded-full px-4 py-1.5">
+                  <svg className="w-4 h-4 text-[#D4A373]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-white text-xs font-semibold">DHA-licensed nurses · All Dubai · At your doorstep</span>
+                </div>
+
+                <h2 className="font-bold text-white mb-4 leading-tight" style={{ fontSize: "clamp(24px, 3.4vw, 42px)" }}>
+                  Book your IV Glutathione at home today.
+                </h2>
+                <p className="text-white/60 text-base mb-9 max-w-lg mx-auto leading-relaxed">
+                  No clinic. No waiting. A DHA-licensed nurse arrives at your door with everything needed for your Glutathione infusion.
+                </p>
+
+                <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 mb-10">
+                  <div className="flex items-center gap-2 text-white/80 text-sm">
+                    <svg className="w-4 h-4 text-[#D4A373] shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Certified nurses
+                  </div>
+                  <div className="flex items-center gap-2 text-white/80 text-sm">
+                    <svg className="w-4 h-4 text-[#D4A373] shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
+                    Same-day booking
+                  </div>
+                  <div className="flex items-center gap-2 text-white/80 text-sm">
+                    <svg className="w-4 h-4 text-[#D4A373] shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-7-7v14" /></svg>
+                    At your doorstep
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <a href={`https://wa.me/${WA_NUM}?text=${WA_MSG}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-8 py-3.5 rounded-full text-sm transition-all duration-300 shadow-lg shadow-[#25D366]/20 hover:scale-[1.03]">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
+                    Book on WhatsApp
+                  </a>
+                  <a href={CALL_NUM} className="inline-flex items-center justify-center gap-2 border border-white/25 bg-white/5 text-white font-semibold px-8 py-3.5 rounded-full text-sm hover:bg-white/10 hover:border-white/40 transition-all duration-300">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
+                    Call us, toll-free
+                  </a>
+                </div>
               </div>
             </div>
           </FadeIn>
