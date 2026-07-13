@@ -1,7 +1,5 @@
 const nextConfig = {
-  experimental: {
-    turbo: undefined,
-  },
+
   images: {
     unoptimized: true,
 
