@@ -11,6 +11,7 @@ const FOOTER_SERVICES = [
   { label: "Peptides", href: "/peptides" },
   { label: "IV Therapy", href: "/iv-therapy" },
   { label: "Weight Loss", href: "/weight-loss" },
+  { label: "Physiotherapy", href: "/physiotherapy" },
 ];
 
 export default function Footer() {
