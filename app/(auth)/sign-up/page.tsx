@@ -152,30 +152,42 @@ export default function SignUpPage() {
 
   const hasFieldErrors = Object.values(fieldErrors).some((e) => e);
 
-  const handleSubmit = async () => {
-    setError("");
+ const handleSubmit = async () => {
+  setError("");
 
-    if (!name || !email || !phone || !password || !confirmPassword) {
-      setError("All fields are required");
-      return;
-    }
+  if (!name || !email || !phone || !password || !confirmPassword) {
+    setError("All fields are required");
+    return;
+  }
 
-    if (hasFieldErrors) {
-      setError("Please fix the errors above before submitting");
-      return;
-    }
+  if (hasFieldErrors) {
+    setError("Please fix the errors above before submitting");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      await registerUser({ name, email, phone, password });
-      router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Registration failed";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+
+  try {
+    await registerUser({
+      name,
+      email,
+      phone,
+      password,
+    });
+
+    // Registration successful
+    router.push("/sign-in");
+
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Registration failed";
+
+    setError(message);
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   const inputClass = (field: string) =>
     `w-full p-3 border rounded-lg text-black focus:outline-none focus:ring-2 transition ${

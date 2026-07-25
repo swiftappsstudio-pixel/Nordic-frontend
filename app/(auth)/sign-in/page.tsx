@@ -116,44 +116,54 @@ export default function SignInPage() {
   const hasFieldErrors = Object.values(fieldErrors).some((e) => e);
 
   const handleSubmit = async () => {
-    setError("");
+  setError("");
 
-    if (loginMode === "email") {
-      if (!email || !password) {
-        setError("Email and password are required");
-        return;
-      }
-    } else {
-      if (!phone || !password) {
-        setError("Phone and password are required");
-        return;
-      }
-    }
-
-    if (hasFieldErrors) {
-      setError("Please fix the errors above");
+  if (loginMode === "email") {
+    if (!email || !password) {
+      setError("Email and password are required");
       return;
     }
+  } else {
+    if (!phone || !password) {
+      setError("Phone and password are required");
+      return;
+    }
+  }
 
-    setLoading(true);
-    try {
-      const payload = loginMode === "email"
+  if (hasFieldErrors) {
+    setError("Please fix the errors above");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const payload =
+      loginMode === "email"
         ? { email, password }
         : { phone, password };
-      const res = await loginUser(payload);
-      login(res.token, res.user);
-      router.push(res.user?.role === "admin" ? "/admin" : "/");
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Login failed";
-      if (message.includes("verify your email")) {
-        router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
-        return;
-      }
-      setError(message);
-    } finally {
-      setLoading(false);
+
+    const res = await loginUser(payload);
+
+    login(res.token, res.user);
+
+    // Redirect based on role
+    if (res.user?.role === "admin") {
+      router.push("/admin");
+    } else {
+      router.push("/");
     }
-  };
+
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Login failed";
+
+    setError(message);
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   const inputClass = (field: string) =>
     `w-full pl-10 pr-10 py-3 bg-gray-50 border rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition ${
