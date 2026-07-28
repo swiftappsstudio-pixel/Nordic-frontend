@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getServiceDetail, createBooking, getCategories, getServicesByCategory, getServices } from "@/app/_common/api";
+import { getServiceDetail, createBooking, getCategories, getServicesByCategory, getServices, getMyAddresses, createAddress } from "@/app/_common/api";
 import {
   ServiceWithVariants,
   Variant,
@@ -12,6 +12,9 @@ import {
   CartItem,
   Category,
   Service,
+  Address,
+  AddressLabel,
+  AddressRequest,
 } from "@/app/_common/interfaces";
 import { useAuth } from "@/app/_common/auth-context";
 
@@ -26,6 +29,18 @@ const ALL_STEPS: { key: Step; label: string; icon: string }[] = [
   { key: "datetime", label: "Date & Time", icon: "📅" },
   { key: "summary", label: "Summary", icon: "📋" },
 ];
+
+const ADDRESS_LABELS: AddressLabel[] = ["Home", "Office", "Other"];
+
+const emptyNewAddress: AddressRequest = {
+  label: "Home",
+  flatNumber: "",
+  streetName: "",
+  city: "",
+  country: "United Arab Emirates",
+  formattedAddress: "",
+  isDefault: false,
+};
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MONTHS = [
@@ -53,6 +68,12 @@ function BookingContent({ id }: Props) {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [guestInfo, setGuestInfo] = useState<GuestInfo>({ fullName: "", email: "", phone: "" });
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+  const [showAddAddress, setShowAddAddress] = useState(false);
+  const [newAddress, setNewAddress] = useState<AddressRequest>(emptyNewAddress);
+  const [savingAddress, setSavingAddress] = useState(false);
+  const [addressError, setAddressError] = useState("");
   const [bookings, setBookings] = useState<BookingResponse[]>([]);
   const [bookingError, setBookingError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -99,6 +120,46 @@ function BookingContent({ id }: Props) {
   }, [user]);
 
   useEffect(() => {
+    if (!token) return;
+    getMyAddresses(token)
+      .then((list) => {
+        setAddresses(list);
+        const defaultAddress = list.find((a) => a.isDefault) || list[0];
+        if (defaultAddress) setSelectedAddressId(defaultAddress._id);
+        else setShowAddAddress(true);
+      })
+      .catch(console.error);
+  }, [token]);
+
+  const handleAddAddress = async () => {
+    if (!token) return;
+    if (!newAddress.flatNumber?.trim() || !newAddress.streetName?.trim() || !newAddress.city.trim()) {
+      setAddressError("Address, Street Address and City are required");
+      return;
+    }
+    setAddressError("");
+    setSavingAddress(true);
+    try {
+      const formattedAddress = [newAddress.flatNumber, newAddress.streetName, newAddress.city, newAddress.country]
+        .filter(Boolean)
+        .join(", ");
+      const created = await createAddress(
+        { ...newAddress, formattedAddress, isDefault: addresses.length === 0 ? true : newAddress.isDefault },
+        token,
+      );
+      const updated = await getMyAddresses(token);
+      setAddresses(updated);
+      setSelectedAddressId(created._id);
+      setShowAddAddress(false);
+      setNewAddress(emptyNewAddress);
+    } catch (err) {
+      setAddressError(err instanceof Error ? err.message : "Failed to save address");
+    } finally {
+      setSavingAddress(false);
+    }
+  };
+
+  useEffect(() => {
     if (stepRef.current) {
       stepRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -134,7 +195,7 @@ function BookingContent({ id }: Props) {
   const handleConfirmBooking = async () => {
     setSubmitting(true); setBookingError("");
     try {
-      const payload = { serviceId: id, preferredDate: selectedDate, preferredTime: selectedTime, ...(selectedVariant ? { variantId: selectedVariant._id } : {}), ...(user ? {} : { guestInfo }) };
+      const payload = { serviceId: id, preferredDate: selectedDate, preferredTime: selectedTime, ...(selectedVariant ? { variantId: selectedVariant._id } : {}), ...(user ? {} : { guestInfo }), ...(selectedAddressId ? { addressId: selectedAddressId } : {}) };
       const result = await createBooking(payload, token || undefined);
       setBookings([result]); setShowSuccess(true);
     } catch (err: unknown) {
@@ -343,6 +404,101 @@ function BookingContent({ id }: Props) {
                       <div><label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label><input type="text" value={guestInfo.fullName} onChange={(e) => setGuestInfo({ ...guestInfo, fullName: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="Enter your full name" /></div>
                       <div><label className="block text-sm font-medium text-gray-700 mb-1">Email *</label><input type="email" value={guestInfo.email} onChange={(e) => setGuestInfo({ ...guestInfo, email: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="Enter your email" /></div>
                       <div><label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label><input type="tel" value={guestInfo.phone} onChange={(e) => setGuestInfo({ ...guestInfo, phone: e.target.value })} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent" placeholder="+971 XX XXX XXXX" /></div>
+                      {user && (
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-sm font-medium text-gray-700">Address</label>
+                            {addresses.length > 0 && !showAddAddress && (
+                              <button
+                                type="button"
+                                onClick={() => setShowAddAddress(true)}
+                                className="text-xs font-medium text-orange-600 hover:underline"
+                              >
+                                + Add new address
+                              </button>
+                            )}
+                          </div>
+
+                          {addresses.length > 0 && !showAddAddress && (
+                            <select
+                              value={selectedAddressId}
+                              onChange={(e) => setSelectedAddressId(e.target.value)}
+                              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            >
+                              {addresses.map((a) => (
+                                <option key={a._id} value={a._id}>
+                                  {a.label} — {a.formattedAddress}
+                                  {a.isDefault ? " (Default)" : ""}
+                                </option>
+                              ))}
+                            </select>
+                          )}
+
+                          {showAddAddress && (
+                            <div className="border border-gray-200 rounded-lg p-4 space-y-3 bg-gray-50">
+                              <div className="flex gap-2">
+                                {ADDRESS_LABELS.map((l) => (
+                                  <button
+                                    type="button"
+                                    key={l}
+                                    onClick={() => setNewAddress((prev) => ({ ...prev, label: l }))}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition ${
+                                      newAddress.label === l
+                                        ? "bg-[#543826] text-white border-[#543826]"
+                                        : "bg-white text-gray-600 border-gray-300 hover:border-[#543826]"
+                                    }`}
+                                  >
+                                    {l}
+                                  </button>
+                                ))}
+                              </div>
+                              <input
+                                value={newAddress.flatNumber}
+                                onChange={(e) => setNewAddress((prev) => ({ ...prev, flatNumber: e.target.value }))}
+                                placeholder="Address (e.g. Flat 204, Marina Towers)"
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              />
+                              <input
+                                value={newAddress.streetName}
+                                onChange={(e) => setNewAddress((prev) => ({ ...prev, streetName: e.target.value }))}
+                                placeholder="Street Address"
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              />
+                              <input
+                                value={newAddress.city}
+                                onChange={(e) => setNewAddress((prev) => ({ ...prev, city: e.target.value }))}
+                                placeholder="City"
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              />
+                              <input
+                                value={newAddress.country}
+                                disabled
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-500 bg-gray-100 cursor-not-allowed"
+                              />
+                              {addressError && <p className="text-red-500 text-xs">{addressError}</p>}
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  disabled={savingAddress}
+                                  onClick={handleAddAddress}
+                                  className="flex-1 bg-[#543826] hover:bg-[#3e2a1c] disabled:opacity-50 text-white text-sm font-medium py-2.5 rounded-lg transition"
+                                >
+                                  {savingAddress ? "Saving..." : "Save Address"}
+                                </button>
+                                {addresses.length > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => { setShowAddAddress(false); setAddressError(""); }}
+                                    className="px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-100 transition"
+                                  >
+                                    Cancel
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   <div className="space-y-3 mt-6">
                     <div className="flex justify-between py-2 border-b"><span className="text-gray-500 text-sm">Payment Method</span><span className="font-medium text-gray-800 text-sm">Cash on Delivery</span></div>

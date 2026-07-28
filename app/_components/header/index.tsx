@@ -143,6 +143,10 @@ export default function Navbar() {
                     <Link href="/change-password" onClick={() => setUserMenu(false)} className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                       Change Password
                     </Link>
+                     
+                    <Link href="/manage-address" onClick={() => setUserMenu(false)} className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      Manage Address
+                    </Link>
                     <button onClick={() => { logout(); setUserMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
                       Sign Out
                     </button>
@@ -226,6 +230,9 @@ export default function Navbar() {
                   </div>
                   <Link href="/change-password" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm text-gray-700 rounded-xl hover:bg-gray-50 transition">
                     Change Password
+                  </Link>
+                  <Link href="/manage-address" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm text-gray-700 rounded-xl hover:bg-gray-50 transition">
+                    Manage Address
                   </Link>
                   <button onClick={() => { logout(); setOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 rounded-xl hover:bg-red-50 transition">
                     Sign Out
