@@ -314,6 +314,7 @@ export interface BookingRequest {
   subServiceName?: string;
   addOnNames?: string[];
   guestInfo?: GuestInfo;
+  addressId?: string;
 }
 
 export interface AddOn {
@@ -382,6 +383,50 @@ export interface ServiceWithVariants extends Service {
   variants: Variant[];
   image?: string;
   isProduct?: boolean;
+}
+
+// ============================================================================
+// ADDRESS INTERFACES
+// ============================================================================
+
+export type AddressLabel = "Home" | "Office" | "Other";
+
+export interface Address {
+  _id: string;
+  user: string;
+  label: AddressLabel;
+  flatNumber?: string;
+  villaNumber?: string;
+  buildingName?: string;
+  floor?: string;
+  streetName?: string;
+  area?: string;
+  city: string;
+  country: string;
+  formattedAddress: string;
+  latitude?: number;
+  longitude?: number;
+  placeId?: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AddressRequest {
+  label: AddressLabel;
+  flatNumber?: string;
+  villaNumber?: string;
+  buildingName?: string;
+  floor?: string;
+  streetName?: string;
+  area?: string;
+  city: string;
+  country?: string;
+  formattedAddress: string;
+  latitude?: number;
+  longitude?: number;
+  placeId?: string;
+  isDefault?: boolean;
 }
 
 // ============================================================================

@@ -19,6 +19,8 @@ import {
   AddOn,
   GuestInfo,
   Banner,
+  Address,
+  AddressRequest,
 } from "@/app/_common/interfaces";
 import { authFetch } from "@/app/_common/auth-fetch";
 
@@ -505,4 +507,113 @@ export const getCategoryByLink = async (link: string): Promise<CategoryWithServi
 
   const data = await res.json();
   return data.data;
+};
+
+// =========================================== Address API CALLS ===========================================//
+
+// Backend error/404 pages come back as HTML, not JSON — res.json() would throw
+// an opaque "Unexpected token '<'" in that case, so parse defensively here.
+const parseJsonOrThrow = async (res: Response, fallbackMessage: string) => {
+  const text = await res.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(
+      res.ok
+        ? fallbackMessage
+        : `${fallbackMessage} (server returned ${res.status} ${res.statusText})`,
+    );
+  }
+};
+
+export const getMyAddresses = async (token: string): Promise<Address[]> => {
+  const res = await authFetch(`${API_BASE_URL}/addresses`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+
+  const result = await parseJsonOrThrow(res, "Failed to fetch addresses");
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to fetch addresses");
+  }
+
+  return result.data;
+};
+
+export const createAddress = async (
+  data: AddressRequest,
+  token: string,
+): Promise<{ _id: string }> => {
+  const res = await authFetch(`${API_BASE_URL}/addresses`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await parseJsonOrThrow(res, "Failed to save address");
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to save address");
+  }
+
+  return result.data;
+};
+
+export const updateAddress = async (
+  id: string,
+  data: AddressRequest,
+  token: string,
+): Promise<Address> => {
+  const res = await authFetch(`${API_BASE_URL}/addresses/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await parseJsonOrThrow(res, "Failed to update address");
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to update address");
+  }
+
+  return result.data;
+};
+
+export const deleteAddress = async (id: string, token: string): Promise<void> => {
+  const res = await authFetch(`${API_BASE_URL}/addresses/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const result = await parseJsonOrThrow(res, "Failed to delete address");
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to delete address");
+  }
+};
+
+export const setDefaultAddress = async (id: string, token: string): Promise<Address> => {
+  const res = await authFetch(`${API_BASE_URL}/addresses/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ isDefault: true }),
+  });
+
+  const result = await parseJsonOrThrow(res, "Failed to set default address");
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to set default address");
+  }
+
+  return result.data;
 };
