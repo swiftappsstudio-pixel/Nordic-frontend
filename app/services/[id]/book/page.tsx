@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   getServiceDetail,
   createBooking,
+  getMyAddresses,
 } from "@/app/_common/api";
 import {
   ServiceWithVariants,
@@ -13,6 +14,7 @@ import {
   GuestInfo,
   BookingResponse,
   ServiceAddOn,
+  Address,
 } from "@/app/_common/interfaces";
 import { useAuth } from "@/app/_common/auth-context";
 import ReviewsSection from "@/app/_components/reviews-section";
@@ -70,13 +72,33 @@ function BookingContent() {
     fullName: "",
     email: "",
     phone: "",
+    address: "",
   });
 
-  const [touched, setTouched] = useState<{ fullName: boolean; email: boolean; phone: boolean }>({
+  const [touched, setTouched] = useState<{ fullName: boolean; email: boolean; phone: boolean; address: boolean }>({
     fullName: false,
     email: false,
     phone: false,
+    address: false,
   });
+
+  // Saved addresses — logged-in users pick from these instead of typing
+  const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+
+  useEffect(() => {
+    if (!token) return;
+    getMyAddresses(token)
+      .then((list) => {
+        setSavedAddresses(list);
+        const defaultAddress = list.find((a) => a.isDefault) || list[0];
+        if (defaultAddress) {
+          setSelectedAddressId(defaultAddress._id);
+          setGuestInfo((prev) => ({ ...prev, address: defaultAddress.formattedAddress }));
+        }
+      })
+      .catch(console.error);
+  }, [token]);
 
   const getFieldError = (field: keyof typeof touched) => {
     if (!touched[field]) return null;
@@ -138,17 +160,19 @@ function BookingContent() {
 
   useEffect(() => {
     if (user) {
-      setGuestInfo({
+      setGuestInfo((prev) => ({
+        ...prev,
         fullName: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
-      });
+      }));
     } else {
-      setGuestInfo({
+      setGuestInfo((prev) => ({
+        ...prev,
         fullName: "",
         email: "",
         phone: "",
-      });
+      }));
     }
   }, [user]);
 
@@ -279,7 +303,8 @@ function BookingContent() {
         ...(selectedAddOnNames.size > 0
           ? { addOnNames: Array.from(selectedAddOnNames) }
           : {}),
-        ...(user ? { guestInfo } : { guestInfo }),
+        ...(selectedAddressId ? { addressId: selectedAddressId } : {}),
+        guestInfo,
       };
       const result = await createBooking(payload, token || undefined);
       setBookings([result]);
@@ -371,18 +396,28 @@ function BookingContent() {
                   AED {booking.totalAmount}
                 </span>
               </div>
+              
               <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm gap-0.5 sm:gap-0">
                 <span className="text-gray-500">Status</span>
                 <span className="text-green-600 font-medium capitalize">
                   {booking.status}
                 </span>
               </div>
+              {(booking.guestInfo?.address || guestInfo.address) && (
+                <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm gap-0.5 sm:gap-0">
+                  <span className="text-gray-500">Address</span>
+                  <span className="text-[#543826] break-words">
+                    {booking.guestInfo?.address || guestInfo.address}
+                  </span>
+                </div>
+              )}
             </div>
 
             <button
               onClick={() => {
+                const displayAddress = booking.guestInfo?.address || guestInfo.address;
                 const msg = encodeURIComponent(
-                  `New Booking Confirmed!\n\nBooking ID: ${booking._id}\nService: ${booking.serviceSnapshot?.title}\n${booking.variantSnapshot ? `Package: ${booking.variantSnapshot.name}\n` : ""}${booking.addOnsSnapshot?.length ? `Add-ons: ${booking.addOnsSnapshot.map((a) => a.name).join(", ")}\n` : ""}Date: ${booking.preferredDate}\nTime: ${booking.preferredTime}\nAmount: AED ${booking.totalAmount}\nStatus: ${booking.status}\n${booking.guestInfo ? `Guest: ${booking.guestInfo.fullName} | ${booking.guestInfo.phone} | ${booking.guestInfo.email}` : ""}`
+                  `New Booking Confirmed!\n\nBooking ID: ${booking._id}\nService: ${booking.serviceSnapshot?.title}\n${booking.variantSnapshot ? `Package: ${booking.variantSnapshot.name}\n` : ""}${booking.addOnsSnapshot?.length ? `Add-ons: ${booking.addOnsSnapshot.map((a) => a.name).join(", ")}\n` : ""}Date: ${booking.preferredDate}\nTime: ${booking.preferredTime}\nAmount: AED ${booking.totalAmount}\nStatus: ${booking.status}\n${booking.guestInfo ? `Guest: ${booking.guestInfo.fullName} | ${booking.guestInfo.phone} | ${booking.guestInfo.email}` : ""}${displayAddress ? `\nAddress: ${displayAddress}` : ""}`
                 );
                 window.open(`https://wa.me/971581649910?text=${msg}`, "_blank");
               }}
@@ -1090,10 +1125,53 @@ function BookingContent() {
                             <p className="text-xs text-red-500 mt-1">{getFieldError("phone")}</p>
                           )}
                         </div>
+                        <div className="md:col-span-2 space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Address (optional)
+                          </label>
+                          {savedAddresses.length > 0 ? (
+                            <select
+                              value={selectedAddressId}
+                              onChange={(e) => {
+                                const addr = savedAddresses.find((a) => a._id === e.target.value);
+                                setSelectedAddressId(e.target.value);
+                                setGuestInfo({ ...guestInfo, address: addr?.formattedAddress || "" });
+                              }}
+                              className="w-full border rounded-xl sm:rounded-3xl px-3 sm:px-4 py-3 sm:py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent border-gray-300"
+                            >
+                              {savedAddresses.map((a) => (
+                                <option key={a._id} value={a._id}>
+                                  {a.label} — {a.formattedAddress}
+                                  {a.isDefault ? " (Default)" : ""}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              type="text"
+                              value={guestInfo.address ?? ""}
+                              onChange={(e) =>
+                                setGuestInfo({ ...guestInfo, address: e.target.value })
+                              }
+                              onBlur={() => setTouched({ ...touched, address: true })}
+                              className={`w-full border rounded-xl sm:rounded-3xl px-3 sm:px-4 py-3 sm:py-4 text-sm text-black focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                                getFieldError("address") ? "border-red-400 bg-red-50/30" : "border-gray-300"
+                              }`}
+                              placeholder="Enter your address"
+                            />
+                          )}
+                          {getFieldError("address") && (
+                            <p className="text-xs text-red-500 mt-1">{getFieldError("address")}</p>
+                          )}
+                        </div>
                        </div>
                      </div>
 
-                   
+                  {bookingError && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl sm:rounded-3xl p-4">
+                      {bookingError}
+                    </div>
+                  )}
                 </div>
               )}
 
