@@ -303,6 +303,7 @@ export interface GuestInfo {
   fullName: string;
   email: string;
   phone: string;
+  address?: string;
 }
 
 export interface BookingRequest {

@@ -702,6 +702,12 @@ export default function BookingsCalendarPage() {
                   <p className="font-medium text-gray-800">{showDetailModal.guestInfo.email}</p>
                 </div>
               )}
+              {showDetailModal.guestInfo?.address && (
+                <div className="text-sm">
+                  <p className="text-gray-500">Address</p>
+                  <p className="font-medium text-gray-800">{showDetailModal.guestInfo.address}</p>
+                </div>
+              )}
             </div>
 <div className="flex items-center justify-between p-4 border-t">
                <div className="flex gap-2">
