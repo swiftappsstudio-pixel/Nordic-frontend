@@ -13,7 +13,7 @@ export const ConditionalFooter = () => {
   
   // Don't show footer on admin routes (they have their own layout)
   const isAdminRoute = pathname.startsWith("/admin");
-  
+
   // Only show footer if not on auth or admin routes
   if (isAuthRoute || isAdminRoute) {
     return null;

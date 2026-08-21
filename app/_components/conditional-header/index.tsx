@@ -12,7 +12,7 @@ export const ConditionalNavBar = () => {
   
   // Don't show navbar on admin routes (they have their own layout)
   const isAdminRoute = pathname.startsWith("/admin");
-  
+
   // Only show navbar if not on auth or admin routes
   if (isAuthRoute || isAdminRoute) {
     return null;

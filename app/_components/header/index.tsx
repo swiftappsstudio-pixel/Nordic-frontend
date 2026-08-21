@@ -1,12 +1,20 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { useAuth } from "@/app/_common/auth-context";
 
-const NAV_ITEMS = [
+type NavItem = {
+  label: string;
+  href: string;
+  dropdown?: { label: string; href: string }[];
+};
+
+const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "IV Glutathione", href: "/iv-glutathione" },
   { label: "Mother & Baby", href: "/mother-and-baby" },
@@ -16,9 +24,25 @@ const NAV_ITEMS = [
   { label: "IV Therapy", href: "/iv-therapy" },
   { label: "Weight Loss", href: "/weight-loss" },
   { label: "Physiotherapy", href: "/physiotherapy" },
+  {
+    label: "Our Team",
+    href: "/our-team",
+    dropdown: [
+      { label: "Our Management", href: "/our-management" },
+      { label: "Our Nurses", href: "/our-nurses" },
+      { label: "Join Our Team", href: "/join-our-team" },
+    ],
+  },
 ];
 
 const SCROLL_THRESHOLD = 80;
+
+const getInitials = (name: string) => {
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0]?.charAt(0) ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + last).toUpperCase();
+};
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -26,19 +50,67 @@ export default function Navbar() {
   const [userMenu, setUserMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoverExpand, setHoverExpand] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number } | null>(null);
   const { user, logout, isLoading } = useAuth();
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const dropdownTriggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const dropdownPanelRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const expanded = !scrolled || hoverExpand;
+
+  const cancelScheduledClose = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  const openDropdownAt = (label: string, triggerEl: HTMLButtonElement | null) => {
+    cancelScheduledClose();
+    if (triggerEl) {
+      const rect = triggerEl.getBoundingClientRect();
+      setDropdownPos({ top: rect.bottom + 8, left: rect.left });
+    }
+    setOpenDropdown(label);
+  };
+
+  const scheduleCloseDropdown = () => {
+    cancelScheduledClose();
+    closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 150);
+  };
+
+  const toggleDropdown = (label: string, triggerEl: HTMLButtonElement | null) => {
+    if (openDropdown === label) {
+      setOpenDropdown(null);
+      return;
+    }
+    openDropdownAt(label, triggerEl);
+  };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node))
         setUserMenu(false);
+      if (openDropdown) {
+        const trigger = dropdownTriggerRefs.current[openDropdown];
+        const panel = dropdownPanelRefs.current[openDropdown];
+        const target = e.target as Node;
+        const insideTrigger = trigger && trigger.contains(target);
+        const insidePanel = panel && panel.contains(target);
+        if (!insideTrigger && !insidePanel) setOpenDropdown(null);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [openDropdown]);
+
+  useEffect(() => {
+    if (!expanded) setOpenDropdown(null);
+  }, [expanded]);
+
+  useEffect(() => () => cancelScheduledClose(), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
@@ -46,7 +118,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => { setOpen(false); setOpenDropdown(null); }, [pathname]);
 
   const handleAnchorClick = (e: React.MouseEvent, href: string, isAnchor?: boolean) => {
     setOpen(false);
@@ -70,7 +142,7 @@ export default function Navbar() {
           }`}
       >
         {/* Logo */}
-        <Link href="/" className="shrink-0">
+        <Link href="/" className="shrink-0 mr-3 lg:mr-4">
           <Image
             src="/images/logo.jpeg"
             alt="Nordic Home Healthcare"
@@ -84,42 +156,87 @@ export default function Navbar() {
 
         {/* Desktop nav links */}
         <div
-          className={`hidden lg:flex items-center gap-1 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
+          style={{ scrollbarWidth: "none" }}
+          className={`hidden lg:flex items-center gap-1 min-w-0 py-1.5 [&::-webkit-scrollbar]:hidden transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto overflow-x-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
             }`}
         >
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              onClick={(e) => handleAnchorClick(e, item.href)}
-              className={`relative whitespace-nowrap text-sm font-medium px-3.5 py-1.5 rounded-full transition-all duration-200 flex items-center gap-1.5 ${isActive(item.href)
-                  ? "bg-[#C9C3B3]/60 text-[#543826] font-semibold"
-                  : "text-[#543826]/80 hover:bg-[#C9C3B3]/30 hover:text-[#543826]"
-                }`}
-            >
-              {item.label}
-              {item.label === "Services" && (
-                <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-                  New
-                </span>
-              )}
-              {item.label === "IV Therapy" && (
-                <span className="bg-[#543826] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-                  HOT
-                </span>
-              )}
-              {item.label === "Peptides" && (
-                <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-                  New
-                </span>
-              )}
-            </Link>
-          ))}
+          {NAV_ITEMS.map((item) =>
+            item.dropdown ? (
+              <div
+                key={item.label}
+                className="relative shrink-0"
+                onMouseEnter={(e) => openDropdownAt(item.label, dropdownTriggerRefs.current[item.label] ?? (e.currentTarget.querySelector("button") as HTMLButtonElement | null))}
+                onMouseLeave={scheduleCloseDropdown}
+              >
+                <button
+                  ref={(el) => { dropdownTriggerRefs.current[item.label] = el; }}
+                  onClick={(e) => toggleDropdown(item.label, e.currentTarget)}
+                  data-glass-open={openDropdown === item.label}
+                  className={`nav-glass-tab shrink-0 whitespace-nowrap text-sm font-medium px-3.5 py-1.5 rounded-full flex items-center gap-1 ${openDropdown === item.label || isActive(item.href)
+                      ? "bg-[#C9C3B3]/60 text-[#543826] font-semibold"
+                      : "text-[#543826]/80 hover:text-[#543826]"
+                    }`}
+                >
+                  {item.label}
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""}`} />
+                </button>
+                {openDropdown === item.label && dropdownPos &&
+                  createPortal(
+                    <div
+                      ref={(el) => { dropdownPanelRefs.current[item.label] = el; }}
+                      onMouseEnter={cancelScheduledClose}
+                      onMouseLeave={scheduleCloseDropdown}
+                      style={{ position: "fixed", top: dropdownPos.top, left: dropdownPos.left }}
+                      className="bg-white/90 backdrop-blur-xl shadow-xl rounded-2xl w-48 py-2 border border-white/50 z-[100]"
+                    >
+                      {item.dropdown.map((sub) => (
+                        <Link
+                          key={sub.label}
+                          href={sub.href}
+                          onClick={() => setOpenDropdown(null)}
+                          className="dropdown-glass-item mx-2 block px-3.5 py-2.5 rounded-xl text-sm text-gray-700 hover:text-[#543826]"
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </div>,
+                    document.body
+                  )}
+              </div>
+            ) : (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleAnchorClick(e, item.href)}
+                className={`nav-glass-tab shrink-0 whitespace-nowrap text-sm font-medium px-3.5 py-1.5 rounded-full flex items-center gap-1.5 ${isActive(item.href)
+                    ? "bg-[#C9C3B3]/60 text-[#543826] font-semibold"
+                    : "text-[#543826]/80 hover:text-[#543826]"
+                  }`}
+              >
+                {item.label}
+                {item.label === "Services" && (
+                  <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                    New
+                  </span>
+                )}
+                {item.label === "IV Therapy" && (
+                  <span className="bg-[#543826] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                    HOT
+                  </span>
+                )}
+                {item.label === "Peptides" && (
+                  <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                    New
+                  </span>
+                )}
+              </Link>
+            )
+          )}
         </div>
 
         {/* Desktop auth */}
         <div
-          className={`hidden lg:flex items-center gap-2 shrink-0 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
+          className={`hidden lg:flex items-center gap-2 shrink-0 ml-4 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
             }`}
         >
           {!isLoading &&
@@ -129,10 +246,10 @@ export default function Navbar() {
                   onClick={() => setUserMenu(!userMenu)}
                   className="flex items-center gap-2 bg-[#543826] text-white pl-2 pr-4 py-1.5 rounded-full hover:bg-[#3e2a1c] transition-colors"
                 >
-                  <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">
+                  <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold shrink-0">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium max-w-[100px] truncate">{user.name}</span>
+                  <span className="text-sm font-medium">{getInitials(user.name)}</span>
                 </button>
                 {userMenu && (
                   <div className="absolute right-0 top-11 bg-white shadow-xl rounded-2xl w-48 py-2 border border-gray-100 z-50">
@@ -154,14 +271,9 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <>
-                <Link href="/sign-in" className="whitespace-nowrap text-sm font-medium text-[#543826]/80 hover:text-[#543826] px-4 py-1.5 rounded-full hover:bg-[#C9C3B3]/30 transition">
-                  Sign In
-                </Link>
-                <Link href="/sign-up" className="whitespace-nowrap text-sm font-semibold bg-[#543826] text-white px-4 py-1.5 rounded-full hover:bg-[#3e2a1c] transition shadow-sm">
-                  Sign Up
-                </Link>
-              </>
+              <Link href="/sign-in" className="whitespace-nowrap text-sm font-semibold bg-[#543826] text-white px-4 py-1.5 rounded-full hover:bg-[#3e2a1c] transition shadow-sm">
+                Sign In
+              </Link>
             ))}
         </div>
 
@@ -190,27 +302,56 @@ export default function Navbar() {
           <ul className="flex flex-col gap-1 mb-3">
             {NAV_ITEMS.map((item) => (
               <li key={item.label}>
-                <Link
-                  href={item.href}
-                  onClick={(e) => handleAnchorClick(e, item.href)}
-                  className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive(item.href)
-                      ? "bg-[#C9C3B3]/50 text-[#543826] font-semibold"
-                      : "text-[#543826]/80 hover:bg-[#C9C3B3]/20"
-                    }`}
-                >
-                  <span>{item.label}</span>
-                  <div className="flex items-center gap-1.5">
-                    {item.label === "Services" && (
-                      <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">New</span>
+                {item.dropdown ? (
+                  <>
+                    <button
+                      onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                      className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${openDropdown === item.label
+                          ? "bg-[#C9C3B3]/50 text-[#543826] font-semibold"
+                          : "text-[#543826]/80 hover:bg-[#C9C3B3]/20"
+                        }`}
+                    >
+                      <span>{item.label}</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""}`} />
+                    </button>
+                    {openDropdown === item.label && (
+                      <div className="flex flex-col gap-1 mt-1 pl-4">
+                        {item.dropdown.map((sub) => (
+                          <Link
+                            key={sub.label}
+                            href={sub.href}
+                            onClick={() => { setOpen(false); setOpenDropdown(null); }}
+                            className="px-4 py-2 rounded-xl text-sm text-[#543826]/70 hover:bg-[#C9C3B3]/20 transition-all"
+                          >
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </div>
                     )}
-                    {item.label === "IV Therapy" && (
-                      <span className="bg-[#543826] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">HOT</span>
-                    )}
-                    {item.label === "Peptides" && (
-                      <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">New</span>
-                    )}
-                  </div>
-                </Link>
+                  </>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={(e) => handleAnchorClick(e, item.href)}
+                    className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive(item.href)
+                        ? "bg-[#C9C3B3]/50 text-[#543826] font-semibold"
+                        : "text-[#543826]/80 hover:bg-[#C9C3B3]/20"
+                      }`}
+                  >
+                    <span>{item.label}</span>
+                    <div className="flex items-center gap-1.5">
+                      {item.label === "Services" && (
+                        <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">New</span>
+                      )}
+                      {item.label === "IV Therapy" && (
+                        <span className="bg-[#543826] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">HOT</span>
+                      )}
+                      {item.label === "Peptides" && (
+                        <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">New</span>
+                      )}
+                    </div>
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

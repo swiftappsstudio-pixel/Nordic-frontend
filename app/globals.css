@@ -68,3 +68,79 @@ body {
 .animate-progress-fill { animation: progress-fill 0.5s ease-out forwards; }
 .animate-step-enter { animation: step-content-enter 0.35s ease-out forwards; }
 .animate-active-pulse { animation: active-pulse 2s ease-in-out infinite; }
+
+.nav-glass-tab {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid transparent;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s ease, background 0.35s ease, border-color 0.35s ease;
+}
+
+.nav-glass-tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 35%, transparent 65%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.nav-glass-tab:hover,
+.nav-glass-tab[data-glass-open="true"] {
+  background: linear-gradient(180deg, rgba(233, 224, 205, 0.55) 0%, rgba(201, 195, 179, 0.4) 100%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-color: rgba(255, 255, 255, 0.55);
+  transform: scale(1.035);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    inset 0 -1px 2px rgba(84, 56, 38, 0.15),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 8px 16px -8px rgba(84, 56, 38, 0.35);
+}
+
+.nav-glass-tab:hover::before,
+.nav-glass-tab[data-glass-open="true"]::before {
+  opacity: 1;
+}
+
+.dropdown-glass-item {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid transparent;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+.dropdown-glass-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 35%, transparent 65%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.dropdown-glass-item:hover {
+  background: linear-gradient(180deg, rgba(233, 224, 205, 0.6) 0%, rgba(201, 195, 179, 0.45) 100%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.02);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    inset 0 -1px 2px rgba(84, 56, 38, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 6px 14px -8px rgba(84, 56, 38, 0.3);
+}
+
+.dropdown-glass-item:hover::before {
+  opacity: 1;
+}
