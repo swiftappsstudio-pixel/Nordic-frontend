@@ -52,7 +52,7 @@ export default function TaniaJenniferProfile() {
         <span>/</span>
         <span className="hover:text-[#543826]">Our Team</span>
         <span>/</span>
-        <Link href="/our-nurses" className="hover:text-[#543826]">Our Nurses</Link>
+        <Link href="/our-physiotherapist" className="hover:text-[#543826]">Our Physiotherapist</Link>
         <span>/</span>
         <span className="text-[#543826] font-medium">Tania Jennifer</span>
       </nav>

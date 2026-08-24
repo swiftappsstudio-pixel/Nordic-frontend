@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useAuth } from "@/app/_common/auth-context";
 
 type NavItem = {
@@ -29,6 +29,7 @@ const NAV_ITEMS: NavItem[] = [
     href: "/our-team",
     dropdown: [
       { label: "Our Management", href: "/our-management" },
+      { label: "Our Physiotherapist", href: "/our-physiotherapist" },
       { label: "Our Nurses", href: "/our-nurses" },
       { label: "Join Our Team", href: "/join-our-team" },
     ],
@@ -53,6 +54,10 @@ export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number } | null>(null);
   const { user, logout, isLoading } = useAuth();
+  const navRef = useRef<HTMLElement>(null);
+  const navLinksRef = useRef<HTMLDivElement>(null);
+  const [canScrollNavRight, setCanScrollNavRight] = useState(false);
+  const [canScrollNavLeft, setCanScrollNavLeft] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const dropdownTriggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const dropdownPanelRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -94,9 +99,18 @@ export default function Navbar() {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node))
         setUserMenu(false);
       if (openDropdown) {
+        const target = e.target as Node;
+        if (open) {
+          // Mobile menu: the dropdown is rendered inline inside <nav>, not via
+          // the desktop trigger/portal refs below. Only treat a tap outside the
+          // whole nav as "outside" so taps on submenu links reach their own
+          // onClick (which closes the menu and navigates) instead of being
+          // pre-empted here.
+          if (navRef.current && !navRef.current.contains(target)) setOpenDropdown(null);
+          return;
+        }
         const trigger = dropdownTriggerRefs.current[openDropdown];
         const panel = dropdownPanelRefs.current[openDropdown];
-        const target = e.target as Node;
         const insideTrigger = trigger && trigger.contains(target);
         const insidePanel = panel && panel.contains(target);
         if (!insideTrigger && !insidePanel) setOpenDropdown(null);
@@ -104,7 +118,7 @@ export default function Navbar() {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [openDropdown]);
+  }, [openDropdown, open]);
 
   useEffect(() => {
     if (!expanded) setOpenDropdown(null);
@@ -120,6 +134,31 @@ export default function Navbar() {
 
   useEffect(() => { setOpen(false); setOpenDropdown(null); }, [pathname]);
 
+  useEffect(() => {
+    const el = navLinksRef.current;
+    if (!el) return;
+    const updateScrollState = () => {
+      setCanScrollNavRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+      setCanScrollNavLeft(el.scrollLeft > 4);
+    };
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    const resizeObserver = new ResizeObserver(updateScrollState);
+    resizeObserver.observe(el);
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  const scrollNavRight = () => {
+    navLinksRef.current?.scrollBy({ left: 220, behavior: "smooth" });
+  };
+
+  const scrollNavLeft = () => {
+    navLinksRef.current?.scrollBy({ left: -220, behavior: "smooth" });
+  };
+
   const handleAnchorClick = (e: React.MouseEvent, href: string, isAnchor?: boolean) => {
     setOpen(false);
   };
@@ -130,6 +169,7 @@ export default function Navbar() {
 
   return (
     <nav
+      ref={navRef}
       onMouseEnter={() => setHoverExpand(true)}
       onMouseLeave={() => setHoverExpand(false)}
       className={`fixed z-50 bg-white/75 backdrop-blur-xl border border-white/30 shadow-sm transition-all duration-500 ease-in-out ${expanded
@@ -156,10 +196,14 @@ export default function Navbar() {
 
         {/* Desktop nav links */}
         <div
-          style={{ scrollbarWidth: "none" }}
-          className={`hidden lg:flex items-center gap-1 min-w-0 py-1.5 [&::-webkit-scrollbar]:hidden transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto overflow-x-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
+          className={`hidden lg:flex relative min-w-0 transition-all duration-500 ${expanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none w-0 overflow-hidden"
             }`}
         >
+          <div
+            ref={navLinksRef}
+            style={{ scrollbarWidth: "none" }}
+            className={`flex items-center gap-1 py-1.5 [&::-webkit-scrollbar]:hidden ${expanded ? "overflow-x-auto" : "overflow-hidden"}`}
+          >
           {NAV_ITEMS.map((item) =>
             item.dropdown ? (
               <div
@@ -231,6 +275,31 @@ export default function Navbar() {
                 )}
               </Link>
             )
+          )}
+          </div>
+
+          {expanded && canScrollNavLeft && (
+            <button
+              onClick={scrollNavLeft}
+              aria-label="Show previous tabs"
+              className="absolute left-0 top-0 bottom-0 flex items-center pr-8 pl-0.5 bg-gradient-to-r from-white via-white/95 to-transparent pointer-events-auto"
+            >
+              <span className="w-6 h-6 rounded-full bg-white shadow-md border border-[#C9C3B3]/50 flex items-center justify-center text-[#543826]">
+                <ChevronRight className="w-4 h-4 rotate-180" />
+              </span>
+            </button>
+          )}
+
+          {expanded && canScrollNavRight && (
+            <button
+              onClick={scrollNavRight}
+              aria-label="Show more tabs"
+              className="absolute right-0 top-0 bottom-0 flex items-center pl-8 pr-0.5 bg-gradient-to-l from-white via-white/95 to-transparent pointer-events-auto"
+            >
+              <span className="w-6 h-6 rounded-full bg-white shadow-md border border-[#C9C3B3]/50 flex items-center justify-center text-[#543826]">
+                <ChevronRight className="w-4 h-4" />
+              </span>
+            </button>
           )}
         </div>
 
