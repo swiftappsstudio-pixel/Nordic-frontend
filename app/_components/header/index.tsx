@@ -11,12 +11,20 @@ import { useAuth } from "@/app/_common/auth-context";
 type NavItem = {
   label: string;
   href: string;
-  dropdown?: { label: string; href: string }[];
+  dropdown?: { label: string; href: string; badge?: string }[];
 };
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "IV Glutathione", href: "/iv-glutathione" },
+  {
+    label: "Exclusive Offers",
+    href: "/back-to-school-sale",
+    dropdown: [
+      { label: "Back to School Sale", href: "/back-to-school-sale", badge: "40% OFF" },
+      { label: "Emirati Women's Day", href: "/emirati-womens-day", badge: "40% OFF" },
+      { label: "IV Glutathione", href: "/iv-glutathione" },
+    ],
+  },
   { label: "Mother & Baby", href: "/mother-and-baby" },
   { label: "Elderly Care", href: "/elderly-care" },
   { label: "Blood Test", href: "/blood-test" },
@@ -167,6 +175,11 @@ export default function Navbar() {
     return pathname === href;
   };
 
+  const isDropdownActive = (item: NavItem) => {
+    if (isActive(item.href)) return true;
+    return item.dropdown?.some((sub) => isActive(sub.href)) ?? false;
+  };
+
   return (
     <nav
       ref={navRef}
@@ -216,12 +229,17 @@ export default function Navbar() {
                   ref={(el) => { dropdownTriggerRefs.current[item.label] = el; }}
                   onClick={(e) => toggleDropdown(item.label, e.currentTarget)}
                   data-glass-open={openDropdown === item.label}
-                  className={`nav-glass-tab shrink-0 whitespace-nowrap text-sm font-medium px-3.5 py-1.5 rounded-full flex items-center gap-1 ${openDropdown === item.label || isActive(item.href)
+                  className={`nav-glass-tab shrink-0 whitespace-nowrap text-sm font-medium px-3.5 py-1.5 rounded-full flex items-center gap-1.5 ${openDropdown === item.label || isDropdownActive(item)
                       ? "bg-[#C9C3B3]/60 text-[#543826] font-semibold"
                       : "text-[#543826]/80 hover:text-[#543826]"
                     }`}
                 >
                   {item.label}
+                  {item.label === "Exclusive Offers" && (
+                    <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                      SALE
+                    </span>
+                  )}
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""}`} />
                 </button>
                 {openDropdown === item.label && dropdownPos &&
@@ -231,16 +249,21 @@ export default function Navbar() {
                       onMouseEnter={cancelScheduledClose}
                       onMouseLeave={scheduleCloseDropdown}
                       style={{ position: "fixed", top: dropdownPos.top, left: dropdownPos.left }}
-                      className="bg-white/90 backdrop-blur-xl shadow-xl rounded-2xl w-48 py-2 border border-white/50 z-[100]"
+                      className="bg-white/90 backdrop-blur-xl shadow-xl rounded-2xl w-56 py-2 border border-white/50 z-[100]"
                     >
                       {item.dropdown.map((sub) => (
                         <Link
                           key={sub.label}
                           href={sub.href}
                           onClick={() => setOpenDropdown(null)}
-                          className="dropdown-glass-item mx-2 block px-3.5 py-2.5 rounded-xl text-sm text-gray-700 hover:text-[#543826]"
+                          className="dropdown-glass-item mx-2 flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl text-sm text-gray-700 hover:text-[#543826]"
                         >
-                          {sub.label}
+                          <span>{sub.label}</span>
+                          {sub.badge && (
+                            <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none shrink-0">
+                              {sub.badge}
+                            </span>
+                          )}
                         </Link>
                       ))}
                     </div>,
@@ -380,7 +403,14 @@ export default function Navbar() {
                           : "text-[#543826]/80 hover:bg-[#C9C3B3]/20"
                         }`}
                     >
-                      <span>{item.label}</span>
+                      <span className="flex items-center gap-1.5">
+                        {item.label}
+                        {item.label === "Exclusive Offers" && (
+                          <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                            SALE
+                          </span>
+                        )}
+                      </span>
                       <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""}`} />
                     </button>
                     {openDropdown === item.label && (
@@ -390,9 +420,14 @@ export default function Navbar() {
                             key={sub.label}
                             href={sub.href}
                             onClick={() => { setOpen(false); setOpenDropdown(null); }}
-                            className="px-4 py-2 rounded-xl text-sm text-[#543826]/70 hover:bg-[#C9C3B3]/20 transition-all"
+                            className="flex items-center justify-between gap-2 px-4 py-2 rounded-xl text-sm text-[#543826]/70 hover:bg-[#C9C3B3]/20 transition-all"
                           >
-                            {sub.label}
+                            <span>{sub.label}</span>
+                            {sub.badge && (
+                              <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none shrink-0">
+                                {sub.badge}
+                              </span>
+                            )}
                           </Link>
                         ))}
                       </div>

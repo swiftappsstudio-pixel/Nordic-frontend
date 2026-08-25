@@ -5,6 +5,8 @@ import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaWhatsapp } from "react-icons/fa";
 
 const FOOTER_SERVICES = [
+  { label: "Back to School Sale", href: "/back-to-school-sale" },
+  { label: "Emirati Women's Day", href: "/emirati-womens-day" },
   { label: "Mother & Baby", href: "/mother-and-baby" },
   { label: "Elderly Care", href: "/elderly-care" },
   { label: "Blood Test", href: "/blood-test" },

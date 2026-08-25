@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const WHATSAPP_NUMBER = "971581649910";
@@ -9,7 +10,16 @@ const WHATSAPP_NUMBER = "971581649910";
 const buildWhatsappUrl = (message: string) =>
   `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
-const PROMOS = [
+type Promo = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  whatsappUrl: string;
+  pageHref?: string;
+};
+
+const PROMOS: Promo[] = [
   {
     src: "/images/promos/emirati-womens-day.jpg",
     alt: "Emirati Women's Day — Nordic Home Healthcare",
@@ -18,6 +28,7 @@ const PROMOS = [
     whatsappUrl: buildWhatsappUrl(
       "Hi Nordic! I saw your Emirati Women's Day post — I'd like to know more about your home healthcare services."
     ),
+    pageHref: "/emirati-womens-day",
   },
   {
     src: "/images/promos/child-checkup.jpg",
@@ -27,6 +38,7 @@ const PROMOS = [
     whatsappUrl: buildWhatsappUrl(
       "Hi Nordic! I'd like to book my child's back-to-school routine checkup and vaccines."
     ),
+    pageHref: "/back-to-school-sale",
   },
   {
     src: "/images/promos/back-to-school.png",
@@ -36,6 +48,7 @@ const PROMOS = [
     whatsappUrl: buildWhatsappUrl(
       "Hi Nordic! I'd like to book the back-to-school vaccines offer (up to 40% off)."
     ),
+    pageHref: "/back-to-school-sale",
   },
 ];
 
@@ -52,7 +65,9 @@ export default function PromoAlert() {
   const isAuthRoute =
     pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") || pathname.startsWith("/forget-password");
   const isAdminRoute = pathname.startsWith("/admin");
-  const skip = isAuthRoute || isAdminRoute;
+  const isOwnOfferRoute =
+    pathname.startsWith("/back-to-school-sale") || pathname.startsWith("/emirati-womens-day");
+  const skip = isAuthRoute || isAdminRoute || isOwnOfferRoute;
 
   useEffect(() => {
     // shownCountRef lives only in memory, so a hard refresh (or a new tab)
@@ -114,23 +129,36 @@ export default function PromoAlert() {
         </button>
 
         <div className="relative overflow-y-auto">
-          <Image
-            src={promo.src}
-            alt={promo.alt}
-            width={promo.width}
-            height={promo.height}
-            unoptimized
-            className="block w-full h-auto"
-          />
+          {promo.pageHref ? (
+            <Link href={promo.pageHref} onClick={close} aria-label={promo.alt}>
+              <Image
+                src={promo.src}
+                alt={promo.alt}
+                width={promo.width}
+                height={promo.height}
+                unoptimized
+                className="block w-full h-auto cursor-pointer"
+              />
+            </Link>
+          ) : (
+            <Image
+              src={promo.src}
+              alt={promo.alt}
+              width={promo.width}
+              height={promo.height}
+              unoptimized
+              className="block w-full h-auto"
+            />
+          )}
 
-          <PromoCta key={index} whatsappUrl={promo.whatsappUrl} onNavigate={close} />
+          <PromoCta key={index} promo={promo} onNavigate={close} />
         </div>
       </div>
     </div>
   );
 }
 
-function PromoCta({ whatsappUrl, onNavigate }: { whatsappUrl: string; onNavigate: () => void }) {
+function PromoCta({ promo, onNavigate }: { promo: Promo; onNavigate: () => void }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -140,30 +168,43 @@ function PromoCta({ whatsappUrl, onNavigate }: { whatsappUrl: string; onNavigate
 
   return (
     <div
-      className={`absolute inset-x-0 bottom-0 px-4 pb-4 pt-14 bg-gradient-to-t from-black/80 via-black/45 to-transparent transition-all duration-700 ease-out ${
+      className={`absolute inset-x-0 bottom-0 px-4 pb-3 pt-6 bg-gradient-to-t from-black/80 via-black/45 to-transparent transition-all duration-700 ease-out ${
         show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
     >
-      <div className="bg-white/15 backdrop-blur-lg border border-white/25 rounded-2xl px-4 py-4 shadow-xl flex flex-col items-center gap-3 text-center">
-        <span className="inline-flex items-center gap-1.5 text-white text-xs sm:text-sm font-semibold tracking-wide drop-shadow">
-          <span className="relative flex w-2 h-2">
+      <div className="bg-white/15 backdrop-blur-lg border border-white/25 rounded-2xl px-3 py-2 shadow-xl flex items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-1.5 text-white text-[11px] font-semibold tracking-wide drop-shadow leading-tight">
+          <span className="relative flex w-1.5 h-1.5 shrink-0">
             <span className="absolute inline-flex w-full h-full rounded-full bg-red-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex w-2 h-2 rounded-full bg-red-500" />
+            <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-red-500" />
           </span>
           Limited Slots Available
         </span>
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener"
-          onClick={onNavigate}
-          className="promo-cta-glow inline-flex items-center gap-2 bg-[#543826] text-white text-sm font-bold px-7 py-3 rounded-full hover:bg-[#3e2a1c] active:scale-95 transition-all duration-200"
-        >
-          Book Now
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="w-4 h-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
-        </a>
+        {promo.pageHref ? (
+          <Link
+            href={promo.pageHref}
+            onClick={onNavigate}
+            className="promo-cta-glow inline-flex items-center gap-1.5 bg-[#543826] text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-[#3e2a1c] active:scale-95 transition-all duration-200 shrink-0"
+          >
+            View Offers
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="w-3.5 h-3.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </Link>
+        ) : (
+          <a
+            href={promo.whatsappUrl}
+            target="_blank"
+            rel="noopener"
+            onClick={onNavigate}
+            className="promo-cta-glow inline-flex items-center gap-1.5 bg-[#543826] text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-[#3e2a1c] active:scale-95 transition-all duration-200 shrink-0"
+          >
+            Book Now
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="w-3.5 h-3.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </a>
+        )}
       </div>
     </div>
   );
