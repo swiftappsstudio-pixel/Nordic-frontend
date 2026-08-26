@@ -53,7 +53,7 @@ function ServiceCard({ svc }: { svc: Service }) {
     <Link href={`/services/${svc._id}`} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
       <div className="relative h-48 overflow-hidden bg-gray-100">
         {svc.images?.[0] ? (
-          <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+          <Image src={svc.images[0]} alt={svc.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[#543826]/10 to-[#543826]/20 flex items-center justify-center">
             <svg className="w-10 h-10 text-[#543826]/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -142,7 +142,7 @@ export default function CategoryPageClient({ categories }: CategoryPageClientPro
       <section className="relative min-h-[85vh] flex flex-col justify-end overflow-hidden">
         <div className="absolute inset-0">
           {mainCategory?.image ? (
-            <Image src={mainCategory.image} alt={mainCategory.name} fill className="object-cover object-center" priority unoptimized />
+            <Image src={mainCategory.image} alt={mainCategory.name} fill sizes="100vw" className="object-cover object-center" priority />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#1F3C34] to-[#2D5B4F]" />
           )}
@@ -258,7 +258,7 @@ export default function CategoryPageClient({ categories }: CategoryPageClientPro
                 <Link key={cat._id} href={cat.link || `/${cat.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="group block bg-white rounded-2xl overflow-hidden border border-black/6 hover:shadow-md transition-all duration-300">
                   <div className="relative h-44 overflow-hidden bg-gray-100">
                     {cat.image ? (
-                      <Image src={cat.image} alt={cat.name} fill className="object-cover object-center group-hover:scale-105 transition-transform duration-500" unoptimized />
+                      <Image src={cat.image} alt={cat.name} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover object-center group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full bg-[#e8e4dc] flex items-center justify-center">
                         <svg className="w-10 h-10 text-[#543826]/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>

@@ -69,7 +69,7 @@ function SortableRow({ review, onEdit, onDelete }: { review: Review; onEdit: (r:
             </div>
           ) : (
             <div className="relative w-44 h-28 rounded-lg overflow-hidden shadow-sm bg-gray-100">
-              <Image src={review.media} alt="review" fill className="object-cover" unoptimized />
+              <Image src={review.media} alt="review" fill sizes="176px" className="object-cover" />
             </div>
           )
         ) : (

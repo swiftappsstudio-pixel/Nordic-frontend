@@ -1,5 +1,3 @@
-"use client";
-
 import { ServiceWizard } from "@/app/_components/service-wizard";
 
 interface Props {

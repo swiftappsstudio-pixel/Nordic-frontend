@@ -59,7 +59,7 @@ export default function OurNursesPage() {
                 className="group flex flex-col sm:flex-row gap-5 sm:gap-7 items-start sm:items-center bg-white border border-[#C9C3B3]/40 rounded-2xl p-5 sm:p-6 hover:border-[#543826]/50 hover:shadow-md transition-all duration-200"
               >
                 <div className="relative w-full sm:w-28 h-56 sm:h-28 rounded-xl overflow-hidden shrink-0 bg-[#F7EEE0]">
-                  <Image src={nurse.photo} alt={nurse.name} fill unoptimized className="object-cover" />
+                  <Image src={nurse.photo} alt={nurse.name} fill sizes="(max-width: 640px) 100vw, 112px" className="object-cover" />
                 </div>
 
                 <div className="flex-1 min-w-0">

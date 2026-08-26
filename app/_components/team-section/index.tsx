@@ -149,7 +149,6 @@ Built by healthcare professionals, wellness experts, and technology specialists 
                     width={40}
                     height={40}
                     className="w-full h-full object-cover rounded-full"
-                    unoptimized
                   />
                 </div>
               </button>
@@ -165,7 +164,6 @@ Built by healthcare professionals, wellness experts, and technology specialists 
               width={340}
               height={340}
               className="w-full h-full object-cover rounded-2xl"
-              unoptimized
             />
           </div>
 

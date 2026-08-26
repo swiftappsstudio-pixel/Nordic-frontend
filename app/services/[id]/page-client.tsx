@@ -121,7 +121,6 @@ export default function ServiceDetailPage({ id }: Props) {
                     fill
                     className="object-contain"
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    unoptimized
                   />
                 </div>
                 {images.length > 1 && (
@@ -141,7 +140,6 @@ export default function ServiceDetailPage({ id }: Props) {
                           fill
                           className="object-contain"
                           sizes="80px"
-                          unoptimized
                         />
                       </button>
                     ))}

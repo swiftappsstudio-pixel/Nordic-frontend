@@ -44,7 +44,7 @@ export default async function ParentsWellnessServicePage({ params }: { params: P
           </div>
         ) : (
           <div className="absolute inset-0">
-            <Image src={service.image!} alt={service.title} fill className="object-cover object-center" priority unoptimized />
+            <Image src={service.image!} alt={service.title} fill sizes="(max-width: 1024px) 100vw, 640px" className="object-cover object-center" priority />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e28]/95 via-[#1a2e28]/60 to-[#1a2e28]/20" />
           </div>
         )}
@@ -154,7 +154,7 @@ export default async function ParentsWellnessServicePage({ params }: { params: P
                     </div>
                   ) : (
                     <div className="absolute inset-0">
-                      <Image src={s.image!} alt={s.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                      <Image src={s.image!} alt={s.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.8) 100%)" }} />
                     </div>
                   )}

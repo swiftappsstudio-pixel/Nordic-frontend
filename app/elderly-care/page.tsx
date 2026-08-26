@@ -25,7 +25,7 @@ function ServiceCard({ svc }: { svc: Service }) {
     <a href={waLink} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl" style={{ minHeight: "340px" }}>
       <div className="absolute inset-0">
         {svc.images?.[0] ? (
-          <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+          <Image src={svc.images[0]} alt={svc.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[#1a2e28]/20 to-[#1a2e28]/40" />
         )}
@@ -129,7 +129,7 @@ function HeroSlider() {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="absolute inset-0"
           >
-            <Image src={HERO_SLIDES[active].src} alt={HERO_SLIDES[active].alt} fill className="object-cover object-center" unoptimized />
+            <Image src={HERO_SLIDES[active].src} alt={HERO_SLIDES[active].alt} fill sizes="260px" className="object-cover object-center" />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -375,7 +375,7 @@ function VideoTestimonialSection() {
 
         <motion.div key={active} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: "easeOut" }} className="bg-[#F7F4EE] rounded-2xl overflow-hidden flex flex-col sm:flex-row" style={{ minHeight: "300px" }}>
           <div className="relative sm:w-[40%] shrink-0" style={{ minHeight: "300px" }}>
-            <Image src={t.img} alt={t.name} fill className="object-cover object-center" unoptimized />
+            <Image src={t.img} alt={t.name} fill sizes="(max-width: 640px) 100vw, 40vw" className="object-cover object-center" />
           </div>
           <div className="flex flex-col justify-between px-8 sm:px-10 py-8 flex-1">
             <div>
@@ -465,7 +465,7 @@ function StackCardBody({ idx }: { idx: number }) {
         </a>
       </div>
       <div className="relative w-full lg:flex-1 overflow-hidden" style={{ minHeight: "160px", borderRadius: "0 0 14px 0" }}>
-        <Image src={card.img} alt={card.h1} fill className="object-cover object-center" unoptimized />
+        <Image src={card.img} alt={card.h1} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover object-center" />
         <div className="absolute inset-y-0 left-0 w-12 pointer-events-none" style={{ background: `linear-gradient(to right, ${card.bg}, transparent)` }} />
       </div>
     </div>
@@ -562,7 +562,7 @@ function WeAlsoServeSection() {
             <FadeIn key={card.title} delay={i * 0.08}>
               <a href={card.href} className="group block bg-white rounded-2xl overflow-hidden border border-black/6 hover:shadow-md transition-all duration-300">
                 <div className="relative h-44 overflow-hidden bg-[#e8e4dc]">
-                  <Image src={card.img} alt={card.title} fill className="object-cover object-center group-hover:scale-105 transition-transform duration-500" unoptimized />
+                  <Image src={card.img} alt={card.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover object-center group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <div className="p-5">
                   <h3 className="font-semibold text-[#1a2e28] text-base mb-1.5">{card.title}</h3>
@@ -632,7 +632,7 @@ export default function ElderlyCarePage() {
       {/* HERO */}
       <section className="relative min-h-[55vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/images/nurse_with_elder.png" alt="Elderly care at home Dubai" fill className="object-cover object-center" priority unoptimized />
+          <Image src="/images/nurse_with_elder.png" alt="Elderly care at home Dubai" fill sizes="100vw" className="object-cover object-center" priority />
           <div className="absolute inset-0 bg-gradient-to-br from-[#1a2e28]/85 via-[#2D5B4F]/75 to-[#1a2e28]/85" />
         </div>
 

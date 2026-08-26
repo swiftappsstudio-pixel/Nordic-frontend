@@ -81,7 +81,7 @@ export default function OurManagementPage() {
             >
               {member.photo ? (
                 <div className="relative w-20 h-20 rounded-full overflow-hidden border border-[#C9C3B3]/50 shrink-0 mx-auto sm:mx-0">
-                  <Image src={member.photo} alt={member.name} fill unoptimized className="object-cover" />
+                  <Image src={member.photo} alt={member.name} fill sizes="80px" className="object-cover" />
                 </div>
               ) : (
                 <div className="w-20 h-20 rounded-full bg-[#F7EEE0] border border-[#C9C3B3]/50 flex items-center justify-center text-xl font-bold text-[#543826] shrink-0 mx-auto sm:mx-0">

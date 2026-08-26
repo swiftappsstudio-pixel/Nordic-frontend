@@ -140,7 +140,7 @@ export default function AddReviewModal({ onSubmit, onCancel, nextSortOrder, edit
                   <video src={mediaPreview} className="w-full h-32 object-cover rounded-md" controls preload="metadata" />
                 ) : (
                   <div className="relative w-full h-32">
-                    <Image src={mediaPreview} alt="Media preview" fill className="object-cover rounded-md" unoptimized />
+                    <Image src={mediaPreview} alt="Media preview" fill sizes="(max-width: 640px) 100vw, 500px" className="object-cover rounded-md" />
                   </div>
                 )
               ) : (

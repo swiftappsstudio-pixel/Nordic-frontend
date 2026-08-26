@@ -199,6 +199,7 @@ export default function CategoryPage() {
                           src={cat.image}
                           alt={cat.name}
                           fill
+                          sizes="48px"
                           className="object-cover"
                         />
                       </div>
@@ -221,6 +222,7 @@ export default function CategoryPage() {
                               src={src}
                               alt={`Slider ${i + 1}`}
                               fill
+                              sizes="32px"
                               className="object-cover"
                             />
                           </div>

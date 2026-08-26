@@ -56,7 +56,7 @@ function ServiceCard({ svc, index }: { svc: TaggedService; index: number }) {
       <a href={waMsg} target="_blank" rel="noopener noreferrer" className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col h-full">
         <div className="relative h-48 overflow-hidden bg-gray-100">
           {svc.images?.[0] ? (
-            <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+            <Image src={svc.images[0]} alt={svc.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#543826]/10 to-[#543826]/20 flex items-center justify-center">
               <svg className="w-10 h-10 text-[#543826]/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -208,7 +208,7 @@ export default function EmiratiWomensDayPage() {
           animate={{ scale: 1.08 }}
           transition={{ duration: 22, ease: "linear", repeat: Infinity, repeatType: "mirror" }}
         >
-          <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy at home in Dubai — Nordic Home Healthcare" fill className="object-cover object-center" priority unoptimized />
+          <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy at home in Dubai — Nordic Home Healthcare" fill sizes="100vw" className="object-cover object-center" priority />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/78 to-[#1a2e28]/40 lg:to-[#1a2e28]/15" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e28]/80 via-transparent to-transparent" />
@@ -307,7 +307,6 @@ export default function EmiratiWomensDayPage() {
                 alt="Celebrating Emirati Women — Nordic Home Healthcare"
                 width={1080}
                 height={615}
-                unoptimized
                 className="w-full h-auto"
               />
             </motion.div>

@@ -29,7 +29,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               fill
               className="object-cover rounded-lg"
               sizes="(max-width: 768px) 100vw, 33vw"
-              unoptimized
             />
           </div>
         )}

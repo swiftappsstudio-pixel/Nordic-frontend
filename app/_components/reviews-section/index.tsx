@@ -87,7 +87,7 @@ function VideoMediaCard({ src }: { src: string }) {
 function ImageMediaCard({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="shrink-0 w-[200px] md:w-[260px] lg:w-[280px] h-[280px] md:h-[340px] lg:h-[360px] bg-[#F7EEE0] rounded-xl overflow-hidden relative">
-      <Image src={src} alt={alt} fill className="object-cover" unoptimized />
+      <Image src={src} alt={alt} fill sizes="(max-width: 768px) 200px, (max-width: 1024px) 260px, 280px" className="object-cover" />
     </div>
   );
 }

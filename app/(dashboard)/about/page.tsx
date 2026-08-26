@@ -12,6 +12,7 @@ export default function AboutPage() {
           src="/images/CTA!.jpg"
           alt="about banner"
           fill
+          sizes="100vw"
           className="object-cover"
         />
 
@@ -40,6 +41,7 @@ export default function AboutPage() {
             src="/images/demo.png"
             alt="about"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover rounded-lg"
           />
         </div>
@@ -54,6 +56,7 @@ export default function AboutPage() {
     src="/images/demo.png"
     alt="care"
     fill
+    sizes="(max-width: 768px) 100vw, 50vw"
     className="object-contain rounded-lg"
   />
 </div>

@@ -136,7 +136,6 @@ export default function PromoAlert() {
                 alt={promo.alt}
                 width={promo.width}
                 height={promo.height}
-                unoptimized
                 className="block w-full h-auto cursor-pointer"
               />
             </Link>
@@ -146,7 +145,6 @@ export default function PromoAlert() {
               alt={promo.alt}
               width={promo.width}
               height={promo.height}
-              unoptimized
               className="block w-full h-auto"
             />
           )}

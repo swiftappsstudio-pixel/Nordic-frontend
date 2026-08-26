@@ -65,7 +65,7 @@ export default function TaniaJenniferProfile() {
               src="/images/tania-jennifer.jpg"
               alt="Tania Jennifer, DPT — Physiotherapist at Nordic Home Healthcare"
               fill
-              unoptimized
+              sizes="(max-width: 768px) 100vw, 320px"
               className="object-cover"
             />
             <div className="absolute left-3 bottom-3 bg-white/95 rounded-full px-3 py-1.5 flex items-center gap-2 text-xs font-medium text-[#543826]">

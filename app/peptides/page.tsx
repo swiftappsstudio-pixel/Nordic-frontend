@@ -26,7 +26,7 @@ function ServiceCard({ svc }: { svc: Service }) {
     <Link href={`/services/${svc._id}`} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
       <div className="relative h-48 overflow-hidden bg-gray-100">
         {svc.images?.[0] ? (
-          <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+          <Image src={svc.images[0]} alt={svc.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[#1a2e28]/10 to-[#1a2e28]/20 flex items-center justify-center">
             <svg className="w-10 h-10 text-[#1a2e28]/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -182,7 +182,7 @@ export default function PeptidesPage() {
 
             <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0, y: [0, -12, 0] }} transition={{ duration: 0.8, delay: 0.4, y: { duration: 3, repeat: Infinity, ease: "easeInOut" } }} className="hidden lg:block">
               <div className="relative flex items-center justify-center" style={{ minHeight: "480px" }}>
-                <Image src="/images/epitalon-removebg-preview.png" alt="Peptide Therapy at Home" fill className="object-contain object-center" priority unoptimized />
+                <Image src="/images/epitalon-removebg-preview.png" alt="Peptide Therapy at Home" fill sizes="50vw" className="object-contain object-center" priority />
               </div>
             </motion.div>
           </div>

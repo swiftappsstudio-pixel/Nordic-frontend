@@ -232,7 +232,7 @@ export default function PhysiotherapyPage() {
 
             <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.3 }} className="relative mt-12 lg:mt-0">
               <div className="relative rounded-[28px] overflow-hidden shadow-2xl aspect-[4/3]">
-                <Image src="/images/physiotherapy-hero.jpeg" alt="Physiotherapist treating a patient at home in Dubai" fill className="object-cover object-center" priority unoptimized />
+                <Image src="/images/physiotherapy-hero.jpeg" alt="Physiotherapist treating a patient at home in Dubai" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover object-center" priority />
               </div>
 
               {/* Floating cards */}
@@ -287,7 +287,7 @@ export default function PhysiotherapyPage() {
         <div className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <FadeIn>
             <div className="relative rounded-[24px] overflow-hidden shadow-lg aspect-[4/3]">
-              <Image src="/images/physiotherapy-2.png" alt="Home physiotherapy assessment in Dubai" fill className="object-cover object-center" unoptimized />
+              <Image src="/images/physiotherapy-2.png" alt="Home physiotherapy assessment in Dubai" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover object-center" />
             </div>
           </FadeIn>
           <FadeIn delay={0.1}>
@@ -409,7 +409,7 @@ export default function PhysiotherapyPage() {
           </FadeIn>
           <FadeIn delay={0.1} className="order-1 lg:order-2">
             <div className="relative rounded-[24px] overflow-hidden shadow-lg aspect-[4/3]">
-              <Image src="/images/healthcare.png" alt="Benefits of physiotherapy at home" fill className="object-cover object-center" unoptimized />
+              <Image src="/images/healthcare.png" alt="Benefits of physiotherapy at home" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover object-center" />
             </div>
           </FadeIn>
         </div>

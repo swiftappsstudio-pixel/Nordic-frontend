@@ -182,7 +182,7 @@ export default function ServicesPage() {
                   <td className="px-5 py-4">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
                       {s.images?.[0] ? (
-                        <Image src={s.images[0]} alt={s.title} fill className="object-cover" unoptimized />
+                        <Image src={s.images[0]} alt={s.title} fill sizes="64px" className="object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-300">
                           <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">

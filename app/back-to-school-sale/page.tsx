@@ -66,7 +66,7 @@ function OfferCard({ offer, index }: { offer: Offer; index: number }) {
         </div>
       ) : (
         <div className="absolute inset-0">
-          <Image src={offer.image!} alt={offer.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+          <Image src={offer.image!} alt={offer.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
           <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.8) 100%)" }} />
         </div>
       )}
@@ -186,7 +186,7 @@ export default function BackToSchoolSalePage() {
           animate={{ scale: 1.08 }}
           transition={{ duration: 22, ease: "linear", repeat: Infinity, repeatType: "mirror" }}
         >
-          <Image src="/images/promos/child-checkup.jpg" alt="Child ready for their back-to-school vaccine — Nordic Home Healthcare" fill className="object-cover object-center" priority unoptimized />
+          <Image src="/images/promos/child-checkup.jpg" alt="Child ready for their back-to-school vaccine — Nordic Home Healthcare" fill sizes="100vw" className="object-cover object-center" priority />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/75 to-[#1a2e28]/35 lg:to-[#1a2e28]/10" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e28]/80 via-transparent to-transparent" />
@@ -266,7 +266,7 @@ export default function BackToSchoolSalePage() {
               className="group relative flex flex-col lg:flex-row items-stretch overflow-hidden rounded-3xl shadow-xl"
             >
               <div className="relative w-full lg:w-[42%] min-h-[240px]">
-                <Image src="/images/Immune-Boost-Hydration-B.webp" alt="Exclusive Deal — Nordic Home Healthcare" fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                <Image src="/images/Immune-Boost-Hydration-B.webp" alt="Exclusive Deal — Nordic Home Healthcare" fill sizes="(max-width: 1024px) 100vw, 42vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e28]/70 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#1a2e28]/10" />
               </div>
               <div className="relative flex-1 bg-gradient-to-br from-[#1a2e28] via-[#20362f] to-[#543826] px-6 sm:px-10 lg:px-12 py-10 flex flex-col justify-center">

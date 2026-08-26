@@ -13,7 +13,6 @@ export default function AppDownloadSection() {
         width={500}
         height={500}
         className="pointer-events-none absolute -left-44 top-0 h-[300px] w-[300px] sm:h-[500px] sm:w-[500px] opacity-90"
-        unoptimized
       />
       <div className="relative max-w-7xl mx-auto px-6">
         <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] items-center">
@@ -160,7 +159,6 @@ export default function AppDownloadSection() {
                 width={360}
                 height={780}
                 className="w-full h-auto rounded-[2rem]"
-                unoptimized
               />
             </div>
             </motion.div>

@@ -48,7 +48,7 @@ function ServiceCard({ svc }: { svc: Service }) {
     <Link href={`/services/${svc._id}`} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
       <div className="relative h-48 overflow-hidden bg-gray-100">
         {svc.images?.[0] ? (
-          <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+          <Image src={svc.images[0]} alt={svc.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[#543826]/10 to-[#543826]/20 flex items-center justify-center">
             <svg className="w-10 h-10 text-[#543826]/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -220,7 +220,7 @@ export default function IVTherapyPage() {
       {/* HERO */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[#1a2e28]">
         <div className="absolute inset-0">
-          <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy at Home Dubai" fill className="object-cover object-center" priority unoptimized />
+          <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy at Home Dubai" fill sizes="100vw" className="object-cover object-center" priority />
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/70 to-transparent" />
         </div>
 
@@ -258,7 +258,7 @@ export default function IVTherapyPage() {
 
             <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="hidden lg:block">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ minHeight: "480px" }}>
-                <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy nurse at home" fill className="object-cover object-center" unoptimized />
+                <Image src="/images/Immune-Boost-Hydration-B.webp" alt="IV Therapy nurse at home" fill sizes="50vw" className="object-cover object-center" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e28]/50 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-4">

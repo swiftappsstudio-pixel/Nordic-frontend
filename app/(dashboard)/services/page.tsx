@@ -1,8 +1,9 @@
 import { getServices } from "@/app/_common/api";
+import { Service } from "@/app/_common/interfaces";
 import ServiceCard from "@/app/_components/service-card";
 
 export default async function ServicesPage() {
-  const services = await getServices();
+  const services = await getServices().catch(() => [] as Service[]);
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-16 px-6">

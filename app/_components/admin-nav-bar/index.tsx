@@ -26,7 +26,6 @@ export  const AdminNavBar = () => {
   };
 
   const handleProfileClick = () => {
-    console.log("Profile clicked, current state:", showProfileMenu);
     setShowProfileMenu(!showProfileMenu);
   };
 

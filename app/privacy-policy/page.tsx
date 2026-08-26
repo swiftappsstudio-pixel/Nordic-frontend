@@ -11,7 +11,6 @@ export default function PrivacyPolicyPage() {
             alt="Nordic"
             width={90}
             height={38}
-            unoptimized
             className="rounded-full"
           />
         </Link>

@@ -172,20 +172,26 @@ export default function ExploreOurServices() {
               onClick={(e) => { if (wasDragged()) e.preventDefault(); }}
             >
               <div className="relative w-[260px] lg:w-[293px] h-[200px] lg:h-[220px] rounded-xl overflow-hidden">
-                <Image
-                  src={category.image || "/images/placeholder.png"}
-                  alt={category.name}
-                  fill
-                  className="object-cover transition-opacity duration-500 group-hover:opacity-0"
-                  unoptimized
-                />
-                <Image
-                  src={category.image || "/images/placeholder.png"}
-                  alt={category.name}
-                  fill
-                  className="object-cover transition-opacity duration-500 opacity-0 group-hover:opacity-100"
-                  unoptimized
-                />
+                {category.image ? (
+                  <>
+                    <Image
+                      src={category.image}
+                      alt={category.name}
+                      fill
+                      sizes="(max-width: 1024px) 260px, 293px"
+                      className="object-cover transition-opacity duration-500 group-hover:opacity-0"
+                    />
+                    <Image
+                      src={category.image}
+                      alt={category.name}
+                      fill
+                      sizes="(max-width: 1024px) 260px, 293px"
+                      className="object-cover transition-opacity duration-500 opacity-0 group-hover:opacity-100"
+                    />
+                  </>
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#543826]/10 to-[#543826]/20" />
+                )}
                 <div className="absolute inset-0 bg-[#543826]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4 md:p-6">
                   <span className="font-brand text-lg md:text-2xl text-white font-semibold leading-tight">
                     {category.name}

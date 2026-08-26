@@ -62,7 +62,6 @@ export const AdminSideBar = () => {
           className="rounded-full"
           height={80}
           width={80}
-          unoptimized
         />
       </div>
 

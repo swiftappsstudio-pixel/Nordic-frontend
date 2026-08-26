@@ -202,7 +202,6 @@ export default function Navbar() {
             width={52}
             height={52}
             priority
-            unoptimized
             className="rounded-full"
           />
         </Link>
@@ -379,7 +378,8 @@ export default function Navbar() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setOpen(!open)}
-          className="flex lg:hidden flex-col justify-center items-center w-9 h-9 rounded-xl hover:bg-[#C9C3B3]/30 transition gap-1.5 ml-auto"
+          data-glass-open={open}
+          className="nav-glass-tab flex lg:hidden flex-col justify-center items-center w-9 h-9 rounded-xl gap-1.5 ml-auto"
           aria-label="Toggle menu"
         >
           <span className={`block w-4.5 h-0.5 bg-[#543826] rounded-full transition-all duration-300 ${open ? "rotate-45 translate-y-[7px]" : ""}`} style={{ width: "18px" }} />
@@ -390,7 +390,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden bg-white/90 backdrop-blur-xl rounded-b-[18px] px-4 pt-2 pb-4 mt-1 border-t border-white/20">
+        <div className="lg:hidden bg-white/85 backdrop-blur-xl rounded-b-[18px] px-4 pt-2 pb-4 mt-1 border border-white/40 border-t-white/20 shadow-lg">
           <ul className="flex flex-col gap-1 mb-3">
             {NAV_ITEMS.map((item) => (
               <li key={item.label}>
@@ -398,9 +398,10 @@ export default function Navbar() {
                   <>
                     <button
                       onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
-                      className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${openDropdown === item.label
-                          ? "bg-[#C9C3B3]/50 text-[#543826] font-semibold"
-                          : "text-[#543826]/80 hover:bg-[#C9C3B3]/20"
+                      data-glass-open={openDropdown === item.label}
+                      className={`nav-glass-tab flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium ${openDropdown === item.label
+                          ? "text-[#543826] font-semibold"
+                          : "text-[#543826]/80"
                         }`}
                     >
                       <span className="flex items-center gap-1.5">
@@ -420,7 +421,7 @@ export default function Navbar() {
                             key={sub.label}
                             href={sub.href}
                             onClick={() => { setOpen(false); setOpenDropdown(null); }}
-                            className="flex items-center justify-between gap-2 px-4 py-2 rounded-xl text-sm text-[#543826]/70 hover:bg-[#C9C3B3]/20 transition-all"
+                            className="dropdown-glass-item flex items-center justify-between gap-2 px-4 py-2 rounded-xl text-sm text-[#543826]/70"
                           >
                             <span>{sub.label}</span>
                             {sub.badge && (
@@ -437,9 +438,10 @@ export default function Navbar() {
                   <Link
                     href={item.href}
                     onClick={(e) => handleAnchorClick(e, item.href)}
-                    className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive(item.href)
-                        ? "bg-[#C9C3B3]/50 text-[#543826] font-semibold"
-                        : "text-[#543826]/80 hover:bg-[#C9C3B3]/20"
+                    data-glass-open={isActive(item.href)}
+                    className={`nav-glass-tab flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium ${isActive(item.href)
+                        ? "text-[#543826] font-semibold"
+                        : "text-[#543826]/80"
                       }`}
                   >
                     <span>{item.label}</span>
@@ -473,22 +475,22 @@ export default function Navbar() {
                       <p className="text-xs text-gray-400 truncate">{user.email}</p>
                     </div>
                   </div>
-                  <Link href="/change-password" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm text-gray-700 rounded-xl hover:bg-gray-50 transition">
+                  <Link href="/change-password" onClick={() => setOpen(false)} className="dropdown-glass-item block px-4 py-2.5 text-sm text-gray-700 rounded-xl">
                     Change Password
                   </Link>
-                  <Link href="/manage-address" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm text-gray-700 rounded-xl hover:bg-gray-50 transition">
+                  <Link href="/manage-address" onClick={() => setOpen(false)} className="dropdown-glass-item block px-4 py-2.5 text-sm text-gray-700 rounded-xl">
                     Manage Address
                   </Link>
-                  <button onClick={() => { logout(); setOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 rounded-xl hover:bg-red-50 transition">
+                  <button onClick={() => { logout(); setOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 rounded-xl hover:bg-red-50 active:bg-red-100 active:scale-[0.98] transition-all">
                     Sign Out
                   </button>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
-                  <Link href="/sign-in" onClick={() => setOpen(false)} className="text-center text-sm font-medium text-[#543826] border border-[#543826]/30 py-2.5 rounded-full hover:bg-[#543826]/5 transition">
+                  <Link href="/sign-in" onClick={() => setOpen(false)} className="text-center text-sm font-medium text-[#543826] border border-[#543826]/30 py-2.5 rounded-full hover:bg-[#543826]/5 active:scale-95 transition-all">
                     Sign In
                   </Link>
-                  <Link href="/sign-up" onClick={() => setOpen(false)} className="text-center text-sm font-semibold bg-[#543826] text-white py-2.5 rounded-full hover:bg-[#3e2a1c] transition">
+                  <Link href="/sign-up" onClick={() => setOpen(false)} className="text-center text-sm font-semibold bg-[#543826] text-white py-2.5 rounded-full hover:bg-[#3e2a1c] active:scale-95 transition-all">
                     Sign Up
                   </Link>
                 </div>

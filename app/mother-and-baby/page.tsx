@@ -82,7 +82,7 @@ function ServiceCard({ svc }: { svc: Service }) {
     <a href={waLink} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl" style={{ minHeight: "340px" }}>
       <div className="absolute inset-0">
         {svc.images?.[0] ? (
-          <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+          <Image src={svc.images[0]} alt={svc.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[#1a2e28]/20 to-[#1a2e28]/40" />
         )}
@@ -264,7 +264,6 @@ function ScrollStickySection() {
               autoPlay muted loop playsInline
               className="w-full h-full object-cover"
             >
-              <source src="/video/mother-bg.mp4" type="video/mp4" />
               <source src="/video/mother.mp4" type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-black/45" />
@@ -499,7 +498,7 @@ function VideoTestimonialSection() {
 
         <motion.div key={active} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: "easeOut" }} className="bg-[#F7F4EE] rounded-2xl overflow-hidden flex flex-col sm:flex-row" style={{ minHeight: "300px" }}>
           <div className="relative sm:w-[40%] shrink-0" style={{ minHeight: "300px" }}>
-            <Image src={t.img} alt={t.name} fill className="object-cover object-center" unoptimized />
+            <Image src={t.img} alt={t.name} fill sizes="(max-width: 640px) 100vw, 40vw" className="object-cover object-center" />
           </div>
           <div className="flex flex-col justify-between px-8 sm:px-10 py-8 flex-1">
             <div>
@@ -627,8 +626,8 @@ function StackCardBody({ idx }: { idx: number }) {
           src={card.img}
           alt={card.h1}
           fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-cover object-center"
-          unoptimized
         />
         <div
           className="absolute inset-y-0 left-0 w-16 pointer-events-none"
@@ -786,7 +785,7 @@ export default function MotherAndBabyPage() {
       ══════════════════════════ */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[#1a2e28]">
         <div className="absolute inset-0">
-          <Image src="/images/mother_child_2.png" alt="Mother and Baby care at home in Dubai" fill className="object-cover object-center" priority unoptimized />
+          <Image src="/images/mother_child_2.png" alt="Mother and Baby care at home in Dubai" fill sizes="100vw" className="object-cover object-center" priority />
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/70 to-transparent" />
         </div>
 
@@ -822,7 +821,7 @@ export default function MotherAndBabyPage() {
 
             <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="hidden lg:block">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ minHeight: "480px" }}>
-                <Image src="/images/mother_child_1.png" alt="Mother and Baby care nurse at home" fill className="object-cover object-center" unoptimized />
+                <Image src="/images/mother_child_1.png" alt="Mother and Baby care nurse at home" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover object-center" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e28]/50 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-4">

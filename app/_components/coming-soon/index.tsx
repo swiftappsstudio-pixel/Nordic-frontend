@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
 
@@ -16,7 +14,6 @@ export default function ComingSoon({ title }: ComingSoonProps) {
           alt="Nordic"
           width={90}
           height={38}
-          unoptimized
           className="mx-auto mb-8 rounded-full"
         />
         <h1 className="font-brand text-4xl md:text-5xl font-semibold text-[#543826] mb-4">

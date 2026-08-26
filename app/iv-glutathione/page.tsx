@@ -53,7 +53,7 @@ function ServiceCard({ svc }: { svc: Service }) {
     <Link href={`/services/${svc._id}`} className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col">
       <div className="relative h-48 overflow-hidden bg-gray-100">
         {svc.images?.[0] ? (
-          <Image src={svc.images[0]} alt={svc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+          <Image src={svc.images[0]} alt={svc.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[#543826]/10 to-[#543826]/20 flex items-center justify-center">
             <svg className="w-10 h-10 text-[#543826]/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -200,7 +200,7 @@ export default function IVGlutathionePage() {
       {/* ── HERO ── */}
       <section className="relative min-h-[60vh] lg:min-h-[70vh] flex items-center overflow-hidden bg-[#1a2e28]">
         <div className="absolute inset-0">
-          <Image src={bgImage} alt="IV Glutathione Therapy at Home Dubai" fill className="object-cover object-center" priority unoptimized />
+          <Image src={bgImage} alt="IV Glutathione Therapy at Home Dubai" fill sizes="100vw" className="object-cover object-center" priority />
           <div className="absolute inset-0 bg-gradient-to-b from-[#1a2e28]/95 via-[#1a2e28]/80 to-[#1a2e28]/95 lg:bg-gradient-to-r lg:from-[#1a2e28]/95 lg:via-[#1a2e28]/70 lg:to-transparent" />
         </div>
 
@@ -221,7 +221,7 @@ export default function IVGlutathionePage() {
                           : "w-8 h-8 border-white/30 hover:border-white/60"
                       }`}
                     >
-                      <Image src={src} alt="" width={40} height={40} className="w-full h-full object-cover" unoptimized />
+                      <Image src={src} alt="" width={40} height={40} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -244,7 +244,6 @@ export default function IVGlutathionePage() {
                       alt={`Glutathione slider ${sliderIndex + 1}`}
                       width={0} height={0} sizes="100vw"
                       className="w-auto max-h-full rounded-[30px]"
-                      unoptimized
                     />
                   </motion.div>
                 </AnimatePresence>
@@ -276,7 +275,7 @@ export default function IVGlutathionePage() {
                           }
                         }}
                       >
-                        <Image src={sliderImages[sliderIndex]} alt={`Slider ${sliderIndex + 1}`} width={0} height={0} sizes="100vw" className="w-auto max-h-full rounded-[26px] pointer-events-none" unoptimized />
+                        <Image src={sliderImages[sliderIndex]} alt={`Slider ${sliderIndex + 1}`} width={0} height={0} sizes="100vw" className="w-auto max-h-full rounded-[26px] pointer-events-none" />
                       </motion.div>
                     </AnimatePresence>
                   </div>
@@ -417,7 +416,7 @@ export default function IVGlutathionePage() {
       <section className="relative py-12 sm:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">
-          <Image src="/images/nurse2.png" alt="" fill className="object-cover object-top" unoptimized />
+          <Image src="/images/nurse2.png" alt="" fill sizes="100vw" className="object-cover object-top" />
         </div>
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#1a2e28]/95 via-[#1a2e28]/90 to-[#543826]/90" />
@@ -427,7 +426,7 @@ export default function IVGlutathionePage() {
         <div className="relative max-w-[800px] mx-auto bg-white/5 backdrop-blur-xl rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl border border-white/10">
           <FadeIn className="flex justify-center mb-10">
             <div className="bg-white rounded-full p-1.5 shadow-lg">
-              <Image src="/images/logo.jpeg" alt="Nordic Logo" width={110} height={44} className="object-contain rounded-full" unoptimized />
+              <Image src="/images/logo.jpeg" alt="Nordic Logo" width={110} height={44} className="object-contain rounded-full" />
             </div>
           </FadeIn>
 

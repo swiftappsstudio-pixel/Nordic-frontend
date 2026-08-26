@@ -174,7 +174,7 @@ export const getUserProfile = async (token: string) => {
 
 export const getServices = async (): Promise<Service[]> => {
   const res = await fetch(`${API_BASE_URL}/services`, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) {
@@ -191,7 +191,7 @@ export const getServices = async (): Promise<Service[]> => {
 
 export const getFeaturedServices = async (): Promise<Service[]> => {
   const res = await fetch(`${API_BASE_URL}/services/featured`, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) {
@@ -207,13 +207,12 @@ export const getFeaturedServices = async (): Promise<Service[]> => {
 export async function getService(id: string): Promise<Service> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3100";
   const res = await fetch(`${baseUrl}/api/services/${id}`, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) throw new Error("Failed to fetch service");
 
   const result = await res.json();
-  console.log("Fetched Service:", result);
 
   // API returns data inside "data"
   return result.data ?? result;
@@ -226,7 +225,7 @@ export const getCategories = async (viewHomeOnly?: boolean): Promise<Category[]>
     ? `${API_BASE_URL}/catalog/categories?viewHome=true`
     : `${API_BASE_URL}/catalog/categories`;
   const res = await fetch(url, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) throw new Error("Failed to fetch categories");
@@ -241,7 +240,7 @@ export const getServicesByCategory = async (
   const res = await fetch(
     `${API_BASE_URL}/catalog/categories/${categoryId}/services`,
     {
-      cache: "no-store",
+      next: { revalidate: 60 },
     },
   );
 
@@ -255,7 +254,7 @@ export const getServiceDetail = async (
   id: string,
 ): Promise<ServiceWithVariants> => {
   const res = await fetch(`${API_BASE_URL}/catalog/services/${id}`, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) throw new Error("Failed to fetch service detail");
@@ -459,7 +458,7 @@ export const adminDeleteBooking = async (token: string, bookingId: string): Prom
 
 export const getAddOnsByService = async (serviceId: string): Promise<AddOn[]> => {
   const res = await fetch(`${API_BASE_URL}/addons/service/${serviceId}`, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
   const result = await res.json();
   if (!res.ok) {
@@ -489,7 +488,7 @@ export const getAdminDashboardStats = async (
 
 export const getBanners = async (): Promise<Banner[]> => {
   const res = await fetch(`${API_BASE_URL}/banners`, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) throw new Error("Failed to fetch banners");
@@ -500,7 +499,7 @@ export const getBanners = async (): Promise<Banner[]> => {
 
 export const getCategoryByLink = async (link: string): Promise<CategoryWithServices[]> => {
   const res = await fetch(`${API_BASE_URL}/categories/link/${link}`, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) throw new Error("Failed to fetch categories by link");

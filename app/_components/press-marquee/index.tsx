@@ -38,7 +38,6 @@ export default function PressMarquee() {
               alt={logo.alt}
               width={120}
               height={40}
-              unoptimized
               className="object-contain"
             />
           </div>

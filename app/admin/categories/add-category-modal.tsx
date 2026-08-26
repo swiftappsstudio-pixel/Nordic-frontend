@@ -176,6 +176,7 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
                     src={imagePreview}
                     alt="Category preview"
                     fill
+                    sizes="(max-width: 640px) 100vw, 500px"
                     className="object-cover rounded-md"
                   />
                 </div>
@@ -234,7 +235,7 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
               <div className="mt-3 grid grid-cols-4 gap-2">
                 {existingSliderUrls.map((src, i) => (
                   <div key={`existing-${i}`} className="relative aspect-square rounded-md overflow-hidden border border-gray-200 group">
-                    <Image src={src} alt={`Slider ${i + 1}`} fill className="object-cover" unoptimized />
+                    <Image src={src} alt={`Slider ${i + 1}`} fill sizes="125px" className="object-cover" />
                     <button
                       type="button"
                       onClick={() => removeExistingSlider(i)}
@@ -246,7 +247,7 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
                 ))}
                 {newSliderPreviews.map((src, i) => (
                   <div key={`new-${i}`} className="relative aspect-square rounded-md overflow-hidden border border-green-300 group">
-                    <Image src={src} alt={`New slider ${i + 1}`} fill className="object-cover" unoptimized />
+                    <Image src={src} alt={`New slider ${i + 1}`} fill sizes="125px" className="object-cover" />
                     <button
                       type="button"
                       onClick={() => removeNewSlider(i)}

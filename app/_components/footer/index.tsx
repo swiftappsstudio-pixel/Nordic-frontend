@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaWhatsapp } from "react-icons/fa";
@@ -27,7 +25,6 @@ export default function Footer() {
               width={90}
               height={38}
               alt="Nordic"
-              unoptimized
               className="mb-4 rounded-full"
             />
             <p className="font-brand text-sm text-white/50 max-w-xs text-center md:text-left">

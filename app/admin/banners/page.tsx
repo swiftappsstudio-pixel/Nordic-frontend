@@ -138,14 +138,14 @@ export default function BannerPage() {
                   <td className="px-4 py-3">
                     {banner.image ? (
                       <div className="relative w-20 h-12 rounded overflow-hidden">
-                        <Image src={banner.image} alt="desktop" fill className="object-cover" unoptimized />
+                        <Image src={banner.image} alt="desktop" fill sizes="80px" className="object-cover" />
                       </div>
                     ) : <div className="w-20 h-12 rounded bg-gray-100 flex items-center justify-center text-gray-400 text-xs">None</div>}
                   </td>
                   <td className="px-4 py-3">
                     {banner.mobileImage ? (
                       <div className="relative w-10 h-14 rounded overflow-hidden">
-                        <Image src={banner.mobileImage} alt="mobile" fill className="object-cover" unoptimized />
+                        <Image src={banner.mobileImage} alt="mobile" fill sizes="40px" className="object-cover" />
                       </div>
                     ) : <div className="w-10 h-14 rounded bg-gray-100 flex items-center justify-center text-gray-400 text-xs">None</div>}
                   </td>

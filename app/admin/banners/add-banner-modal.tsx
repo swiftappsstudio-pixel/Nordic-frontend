@@ -129,7 +129,7 @@ export default function AddBannerModal({ onSubmit, onCancel, editData }: AddBann
             >
               {imagePreview ? (
                 <div className="relative w-full h-32">
-                  <Image src={imagePreview} alt="Desktop preview" fill className="object-cover rounded-md" unoptimized />
+                  <Image src={imagePreview} alt="Desktop preview" fill sizes="(max-width: 640px) 100vw, 500px" className="object-cover rounded-md" />
                 </div>
               ) : (
                 <div className="text-sm text-gray-400 py-4">Click to upload desktop banner</div>
@@ -156,7 +156,7 @@ export default function AddBannerModal({ onSubmit, onCancel, editData }: AddBann
             >
               {mobileImagePreview ? (
                 <div className="relative w-full h-32">
-                  <Image src={mobileImagePreview} alt="Mobile preview" fill className="object-cover rounded-md" unoptimized />
+                  <Image src={mobileImagePreview} alt="Mobile preview" fill sizes="(max-width: 640px) 100vw, 500px" className="object-cover rounded-md" />
                 </div>
               ) : (
                 <div className="text-sm text-gray-400 py-4">Click to upload mobile banner</div>
