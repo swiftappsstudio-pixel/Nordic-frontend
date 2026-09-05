@@ -19,7 +19,6 @@ import {
   Home as HomeIcon,
   Info,
   Moon,
-  Percent,
   ShieldCheck,
   Sparkles,
   Sun,
@@ -320,7 +319,7 @@ export default function IVGlutathionePage() {
               className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-extrabold uppercase tracking-wide px-6 py-2.5 rounded-full shadow-lg"
               style={{ fontSize: "clamp(16px, 2.4vw, 22px)" }}
             >
-              <Percent className="w-5 h-5" /> Get 40% Off
+              Get 40% Off
             </motion.span>
           </motion.div>
 
