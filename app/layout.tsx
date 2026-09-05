@@ -6,7 +6,8 @@ import { ConditionalFooter } from "./_components/conditional-footer";
 import { ConditionalNavBar } from "./_components/conditional-header";
 import { SocialSidebar } from "./_components/social-sidebar";
 import CookieConsent from "./_components/cookie-consent";
-import PromoAlert from "./_components/promo-alert";
+import OfferAlert from "./_components/offer-alert";
+import NadOfferAlert from "./_components/nad-offer-alert";
 import { AuthProvider } from "./_common/auth-context";
 
 const geistSans = Geist({
@@ -48,7 +49,8 @@ export default function RootLayout({
             {children}
             <ConditionalFooter />
             <CookieConsent />
-            <PromoAlert />
+            <OfferAlert />
+            <NadOfferAlert />
           </AuthProvider>
       </body>
     </html>

@@ -28,7 +28,7 @@ export default async function ParentsWellnessServicePage({ params }: { params: P
   if (!service) notFound();
 
   const otherServices = PARENTS_WELLNESS_SERVICES.filter((s) => s.slug !== slug).slice(0, 3);
-  const waMsg = waLink(`Hi Nordic! I'd like to book "${service.title}" — Back to School Sale.`);
+  const waMsg = waLink(`Hi Nordic! I'd like to book "${service.title}" — Dubai Flu Season offer.`);
 
   return (
     <div className="bg-[#F7F4EE] min-h-screen font-sans">
@@ -51,9 +51,9 @@ export default async function ParentsWellnessServicePage({ params }: { params: P
 
         <div className="relative z-10 max-w-[1000px] mx-auto px-6 lg:px-8 w-full pt-32 pb-10">
           <nav className="flex items-center gap-2 text-white/60 text-xs mb-5">
-            <Link href="/back-to-school-sale" className="hover:text-white transition">Back to School Sale</Link>
+            <Link href="/back-to-school-sale" className="hover:text-white transition">Dubai Flu Season</Link>
             <span>/</span>
-            <Link href="/back-to-school-sale#parents-wellness" className="hover:text-white transition">Parent&rsquo;s Wellness</Link>
+            <Link href="/back-to-school-sale#services" className="hover:text-white transition">Flu Services</Link>
             <span>/</span>
             <span className="text-white/90">{service.title}</span>
           </nav>
@@ -111,7 +111,7 @@ export default async function ParentsWellnessServicePage({ params }: { params: P
               <div className="flex items-baseline gap-2 mb-1">
                 <span className="text-[#1a2e28] text-3xl font-bold">40% OFF</span>
               </div>
-              <p className="text-[#2D5B4F] text-xs font-semibold mb-5">Back to School Sale — message us for your discounted price</p>
+              <p className="text-[#2D5B4F] text-xs font-semibold mb-5">Dubai Flu Season — message us for your discounted price</p>
 
               <a href={waMsg} target="_blank" rel="noopener noreferrer" className="w-full inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold py-3.5 rounded-full text-sm transition-all duration-300 shadow-md mb-3">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.79.227 1.496.194 2.068.119.632-.116 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.524-5.274c0-5.49 4.497-9.986 9.996-9.986 2.654 0 5.145 1.035 7.081 2.922a9.827 9.827 0 012.922 7.064c-.003 5.49-4.497 9.984-9.984 9.984m8.526-18.51C18.024 1.25 15.19 0 12.051 0 5.463 0 .095 5.368.095 11.958c0 2.104.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 005.683 1.448h.005c6.584 0 11.955-5.368 11.955-11.958 0-3.176-1.24-6.165-3.495-8.511"/></svg>
@@ -173,7 +173,7 @@ export default async function ParentsWellnessServicePage({ params }: { params: P
       <section className="py-10 px-6 text-center">
         <Link href="/back-to-school-sale" className="inline-flex items-center gap-2 text-[#543826] font-semibold text-sm hover:gap-3 transition-all">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-          Back to Back to School Sale
+          Back to Dubai Flu Season
         </Link>
       </section>
 

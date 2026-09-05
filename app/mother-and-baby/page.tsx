@@ -568,7 +568,7 @@ const STACK_CARDS = [
     h2: "Ready before she knocks.",
     body: "Before her first visit we share your baby's full picture — feeding schedule, health notes, family preferences. She arrives knowing your world.",
     cta: "Reserve your first visit",
-    img: "/images/healthcare.png",
+    img: "/images/mother2.jpg",
     bg: "#E2E5DE",
     accent: "#2D5B4F",
   },
