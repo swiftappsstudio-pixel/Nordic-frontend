@@ -785,7 +785,7 @@ export default function MotherAndBabyPage() {
       ══════════════════════════ */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-[#1a2e28]">
         <div className="absolute inset-0">
-          <Image src="/images/mother_child_2.png" alt="Mother and Baby care at home in Dubai" fill sizes="100vw" className="object-cover object-center" priority />
+          <Image src="/images/mother_child_21.png" alt="Mother and Baby care at home in Dubai" fill sizes="100vw" className="object-cover object-center" priority />
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e28]/95 via-[#1a2e28]/70 to-transparent" />
         </div>
 

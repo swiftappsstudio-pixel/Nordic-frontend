@@ -173,6 +173,7 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
   const [serviceId, setServiceId] = useState<string | null>(editServiceId || null);
   const [busy, setBusy] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
 
   // Image state (kept outside RHF — uploads are handled separately)
   const fileRef = useRef<HTMLInputElement>(null);
@@ -299,8 +300,16 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
   };
 
   const removeImage = (index: number) => {
+    // `previews` is [...existing imageUrls, ...newly-picked file previews], in that
+    // order, so the boundary tells us whether this index is an already-saved image
+    // (must be dropped from imageUrls so it isn't resubmitted) or a pending file.
+    if (index < imageUrls.length) {
+      setImageUrls((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      const newIndex = index - imageUrls.length;
+      setImages((prev) => prev.filter((_, i) => i !== newIndex));
+    }
     setPreviews((prev) => prev.filter((_, i) => i !== index));
-    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const uploadSingleFile = async (file: File): Promise<string> => {
@@ -508,6 +517,7 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
 
   const handleNext = async () => {
     setSaveError(null);
+    setSaveSuccess(null);
     const valid = await trigger(STEP_FIELDS[currentStep]);
     if (!valid) return;
 
@@ -527,7 +537,32 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
 
   const handleBack = () => {
     setSaveError(null);
+    setSaveSuccess(null);
     if (currentStep > 1) setCurrentStep((s) => (s - 1) as 1 | 2 | 3 | 4 | 5);
+  };
+
+  // Saves whatever step the admin is currently on, without navigating —
+  // lets edits made on an earlier step persist without clicking through
+  // every remaining step to reach Publish.
+  const handleSaveStep = async () => {
+    setSaveError(null);
+    setSaveSuccess(null);
+    const valid = await trigger(STEP_FIELDS[currentStep]);
+    if (!valid) return;
+
+    setBusy(true);
+    try {
+      if (currentStep === 1) await saveStep1();
+      else if (currentStep === 2) await saveStep2();
+      else if (currentStep === 3) await saveStep3();
+      else if (currentStep === 4) await saveStep4();
+      else if (currentStep === 5) await saveStep5();
+      setSaveSuccess("Changes saved.");
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const onPublishSubmit = handleSubmit(async () => {
@@ -658,6 +693,12 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
         {saveError && (
           <div className="bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-700">
             {saveError}
+          </div>
+        )}
+
+        {saveSuccess && (
+          <div className="bg-green-50 border border-green-200 rounded-md p-3 text-sm text-green-700">
+            {saveSuccess}
           </div>
         )}
 
@@ -1193,6 +1234,15 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
               Save draft & exit
             </button>
           )}
+
+          <button
+            type="button"
+            onClick={handleSaveStep}
+            disabled={busy}
+            className="px-5 py-2.5 border border-[#543826] text-[#543826] rounded-lg font-medium hover:bg-orange-50 disabled:opacity-60 transition"
+          >
+            {busy ? "Saving..." : "Save Changes"}
+          </button>
 
           {currentStep < 5 ? (
             <button
