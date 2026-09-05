@@ -13,7 +13,7 @@ export default function StatsSection() {
     {
       value: "100+",
       label: "Health and wellness professionals",
-      description: "Doctors, nurses and more employed by NordicHC.",
+      description: "Doctors, nurses and more employed by Nordic.",
     },
     {
       value: "Rated 4.9+",

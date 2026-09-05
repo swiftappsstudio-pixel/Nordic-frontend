@@ -5,24 +5,49 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Lock } from "lucide-react";
 import { useAuth } from "@/app/_common/auth-context";
+import { EXCLUSIVE_OFFERS, getOfferStatus, type OfferStatus } from "@/app/_data/exclusive-offers";
+
+type NavSubItem = {
+  label: string;
+  href: string;
+  badge?: string;
+  // Dubai time (UTC+4). When set, the item auto-shows/hides in the
+  // Exclusive Offers dropdown based on the visitor's real clock — no
+  // manual toggling needed as campaigns roll from one to the next.
+  visibleFrom?: Date;
+  visibleUntil?: Date;
+};
 
 type NavItem = {
   label: string;
   href: string;
-  dropdown?: { label: string; href: string; badge?: string }[];
+  dropdown?: NavSubItem[];
 };
 
+type SubStatus = OfferStatus;
+type NavSubItemWithStatus = NavSubItem & { status: SubStatus };
+type NavItemWithStatus = Omit<NavItem, "dropdown"> & { dropdown?: NavSubItemWithStatus[] };
+
+// Exclusive Offers dropdown: the three campaign items come from the same
+// EXCLUSIVE_OFFERS schedule the promo alert reads, so both stay in sync
+// automatically — no manual updates as campaigns roll from one to the next.
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
   {
     label: "Exclusive Offers",
     href: "/back-to-school-sale",
     dropdown: [
-      { label: "Back to School Sale", href: "/back-to-school-sale", badge: "40% OFF" },
-      { label: "Emirati Women's Day", href: "/emirati-womens-day", badge: "40% OFF" },
-      { label: "IV Glutathione", href: "/iv-glutathione" },
+      { label: "Dubai Flu Season", href: "/back-to-school-sale", badge: "FLU SEASON" },
+      ...EXCLUSIVE_OFFERS.map((offer) => ({
+        label: offer.navLabel,
+        href: offer.href,
+        badge: offer.navBadge,
+        visibleFrom: offer.visibleFrom,
+        visibleUntil: offer.visibleUntil,
+      })),
+      { label: "NAD+ & Glutathione", href: "/iv-glutathione" },
     ],
   },
   { label: "Mother & Baby", href: "/mother-and-baby" },
@@ -36,7 +61,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "Our Team",
     href: "/our-team",
     dropdown: [
-      { label: "Our Management", href: "/our-management" },
+      // { label: "Our Management", href: "/our-management" }, // hidden for now
       { label: "Our Physiotherapist", href: "/our-physiotherapist" },
       { label: "Our Nurses", href: "/our-nurses" },
       { label: "Join Our Team", href: "/join-our-team" },
@@ -70,6 +95,27 @@ export default function Navbar() {
   const dropdownTriggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const dropdownPanelRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Drives the Exclusive Offers auto-rotation — starts null so server and
+  // first client render match, then ticks to the visitor's real clock.
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    const update = () => setNow(Date.now());
+    update();
+    const id = setInterval(update, 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  const navItems: NavItemWithStatus[] = NAV_ITEMS.map((item): NavItemWithStatus => {
+    if (!item.dropdown) return { label: item.label, href: item.href };
+    const withStatus = item.dropdown
+      .map((sub) => ({ ...sub, status: getOfferStatus(sub, now) }))
+      .filter((sub) => sub.status !== "hidden");
+    // Locked ("Coming Soon") items sink to the bottom so live offers lead.
+    const unlocked = withStatus.filter((sub) => sub.status !== "locked");
+    const locked = withStatus.filter((sub) => sub.status === "locked");
+    return { label: item.label, href: item.href, dropdown: [...unlocked, ...locked] };
+  });
 
   const expanded = !scrolled || hoverExpand;
 
@@ -216,7 +262,7 @@ export default function Navbar() {
             style={{ scrollbarWidth: "none" }}
             className={`flex items-center gap-1 py-1.5 [&::-webkit-scrollbar]:hidden ${expanded ? "overflow-x-auto" : "overflow-hidden"}`}
           >
-          {NAV_ITEMS.map((item) =>
+          {navItems.map((item) =>
             item.dropdown ? (
               <div
                 key={item.label}
@@ -255,13 +301,23 @@ export default function Navbar() {
                           key={sub.label}
                           href={sub.href}
                           onClick={() => setOpenDropdown(null)}
-                          className="dropdown-glass-item mx-2 flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl text-sm text-gray-700 hover:text-[#543826]"
+                          className={`dropdown-glass-item mx-2 flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl text-sm ${sub.status === "locked" ? "text-gray-400" : "text-gray-700 hover:text-[#543826]"
+                            }`}
                         >
-                          <span>{sub.label}</span>
-                          {sub.badge && (
-                            <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none shrink-0">
-                              {sub.badge}
+                          <span className="flex items-center gap-1.5">
+                            {sub.status === "locked" && <Lock className="w-3.5 h-3.5 shrink-0" />}
+                            {sub.label}
+                          </span>
+                          {sub.status === "locked" ? (
+                            <span className="bg-gray-200 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none shrink-0">
+                              Coming Soon
                             </span>
+                          ) : (
+                            sub.badge && (
+                              <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none shrink-0">
+                                {sub.badge}
+                              </span>
+                            )
                           )}
                         </Link>
                       ))}
@@ -392,7 +448,7 @@ export default function Navbar() {
       {open && (
         <div className="lg:hidden bg-white/85 backdrop-blur-xl rounded-b-[18px] px-4 pt-2 pb-4 mt-1 border border-white/40 border-t-white/20 shadow-lg">
           <ul className="flex flex-col gap-1 mb-3">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <li key={item.label}>
                 {item.dropdown ? (
                   <>
@@ -421,13 +477,23 @@ export default function Navbar() {
                             key={sub.label}
                             href={sub.href}
                             onClick={() => { setOpen(false); setOpenDropdown(null); }}
-                            className="dropdown-glass-item flex items-center justify-between gap-2 px-4 py-2 rounded-xl text-sm text-[#543826]/70"
+                            className={`dropdown-glass-item flex items-center justify-between gap-2 px-4 py-2 rounded-xl text-sm ${sub.status === "locked" ? "text-gray-400" : "text-[#543826]/70"
+                              }`}
                           >
-                            <span>{sub.label}</span>
-                            {sub.badge && (
-                              <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none shrink-0">
-                                {sub.badge}
+                            <span className="flex items-center gap-1.5">
+                              {sub.status === "locked" && <Lock className="w-3.5 h-3.5 shrink-0" />}
+                              {sub.label}
+                            </span>
+                            {sub.status === "locked" ? (
+                              <span className="bg-gray-200 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none shrink-0">
+                                Coming Soon
                               </span>
+                            ) : (
+                              sub.badge && (
+                                <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none shrink-0">
+                                  {sub.badge}
+                                </span>
+                              )
                             )}
                           </Link>
                         ))}

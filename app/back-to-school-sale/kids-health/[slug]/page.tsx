@@ -28,7 +28,7 @@ export default async function KidsHealthServicePage({ params }: { params: Promis
   if (!service) notFound();
 
   const otherServices = KIDS_HEALTH_SERVICES.filter((s) => s.slug !== slug).slice(0, 3);
-  const waMsg = waLink(`Hi Nordic! I'd like to book "${service.title}" — Back to School Sale.`);
+  const waMsg = waLink(`Hi Nordic! I'd like to book "${service.title}" — Dubai Flu Season offer.`);
 
   return (
     <div className="bg-[#F7F4EE] min-h-screen font-sans">
@@ -51,9 +51,9 @@ export default async function KidsHealthServicePage({ params }: { params: Promis
 
         <div className="relative z-10 max-w-[1000px] mx-auto px-6 lg:px-8 w-full pt-32 pb-10">
           <nav className="flex items-center gap-2 text-white/60 text-xs mb-5">
-            <Link href="/back-to-school-sale" className="hover:text-white transition">Back to School Sale</Link>
+            <Link href="/back-to-school-sale" className="hover:text-white transition">Dubai Flu Season</Link>
             <span>/</span>
-            <Link href="/back-to-school-sale#kids-health" className="hover:text-white transition">Kids&rsquo; Health</Link>
+            <Link href="/back-to-school-sale#services" className="hover:text-white transition">Flu Services</Link>
             <span>/</span>
             <span className="text-white/90">{service.title}</span>
           </nav>
@@ -117,7 +117,7 @@ export default async function KidsHealthServicePage({ params }: { params: Promis
                 )}
               </div>
               {service.offBadge && (
-                <p className="text-[#2D5B4F] text-xs font-semibold mb-5">Save {service.offBadge} — Back to School Sale</p>
+                <p className="text-[#2D5B4F] text-xs font-semibold mb-5">Save {service.offBadge} — Dubai Flu Season offer</p>
               )}
               {!service.offBadge && <div className="mb-5" />}
 
@@ -181,7 +181,7 @@ export default async function KidsHealthServicePage({ params }: { params: Promis
       <section className="py-10 px-6 text-center">
         <Link href="/back-to-school-sale" className="inline-flex items-center gap-2 text-[#543826] font-semibold text-sm hover:gap-3 transition-all">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-          Back to Back to School Sale
+          Back to Dubai Flu Season
         </Link>
       </section>
 

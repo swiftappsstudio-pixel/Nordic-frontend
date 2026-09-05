@@ -3,8 +3,10 @@ import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaWhatsapp } from "react-icons/fa";
 
 const FOOTER_SERVICES = [
-  { label: "Back to School Sale", href: "/back-to-school-sale" },
-  { label: "Emirati Women's Day", href: "/emirati-womens-day" },
+  { label: "Dubai Flu Season", href: "/back-to-school-sale" },
+  { label: "World Physiotherapy Day", href: "/world-physiotherapy-day" },
+  { label: "World First Aid Day", href: "/world-first-aid-day" },
+  { label: "World Patient Safety Day", href: "/world-patient-safety-day" },
   { label: "Mother & Baby", href: "/mother-and-baby" },
   { label: "Elderly Care", href: "/elderly-care" },
   { label: "Blood Test", href: "/blood-test" },
