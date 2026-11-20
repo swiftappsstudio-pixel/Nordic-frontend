@@ -302,7 +302,7 @@ export default function ServiceDetailPage({ id }: Props) {
                      </button>
                    )}
 
-                   {service.variants?.map((variant: any) => (
+                   {service.variants?.map((variant) => (
                      <button
                        key={variant._id}
                        onClick={() => { setSelectedVariant(variant); setUseBasePrice(false); }}
@@ -312,22 +312,12 @@ export default function ServiceDetailPage({ id }: Props) {
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                           <div>
                             <p className="font-semibold text-[#543826] text-sm sm:text-base">
-                              {variant.name.split(/(Get \d+ Free)/i).map((part: any, i: any) =>
-                                /Get \d+ Free/i.test(part)
-                                  ? <span key={i} className="font-bold underline text-[#543826]">{part}</span>
-                                  : part
-                              )}
+                              {variant.name}
                             </p>
                             {variant.description && <p className="text-gray-500 text-sm mt-1">{variant.description}</p>}
                             <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-gray-500">
-                              {service?.isProduct === false ? <>{variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
-                                {variant.freeSessions > 0 && <span className="text-[#543826] font-bold underline">+{variant.freeSessions} free</span>}</> : ""}
-
-                              {variant?.discountPercent > 0 && (
-                                <span className="text-green-600 font-semibold">
-                                  {variant.discountPercent}% OFF
-                                </span>
-                              )}                          </div>
+                              {service?.isProduct === false && variant.sessions > 0 && <span>{variant.sessions} sessions</span>}
+                            </div>
                           </div>
                           <span className="text-orange-600 font-bold text-lg sm:text-xl whitespace-nowrap">AED {variant.price}</span>
                         </div>

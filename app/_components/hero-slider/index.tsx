@@ -41,6 +41,7 @@ export default function HeroSlider({ heroSlides }: HeroSliderProps) {
 
   useEffect(() => {
     if (heroSlides.length === 0) return;
+// eslint-disable-next-line react-hooks/set-state-in-effect -- starts the slide timer/progress bar on mount
     startProgress();
     intervalRef.current = setInterval(nextSlide, SLIDE_DURATION);
     return () => {

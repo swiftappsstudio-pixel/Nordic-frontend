@@ -315,11 +315,11 @@ export default function PhysiotherapyPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {CONDITIONS.map((c, i) => (
               <FadeIn key={c} delay={(i % 6) * 0.05}>
-                <div className="flex items-center gap-3 bg-[#F7F4EE] rounded-xl px-5 py-4 border border-[#543826]/8 hover:border-[#543826]/25 hover:shadow-sm transition-all duration-300">
+                <div className="flex items-center gap-2.5 sm:gap-3 bg-[#F7F4EE] rounded-xl px-3 sm:px-5 py-4 border border-[#543826]/8 hover:border-[#543826]/25 hover:shadow-sm transition-all duration-300">
                   <span className="shrink-0 w-8 h-8 rounded-full bg-[#543826]/10 flex items-center justify-center">
                     <svg className="w-4 h-4 text-[#543826]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </span>
-                  <span className="text-[#1a2e28] text-sm font-semibold">{c}</span>
+                  <span className="min-w-0 break-words hyphens-auto text-[#1a2e28] text-sm font-semibold">{c}</span>
                 </div>
               </FadeIn>
             ))}

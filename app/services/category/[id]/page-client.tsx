@@ -121,9 +121,6 @@ export default function CategoryServicesPage({ slug }: Props) {
                         <span className="text-orange-600 font-bold text-xl">
                           AED {service.discountPrice}
                         </span>
-                        <span className="text-gray-400 line-through text-md">
-                          AED {service.actualPrice}
-                        </span>
                       </>
                     ) : (
                       service.actualPrice && (

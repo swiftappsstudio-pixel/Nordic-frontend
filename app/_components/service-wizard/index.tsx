@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/app/_common/auth-context";
 import { authFetch } from "@/app/_common/auth-fetch";
+import type { ServiceAddOn, Variant } from "@/app/_common/interfaces";
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
@@ -265,7 +266,7 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
         setValue("metaTitle", s.metaTitle || "");
         setValue("metaDescription", s.metaDescription || "");
         setValue("metaKeywords", (s.metaKeywords || []).join(", "));
-        variantArray.replace((s.variants || []).map((v: any) => ({
+        variantArray.replace((s.variants || []).map((v: Partial<Variant>) => ({
           name: v.name || "",
           price: v.price?.toString() || "",
           discountPercent: v.discountPercent?.toString() || "",
@@ -275,7 +276,7 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
           validityInDays: v.validityInDays?.toString() || "",
           isDefault: v.isDefault || false,
         })));
-        addonArray.replace((s.addOns || []).map((a: any) => ({
+        addonArray.replace((s.addOns || []).map((a: Partial<ServiceAddOn>) => ({
           name: a.name || "",
           description: a.description || "",
           price: a.price?.toString() || "",
@@ -439,7 +440,7 @@ export function ServiceWizard({ serviceId: editServiceId }: { serviceId?: string
     }
 
     for (const v of variants) {
-      const payload: Record<string, any> = {
+      const payload: Record<string, unknown> = {
         serviceId,
         name: v.name,
         price: Number(v.price),

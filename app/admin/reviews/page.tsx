@@ -253,7 +253,7 @@ export default function ReviewsPage() {
           </div>
         </div>
       ) : reviews.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-md p-8 text-center text-gray-500">No reviews found. Click "Add Review" to create one.</div>
+        <div className="bg-white rounded-xl shadow-md p-8 text-center text-gray-500">No reviews found. Click &ldquo;Add Review&rdquo; to create one.</div>
       ) : (
         <div className="bg-white rounded-xl shadow-md overflow-x-auto">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

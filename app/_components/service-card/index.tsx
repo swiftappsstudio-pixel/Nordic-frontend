@@ -6,7 +6,6 @@ interface ServiceCardProps {
   image?: string;
   title: string;
   price: number;
-  actualPrice?: number;
   description?: string;
 }
 
@@ -15,7 +14,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   image,
   title,
   price,
-  actualPrice,
   description,
 }) => {
   return (
@@ -38,11 +36,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         )}
         <div className="mt-2 flex items-center gap-3">
           <span className="text-orange-600 font-bold text-xl">AED {price}</span>
-          {actualPrice && actualPrice > price && (
-            <span className="text-gray-400 line-through text-md">
-              AED {actualPrice}
-            </span>
-          )}
         </div>
       </div>
     </Link>

@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (savedToken && savedUser) {
       try {
+// eslint-disable-next-line react-hooks/set-state-in-effect -- restore the saved session from localStorage after hydration
         setToken(savedToken);
         setUser(JSON.parse(savedUser));
       } catch {

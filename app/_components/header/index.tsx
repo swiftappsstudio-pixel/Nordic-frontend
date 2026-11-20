@@ -7,15 +7,14 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight, Lock } from "lucide-react";
 import { useAuth } from "@/app/_common/auth-context";
-import { EXCLUSIVE_OFFERS, getOfferStatus, type OfferStatus } from "@/app/_data/exclusive-offers";
+import { getScheduleStatus, type ScheduleStatus } from "@/app/_common/schedule";
 
 type NavSubItem = {
   label: string;
   href: string;
   badge?: string;
-  // Dubai time (UTC+4). When set, the item auto-shows/hides in the
-  // Exclusive Offers dropdown based on the visitor's real clock — no
-  // manual toggling needed as campaigns roll from one to the next.
+  // Dubai time (UTC+4). When set, the item auto-shows/hides in its
+  // dropdown based on the visitor's real clock.
   visibleFrom?: Date;
   visibleUntil?: Date;
 };
@@ -26,30 +25,12 @@ type NavItem = {
   dropdown?: NavSubItem[];
 };
 
-type SubStatus = OfferStatus;
+type SubStatus = ScheduleStatus;
 type NavSubItemWithStatus = NavSubItem & { status: SubStatus };
 type NavItemWithStatus = Omit<NavItem, "dropdown"> & { dropdown?: NavSubItemWithStatus[] };
 
-// Exclusive Offers dropdown: the three campaign items come from the same
-// EXCLUSIVE_OFFERS schedule the promo alert reads, so both stay in sync
-// automatically — no manual updates as campaigns roll from one to the next.
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
-  {
-    label: "Exclusive Offers",
-    href: "/back-to-school-sale",
-    dropdown: [
-      { label: "Dubai Flu Season", href: "/back-to-school-sale", badge: "FLU SEASON" },
-      ...EXCLUSIVE_OFFERS.map((offer) => ({
-        label: offer.navLabel,
-        href: offer.href,
-        badge: offer.navBadge,
-        visibleFrom: offer.visibleFrom,
-        visibleUntil: offer.visibleUntil,
-      })),
-      { label: "NAD+ & Glutathione", href: "/iv-glutathione" },
-    ],
-  },
   { label: "Mother & Baby", href: "/mother-and-baby" },
   { label: "Elderly Care", href: "/elderly-care" },
   { label: "Blood Test", href: "/blood-test" },
@@ -96,7 +77,7 @@ export default function Navbar() {
   const dropdownPanelRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Drives the Exclusive Offers auto-rotation — starts null so server and
+  // Drives scheduled dropdown items — starts null so server and
   // first client render match, then ticks to the visitor's real clock.
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
@@ -109,7 +90,7 @@ export default function Navbar() {
   const navItems: NavItemWithStatus[] = NAV_ITEMS.map((item): NavItemWithStatus => {
     if (!item.dropdown) return { label: item.label, href: item.href };
     const withStatus = item.dropdown
-      .map((sub) => ({ ...sub, status: getOfferStatus(sub, now) }))
+      .map((sub) => ({ ...sub, status: getScheduleStatus(sub, now) }))
       .filter((sub) => sub.status !== "hidden");
     // Locked ("Coming Soon") items sink to the bottom so live offers lead.
     const unlocked = withStatus.filter((sub) => sub.status !== "locked");
@@ -175,6 +156,7 @@ export default function Navbar() {
   }, [openDropdown, open]);
 
   useEffect(() => {
+// eslint-disable-next-line react-hooks/set-state-in-effect -- collapse any open dropdown when the bar shrinks
     if (!expanded) setOpenDropdown(null);
   }, [expanded]);
 
@@ -186,6 +168,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+// eslint-disable-next-line react-hooks/set-state-in-effect -- close menus on route change
   useEffect(() => { setOpen(false); setOpenDropdown(null); }, [pathname]);
 
   useEffect(() => {
@@ -280,11 +263,6 @@ export default function Navbar() {
                     }`}
                 >
                   {item.label}
-                  {item.label === "Exclusive Offers" && (
-                    <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-                      SALE
-                    </span>
-                  )}
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""}`} />
                 </button>
                 {openDropdown === item.label && dropdownPos &&
@@ -462,11 +440,6 @@ export default function Navbar() {
                     >
                       <span className="flex items-center gap-1.5">
                         {item.label}
-                        {item.label === "Exclusive Offers" && (
-                          <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-                            SALE
-                          </span>
-                        )}
                       </span>
                       <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""}`} />
                     </button>

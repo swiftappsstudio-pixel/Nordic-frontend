@@ -6,6 +6,11 @@
   --primary: #593e30;
 }
 
+/* Short viewports, e.g. phones in landscape. */
+@custom-variant short (@media (max-height: 500px));
+/* Small phones in portrait (e.g. iPhone SE). */
+@custom-variant compact (@media (max-height: 700px));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -282,4 +287,90 @@ body {
 
 .wpd-spotlight {
   background: radial-gradient(600px circle at var(--wpd-x, 50%) var(--wpd-y, 50%), rgba(255, 255, 255, 0.16), transparent 42%);
+}
+
+
+/* ── Nordic Friday Offer popup ─────────────────────────────────────────── */
+@keyframes fo-flash {
+  0%, 62%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0 rgba(255, 214, 102, 0)); }
+  66% { transform: scale(1.28) rotate(-12deg); filter: drop-shadow(0 0 10px rgba(255, 214, 102, 0.95)) brightness(1.6); }
+  70% { transform: scale(0.92) rotate(6deg); }
+  74% { transform: scale(1.18) rotate(-6deg); filter: drop-shadow(0 0 14px rgba(255, 214, 102, 0.9)) brightness(1.4); }
+  80% { transform: scale(1) rotate(0deg); }
+}
+@keyframes fo-ring {
+  0% { transform: scale(0.85); opacity: 0.75; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+@keyframes fo-twinkle {
+  0%, 100% { transform: scale(0.4) rotate(0deg); opacity: 0; }
+  50% { transform: scale(1) rotate(90deg); opacity: 1; }
+}
+@keyframes fo-shine {
+  0% { transform: translateX(-160%) skewX(-20deg); }
+  55%, 100% { transform: translateX(260%) skewX(-20deg); }
+}
+@keyframes fo-gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes fo-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes fo-blink {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  50% { opacity: 0.55; box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+}
+@keyframes fo-kenburns {
+  from { transform: scale(1.08); }
+  to { transform: scale(1.18) translate(-1%, -1%); }
+}
+@keyframes fo-word {
+  from { opacity: 0; transform: translateY(24px); letter-spacing: 0.08em; filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); letter-spacing: -0.01em; filter: blur(0); }
+}
+@keyframes fo-pop {
+  0% { transform: scale(0.4); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+@keyframes fo-glow {
+  0%, 100% { box-shadow: 0 10px 28px -10px rgba(84, 56, 38, 0.65), 0 0 0 0 rgba(212, 163, 115, 0.45); }
+  50% { box-shadow: 0 14px 34px -10px rgba(84, 56, 38, 0.8), 0 0 0 8px rgba(212, 163, 115, 0); }
+}
+@keyframes fo-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.fo-flash { animation: fo-flash 2.6s ease-in-out infinite; transform-origin: 50% 60%; }
+.fo-ring { animation: fo-ring 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite; }
+.fo-twinkle { animation: fo-twinkle 2.2s ease-in-out infinite; }
+.fo-shine { animation: fo-shine 3.2s ease-in-out infinite; }
+.fo-gradient-text {
+  background-image: linear-gradient(100deg, #1a2e28 0%, #2d5b4f 30%, #543826 60%, #b9855a 80%, #1a2e28 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fo-gradient 7s ease-in-out infinite;
+}
+.fo-rise { animation: fo-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.fo-float { animation: fo-float 3.4s ease-in-out infinite; }
+.fo-blink { animation: fo-blink 1.4s ease-in-out infinite; }
+.fo-kenburns { animation: fo-kenburns 18s ease-in-out infinite alternate; }
+.fo-word { animation: fo-word 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.fo-pop { animation: fo-pop 0.35s ease-out both; }
+.fo-glow { animation: fo-glow 2.4s ease-in-out infinite; }
+.fo-progress { animation: fo-progress linear both; transform-origin: left; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fo-flash, .fo-ring, .fo-twinkle, .fo-shine, .fo-gradient-text, .fo-rise, .fo-float,
+  .fo-blink, .fo-kenburns, .fo-word, .fo-pop, .fo-glow, .fo-progress {
+    animation: none !important;
+  }
 }

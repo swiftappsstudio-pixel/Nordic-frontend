@@ -1,5 +1,13 @@
 // api.ts
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
+
+// Homepage data fetched at build/ISR time. Fail fast instead of hanging the
+// build when the API URL isn't configured (e.g. CI) or the API is slow; the
+// homepage already falls back to empty lists and revalidates every 60s.
+const SERVER_FETCH_TIMEOUT_MS = 10_000;
+const assertApiConfigured = () => {
+  if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("NEXT_PUBLIC_API_URL is not set");
+};
 import {
   Service,
   LoginRequest,
@@ -190,8 +198,10 @@ export const getServices = async (): Promise<Service[]> => {
 // =========================================== featured services API CALLS ===========================================//
 
 export const getFeaturedServices = async (): Promise<Service[]> => {
+  assertApiConfigured();
   const res = await fetch(`${API_BASE_URL}/services/featured`, {
     next: { revalidate: 60 },
+    signal: AbortSignal.timeout(SERVER_FETCH_TIMEOUT_MS),
   });
 
   if (!res.ok) {
@@ -487,8 +497,10 @@ export const getAdminDashboardStats = async (
 // =========================================== Banner API CALLS ===========================================//
 
 export const getBanners = async (): Promise<Banner[]> => {
+  assertApiConfigured();
   const res = await fetch(`${API_BASE_URL}/banners`, {
     next: { revalidate: 60 },
+    signal: AbortSignal.timeout(SERVER_FETCH_TIMEOUT_MS),
   });
 
   if (!res.ok) throw new Error("Failed to fetch banners");

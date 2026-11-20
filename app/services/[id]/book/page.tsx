@@ -649,7 +649,7 @@ function BookingContent() {
                                 setSelectedVariant(null);
                               } else {
                                 const v = service.variants?.find(
-                                  (v:any) => v._id === e.target.value
+                                  (v) => v._id === e.target.value
                                 );
                                 if (v) setSelectedVariant(v);
                               }
@@ -667,7 +667,7 @@ function BookingContent() {
                                 ).toFixed(2)}
                               </option>
                             )}
-                            {service.variants?.map((v:any) => (
+                            {service.variants?.map((v) => (
                               <option key={v._id} value={v._id}>
                                 {v.name} — AED {v.price} {service?.isProduct === false ? `(${v.sessions} sessions)` : ""}
                               </option>
@@ -705,7 +705,7 @@ function BookingContent() {
                                setSelectedVariant(null);
                              } else {
                                const v = service.variants?.find(
-                                 (v2: any) => v2._id === e.target.value
+                                 (v2) => v2._id === e.target.value
                                );
                                if (v) setSelectedVariant(v);
                              }
@@ -717,7 +717,7 @@ function BookingContent() {
                              {service?.isProduct === false ? "1 Session — " : ""} AED {(service.discountPrice ?? service.actualPrice ?? 0).toFixed(2)}
                             </option>
                           )}
-                          {service.variants?.map((v: any) => (
+                          {service.variants?.map((v) => (
                             <option key={v._id} value={v._id}>
                               {v.name} — AED {v.price} {service?.isProduct === false ? `(${v.sessions} sessions)` : ""}
                             </option>

@@ -54,11 +54,6 @@ function ServiceCard({ svc }: { svc: Service }) {
             </svg>
           </div>
         )}
-        {svc.discountPrice && svc.actualPrice && (
-          <div className="absolute top-3 right-3 bg-[#543826] text-white text-[10px] font-bold px-2.5 py-1 rounded-lg">
-            Get Best Offer
-          </div>
-        )}
       </div>
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-bold text-gray-900 text-base leading-snug mb-2">{svc.title}</h3>
@@ -69,7 +64,6 @@ function ServiceCard({ svc }: { svc: Service }) {
           {svc.discountPrice ? (
             <div className="flex items-baseline gap-2">
               <span className="text-xl font-bold text-gray-900">AED {svc.discountPrice}</span>
-              <span className="text-sm text-gray-300 line-through font-normal">AED {svc.actualPrice}</span>
             </div>
           ) : svc.actualPrice ? (
             <span className="text-xl font-bold text-gray-900">AED {svc.actualPrice}</span>
@@ -194,7 +188,7 @@ export default function WeightLossPage() {
               </motion.div>
 
               <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="font-bold text-white leading-[1.1] mb-4" style={{ fontSize: "clamp(36px, 5vw, 60px)" }}>
-                Dubai's Trusted<br />At-Home Weight Loss Programs
+                Dubai&apos;s Trusted<br />At-Home Weight Loss Programs
               </motion.h1>
 
               <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-white/70 text-base leading-relaxed mb-8 max-w-md">

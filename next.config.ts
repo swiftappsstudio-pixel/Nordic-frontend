@@ -33,6 +33,19 @@ const nextConfig = {
     ],
   },
 
+  // Retired promotional campaign pages → their regular service pages.
+  async redirects() {
+    return [
+      { source: "/world-physiotherapy-day", destination: "/physiotherapy", permanent: true },
+      { source: "/world-first-aid-day", destination: "/blood-test", permanent: true },
+      { source: "/world-patient-safety-day", destination: "/elderly-care", permanent: true },
+      { source: "/iv-glutathione", destination: "/iv-therapy", permanent: true },
+      { source: "/back-to-school-sale", destination: "/blood-test", permanent: true },
+      { source: "/back-to-school-sale/:path*", destination: "/blood-test", permanent: true },
+      { source: "/offers", destination: "/services", permanent: true },
+    ];
+  },
+
   async headers() {
     return [
       {

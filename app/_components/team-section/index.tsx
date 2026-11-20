@@ -72,6 +72,7 @@ export default function TeamSection() {
   }, [startProgress]);
 
   useEffect(() => {
+// eslint-disable-next-line react-hooks/set-state-in-effect -- starts the slide timer/progress bar on mount
     startProgress();
     intervalRef.current = setInterval(nextSlide, SLIDE_DURATION);
     return () => {

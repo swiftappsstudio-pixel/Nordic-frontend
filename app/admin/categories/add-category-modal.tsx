@@ -149,7 +149,7 @@ export default function AddCategoryModal({ onSubmit, onCancel, editData }: AddCa
                 <span className="text-sm text-gray-700">No</span>
               </label>
             </div>
-            <p className="text-xs text-gray-400 mt-1">Only categories set to "Yes" will appear on the Home page.</p>
+            <p className="text-xs text-gray-400 mt-1">Only categories set to &ldquo;Yes&rdquo; will appear on the Home page.</p>
           </div>
 
           <div>

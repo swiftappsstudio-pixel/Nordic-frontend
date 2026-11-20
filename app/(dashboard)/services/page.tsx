@@ -22,7 +22,6 @@ export default async function ServicesPage() {
                 image={service.images?.[0]}
                 title={service.title}
                 price={service.discountPrice ?? service.actualPrice ?? 0}
-                actualPrice={service.actualPrice}
                 description={service.description}
               />
             ))}

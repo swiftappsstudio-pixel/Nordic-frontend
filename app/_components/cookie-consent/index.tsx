@@ -10,6 +10,7 @@ export default function CookieConsent() {
 
   useEffect(() => {
     const consent = localStorage.getItem(COOKIE_KEY);
+// eslint-disable-next-line react-hooks/set-state-in-effect -- consent lives in localStorage, readable only after hydration
     if (!consent) setVisible(true);
   }, []);
 
@@ -47,7 +48,7 @@ export default function CookieConsent() {
               .
             </p>
             <p className="font-brand text-sm font-normal leading-5 text-gray-600 mt-3">
-              We won't track your information when you visit our site. But in order to comply with your preferences, we'll have to use just one tiny cookie so that you're not asked to make this choice again.
+              We won&apos;t track your information when you visit our site. But in order to comply with your preferences, we&apos;ll have to use just one tiny cookie so that you&apos;re not asked to make this choice again.
             </p>
           </div>
         </div>

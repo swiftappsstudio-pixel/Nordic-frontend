@@ -5,11 +5,12 @@ import CategoryPageClient from "./category-page-client";
 export default async function CategorySlugPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
+  let categories: Awaited<ReturnType<typeof getCategoryByLink>> = [];
   try {
-    const categories = await getCategoryByLink(slug);
-    if (!categories.length) return notFound();
-    return <CategoryPageClient categories={categories} />;
+    categories = await getCategoryByLink(slug);
   } catch {
-    return notFound();
+    notFound();
   }
+  if (!categories.length) notFound();
+  return <CategoryPageClient categories={categories} />;
 }

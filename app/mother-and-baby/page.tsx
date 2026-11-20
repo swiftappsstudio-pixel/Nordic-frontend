@@ -649,6 +649,7 @@ function StackedScrollSection() {
   const [cardHPx, setCardHPx] = useState(800);
 
   useEffect(() => {
+// eslint-disable-next-line react-hooks/set-state-in-effect -- window height is only known after hydration
     setCardHPx(window.innerHeight - TITLE_H);
     const onResize = () => setCardHPx(window.innerHeight - TITLE_H);
     window.addEventListener("resize", onResize);

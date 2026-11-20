@@ -56,11 +56,6 @@ function ServiceCard({ svc }: { svc: Service }) {
             </svg>
           </div>
         )}
-        {svc.discountPrice && svc.actualPrice && (
-          <div className="absolute top-3 right-3 bg-[#543826] text-white text-[10px] font-bold px-2.5 py-1 rounded-lg">
-            Get Best Offer
-          </div>
-        )}
       </div>
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-bold text-gray-900 text-base leading-snug mb-2">{svc.title}</h3>
@@ -71,7 +66,6 @@ function ServiceCard({ svc }: { svc: Service }) {
           {svc.discountPrice ? (
             <div className="flex items-baseline gap-2">
               <span className="text-xl font-bold text-gray-900">AED {svc.discountPrice}</span>
-              <span className="text-sm text-gray-300 line-through font-normal">AED {svc.actualPrice}</span>
             </div>
           ) : svc.actualPrice ? (
             <span className="text-xl font-bold text-gray-900">AED {svc.actualPrice}</span>

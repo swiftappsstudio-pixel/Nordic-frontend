@@ -25,12 +25,14 @@ const CHART_BLUE = "#3b82f6";
 
 const formatAED = (val: number) => `AED ${val.toLocaleString()}`;
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+type TooltipEntry = { name: string; value: number; color?: string };
+
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: TooltipEntry[]; label?: string | number }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 shadow-lg rounded-lg border border-gray-100">
         <p className="font-semibold text-gray-700 mb-1">{label}</p>
-        {payload.map((entry: any, idx: number) => (
+        {payload.map((entry, idx) => (
           <p key={idx} style={{ color: entry.color }} className="text-sm">
             {entry.name}: {entry.name.includes("Revenue") || entry.name.includes("revenue")
               ? formatAED(entry.value)

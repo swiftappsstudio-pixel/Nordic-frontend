@@ -131,11 +131,6 @@ export default function ServicesSection({
                         </svg>
                       </div>
                     )}
-                    {svc.discountPrice && svc.actualPrice && (
-                      <div className="absolute top-3 right-3 bg-[#543826] text-white text-[10px] font-bold px-2.5 py-1 rounded-lg">
-                      Get Best Offer
-                    </div>
-                    )}
                   </div>
 
                   {/* Content */}
@@ -155,7 +150,6 @@ export default function ServicesSection({
                       {svc.discountPrice ? (
                         <div className="flex items-baseline gap-2">
                           <span className="text-xl font-bold text-gray-900">AED {svc.discountPrice}</span>
-                          <span className="text-sm text-gray-300 line-through">AED {svc.actualPrice}</span>
                         </div>
                       ) : svc.actualPrice ? (
                         <span className="text-xl font-bold text-gray-900">AED {svc.actualPrice}</span>

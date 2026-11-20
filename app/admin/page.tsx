@@ -68,6 +68,7 @@ export default function AdminDashboard() {
     if (authLoading) return;
 
     if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- auth state is only known after the provider hydrates
       setError("You must be logged in as an admin to view the dashboard.");
       setLoading(false);
       return;
